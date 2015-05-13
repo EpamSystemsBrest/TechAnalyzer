@@ -39,8 +39,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProtocolTests.cs" />
+    <Compile Include="TestProtocols\Http2Direct.cs" />
+    <Compile Include="TestProtocols\Http2Upgrade.cs" />
+    <Compile Include="TestProtocols\Tls12Alpn.cs" />
+    <Compile Include="TestProtocols\Tls12Npn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
