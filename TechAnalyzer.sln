@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlParser", "HtmlParser\HtmlParser.csproj", "{965F51EB-E9B7-4F1F-A59C-3500FED3868E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CssParser", "CssParser\CssParser.csproj", "{701D18B9-415F-4BAA-8EB5-E8D704F9AA0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsParser", "JsParser\JsParser.csproj", "{50BECA27-EC93-45AB-9D0F-A8EEA3C661A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolAnalizer", "ProtocolAnalizer\ProtocolAnalizer.csproj", "{2D264FFA-83CF-4279-9AF7-F3397D56B3C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CssParser.Tests", "CssParser.Tests\CssParser.Tests.csproj", "{4B5C156F-63BD-493B-80E4-6F39AFC8B1CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlParser.Tests", "HtmlParser.Tests\HtmlParser.Tests.csproj", "{012FB78B-8C41-46FD-AD3C-CFD613F9ED48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsParser.Tests", "JsParser.Tests\JsParser.Tests.csproj", "{1AA03CB1-A290-4608-8A82-D0BC62A26D09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{965F51EB-E9B7-4F1F-A59C-3500FED3868E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{965F51EB-E9B7-4F1F-A59C-3500FED3868E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{965F51EB-E9B7-4F1F-A59C-3500FED3868E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{965F51EB-E9B7-4F1F-A59C-3500FED3868E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{701D18B9-415F-4BAA-8EB5-E8D704F9AA0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{701D18B9-415F-4BAA-8EB5-E8D704F9AA0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{701D18B9-415F-4BAA-8EB5-E8D704F9AA0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{701D18B9-415F-4BAA-8EB5-E8D704F9AA0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50BECA27-EC93-45AB-9D0F-A8EEA3C661A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50BECA27-EC93-45AB-9D0F-A8EEA3C661A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50BECA27-EC93-45AB-9D0F-A8EEA3C661A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50BECA27-EC93-45AB-9D0F-A8EEA3C661A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D264FFA-83CF-4279-9AF7-F3397D56B3C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D264FFA-83CF-4279-9AF7-F3397D56B3C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D264FFA-83CF-4279-9AF7-F3397D56B3C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D264FFA-83CF-4279-9AF7-F3397D56B3C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B5C156F-63BD-493B-80E4-6F39AFC8B1CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B5C156F-63BD-493B-80E4-6F39AFC8B1CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B5C156F-63BD-493B-80E4-6F39AFC8B1CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B5C156F-63BD-493B-80E4-6F39AFC8B1CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{012FB78B-8C41-46FD-AD3C-CFD613F9ED48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{012FB78B-8C41-46FD-AD3C-CFD613F9ED48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{012FB78B-8C41-46FD-AD3C-CFD613F9ED48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{012FB78B-8C41-46FD-AD3C-CFD613F9ED48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AA03CB1-A290-4608-8A82-D0BC62A26D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA03CB1-A290-4608-8A82-D0BC62A26D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA03CB1-A290-4608-8A82-D0BC62A26D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA03CB1-A290-4608-8A82-D0BC62A26D09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
