@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CssParser.Tests", "CssParse
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsParser.Tests", "JsParser.Tests\JsParser.Tests.csproj", "{93933AB6-A471-426F-9D27-C31E1566F660}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolAnalizer.Tests", "ProtocolAnalizer.Tests\ProtocolAnalizer.Tests.csproj", "{301E5DD2-54F9-4A18-A6B8-3A5CDE546286}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{93933AB6-A471-426F-9D27-C31E1566F660}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93933AB6-A471-426F-9D27-C31E1566F660}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93933AB6-A471-426F-9D27-C31E1566F660}.Release|Any CPU.Build.0 = Release|Any CPU
+		{301E5DD2-54F9-4A18-A6B8-3A5CDE546286}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{301E5DD2-54F9-4A18-A6B8-3A5CDE546286}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{301E5DD2-54F9-4A18-A6B8-3A5CDE546286}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{301E5DD2-54F9-4A18-A6B8-3A5CDE546286}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
