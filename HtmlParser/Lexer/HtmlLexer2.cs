@@ -12,7 +12,7 @@ namespace HtmlParser.Lexer
     public class HtmlLexer2
     {
 
-        private readonly char[] content = new char[1024 * 1024];
+        private readonly char[] content = new char[1024*1024];
         private int length;
         private int index;
 
@@ -62,6 +62,7 @@ namespace HtmlParser.Lexer
 
 
         #region State Actions
+
         private bool ParseToken()
         {
             SkipWhitespace();
@@ -181,7 +182,7 @@ namespace HtmlParser.Lexer
 
         private bool ParseEndBracket()
         {
-            stateAction = ParseToken;  // TODO : ???????
+            stateAction = ParseToken; // TODO : ???????
             var result = false;
             var c = content[index];
             if (c == '/')
@@ -249,17 +250,16 @@ namespace HtmlParser.Lexer
             int startIndex = index;
             var tagType = lastTag.GetTag();
             var tagNameLength = lastTag.Name.Name.Length;
-            GoToSequence("</");
+            if (tagType == HtmlTag.Script) GoToEndStyle();
+            else GoToEndStyle();
+
             if (HtmlTagHash.GetTag(content, index + 2, tagNameLength) == tagType)
             {
                 stateAction = ParseCloseLastTag;
                 return FireValueToken(tokenType, startIndex);
             }
-            else
-            {
-                index += "</".Length;
-                return false;
-            }
+            index += "</".Length;
+            return false;
         }
 
 
@@ -358,7 +358,7 @@ namespace HtmlParser.Lexer
         private void GoToSequence(string sequence)
         {
             var len = sequence.Length;
-            int position = 0;
+
             while (index < length)
             {
                 GoToChar(sequence[0]);
@@ -366,15 +366,52 @@ namespace HtmlParser.Lexer
                     ((len < 3) || (content[index + 2] == sequence[2])) &&
                     ((len < 4) || (content[index + 3] == sequence[3])))
                 {
-                    // remembers position </
-                    position = index;
-                    //break;
+                    break;
+                }
+                index++;
+            }
+
+        }
+
+        private void GoToEndStyle()
+        {
+            var position = 0;
+            while (index < length)
+            {
+                if (content[index] == '{')
+                    GoToChar('}');
+                if (content[index] == '<')
+                {
+                    GoToChar(content[index]);
+                    if (content[index + 1] == '/')
+                        position = index;
                 }
                 index++;
             }
             index = position;
         }
 
+        private void GoToEndScript()
+        {
+            var position = 0;
+            while (index < length)
+            {
+                if (content[index] == '\"' || content[index] == '\'') GoToQuote(content[index]);
+                if (content[index] == '<')
+                {
+                    GoToChar(content[index]);
+                    if (content[index + 1] == '/')
+                        position = index;
+                }
+                index++;
+            }
+            index = position;
+        }
+
+        private void GoToQuote(char value)
+        {
+            while ((index < length) && (content[index] != value) && content[index - 1] != '/') index++;
+        }
 
         private bool FireToken(TokenType tokenType, QualifiedName name, StringSegment value = default(StringSegment))
         {
@@ -402,7 +439,6 @@ namespace HtmlParser.Lexer
             //if (tokenType == HtmlTag.Script) 
             //isStyle = (tokenType == HtmlTag.Style);
         }
-
     }
 }
 
