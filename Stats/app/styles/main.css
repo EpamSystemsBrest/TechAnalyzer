@@ -1,0 +1,283 @@
+body {
+	font-family: "Source Sans Pro", sans-serif;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #333;
+	background-color: rgb(226, 222, 222);
+	letter-spacing: .025em;
+	overflow-y: scroll;
+	background-image: url(images/background.png);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+#home .steps-line .numerate>div:before {
+	font-family: "Oswald", Helvetica, Arial, sans-serif;
+	font-weight: 500;
+	line-height: 1.1;
+	color: inherit;
+}
+
+.navbar {
+	position: relative;
+	min-height: 60px;
+	margin-bottom: 30px;
+	border: 1px solid transparent;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+	color: #dbdada;
+}
+
+.navbar-nav>li>a {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	line-height: 20px;
+}
+
+.nav>li>a {
+	position: relative;
+	display: block;
+	padding: 10px 15px;
+}
+
+.navbar-nav {
+	margin: 10px -15px;
+}
+
+.nav {
+	margin-bottom: 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+ul,
+ol {
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+
+main {
+	padding-bottom: 40px;
+}
+
+#navbar li.active a {
+	color: #39c1d7;
+}
+
+#navbar h2,
+#navbar h4 {
+	color: inherit;
+	background-color: inherit;
+	margin: 0;
+	font-weight: normal;
+	line-height: inherit;
+}
+
+.navbar-inverse {
+	background-color: #464648;
+	border-color: #363637;
+}
+
+.navbar-inverse .navbar-brand {
+	color: white;
+}
+
+.navbar-brand {
+	float: left;
+	padding: 20px 15px;
+	font-size: 18px;
+	line-height: 20px;
+	height: 60px;
+	margin-right: 10px;
+}
+
+button.navbar-toggle {
+	border-color: #ddd;
+	margin-top: 12px;
+}
+
+.navbar-toggle .icon-bar {
+	background-color: #888;
+}
+
+.jumbotron {
+	margin-top: 15px;
+	overflow: auto;
+	box-shadow: 0 0 15px rgba(8, 8, 8, 0.5);
+}
+
+p {
+	font-size: 16px;
+}
+
+.left {
+	float: left;
+}
+
+.browser {
+	width: 30px;
+	height: 30px;
+	float: right;
+	margin-right: 5px;
+	display: flex;
+}
+
+ul {
+	padding-left: 0px;
+	list-style: none;
+}
+
+.info {
+	float: left;
+}
+
+.browsers {
+	float: right;
+	overflow: hidden;
+}
+
+.browsers li {
+	opacity: .1;
+}
+
+.browsers li a {
+	height: 100%;
+	width: 100%;
+}
+
+.icon-Chrome {
+	background-position: 0 -160px;
+}
+
+.icon-Firefox {
+	background-position: -128px -128px;
+}
+
+.icon-IE {
+	background-position: -31px -34px;
+	background-size: 166px 109px;
+}
+
+.icon-Opera {
+	background-position: -64px -128px;
+}
+
+.icon-Safari {
+	background-position: -128px -32px;
+}
+
+.icon-msdn {
+	background-position: -160px -128px;
+}
+
+.icon-w3c {
+	background-position: -160px -32px;
+}
+
+.icon-webplatform {
+	background-position: -64px -160px;
+}
+
+.icon {
+	background-image: url(images/browsers.png);
+	width: 30px;
+	height: 30px;
+}
+
+.info a span {
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: 0;
+}
+
+.icon {
+	margin-right: 5px;
+}
+
+.info li {
+	float: left;
+	background-color: #C7C4C4;
+	;
+	margin-right: 10px;
+	padding: 5px;
+	margin-bottom: 5px;
+}
+
+.browsers .implemented {
+	opacity: 1;
+}
+
+.browsers .indevelopment {
+	opacity: .5;
+}
+
+.feature {
+	margin-bottom: 30px;
+}
+
+.feature p {
+	font-size: 1.6rem;
+	line-height: 1.5;
+	margin-bottom: 3.2rem;
+	max-width: 80rem;
+}
+
+.feature h4 {
+	font: inherit;
+	font-size: 2.4rem;
+	font-weight: 300;
+	line-height: 1.2;
+}
+
+.feature .urls {
+	margin-top: 10px;
+	margin-bottom: -25px;
+	overflow: hidden;
+}
+
+.features {
+	margin-top: 20px;
+}
+
+.input {
+	margin-left: 20%;
+	text-align: center;
+	max-width: 40%;
+}
+
+.stats {
+	margin: 0 auto;
+}
+
+h4.noresult {
+	text-align: center;
+	margin: 0;
+	margin-top: 20px;
+}
+
+footer {
+	width: 100%;
+	margin: 0;
+	padding: 5px 0;
+	background: #464547;
+	color: white;
+}
+
+footer .footer-title {
+	float: left;
+}
+
+footer .author {
+	float: right;
+}
