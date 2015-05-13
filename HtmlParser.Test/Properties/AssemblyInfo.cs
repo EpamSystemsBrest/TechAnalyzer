@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CssParser.Tests")]
+[assembly: AssemblyTitle("HtmlParser.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("EPAM Systems")]
-[assembly: AssemblyProduct("CssParser.Tests")]
+[assembly: AssemblyProduct("HtmlParser.Test")]
 [assembly: AssemblyCopyright("Copyright © EPAM Systems 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e4440dbd-f6e9-4f4f-9ebd-5b6838c85016")]
+[assembly: Guid("a82f7e63-edfc-4497-8f92-26708af66221")]
 
 // Version information for an assembly consists of the following four values:
 //

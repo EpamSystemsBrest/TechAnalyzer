@@ -6,14 +6,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D376D66F-B7A5-4395-A4DF-844CC40D7E37}</ProjectGuid>
+    <ProjectGuid>{D530FE99-89C9-4EDC-BA5B-FBF6D4DCC752}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CssParser.Tests</RootNamespace>
-    <AssemblyName>CssParser.Tests</AssemblyName>
+    <RootNamespace>HtmlParser.Test</RootNamespace>
+    <AssemblyName>HtmlParser.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>e17534a1</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>c37d7439</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,11 +52,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Hash\HtmlAttributeHashTest.cs" />
+    <Compile Include="Hash\HtmlTagHashTest.cs" />
+    <Compile Include="Infrastructure\HtmlTestExtentions.cs" />
+    <Compile Include="Lexer\HtmlLexerTest.cs" />
+    <Compile Include="Lexer\InvalidMarkupTest.cs" />
+    <Compile Include="PerformanceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HtmlParser\HtmlParser.csproj">
+      <Project>{965f51eb-e9b7-4f1f-a59c-3500fed3868e}</Project>
+      <Name>HtmlParser</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
