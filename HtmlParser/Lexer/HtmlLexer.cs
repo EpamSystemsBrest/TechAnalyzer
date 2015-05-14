@@ -1,179 +1,303 @@
-﻿using System;
+﻿using HtmlParser.Hash;
+using ParserCommon;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
-using ParserCommon;
-using HtmlParser.Hash;
+using System.Threading.Tasks;
 
-namespace HtmlParser.Lexer {
-    
-    public class HtmlLexer {
+namespace HtmlParser.Lexer
+{
+    public class HtmlLexer
+    {
 
         private readonly char[] content = new char[1024*1024];
         private int length;
         private int index;
-        private HtmlToken[] tokens = new HtmlToken[50];  // 29 - max count of attributes I met
-        private int tokenCount;
-        private bool isScript;
-        private bool isStyle;
 
-        public void Load(Stream stream, Encoding encoding) 
+        private HtmlToken lastTag;
+        private HtmlToken currentToken;
+        private Func<bool> stateAction;
+
+        public void Load(Stream stream, Encoding encoding)
         {
-            using (var reader = new StreamReader(stream, encoding)) {
+            using (var reader = new StreamReader(stream, encoding))
+            {
                 Load(reader);
             }
         }
 
-        public void Load(TextReader reader) 
+        public void Load(TextReader reader)
         {
             int startIndex = 0;
             int bytesRead = 1;
-            while (bytesRead > 0) {
+            while (bytesRead > 0)
+            {
                 bytesRead = reader.ReadBlock(content, startIndex, content.Length - startIndex);
                 startIndex += bytesRead;
             }
             length = startIndex;
         }
 
-        public void Load(string html) {
-            using (var reader = new StringReader(html)) {
+        public void Load(string html)
+        {
+            using (var reader = new StringReader(html))
+            {
                 Load(reader);
             }
         }
 
 
-        public IEnumerable<HtmlToken> Parse() 
+        public IEnumerable<HtmlToken> Parse()
         {
             index = 0;
-            isScript = false;
-            isStyle = false;
-            while (!IsEof()) {
-                //var c = content[index];
-                //if (c == 0) index+=2;
-                index++;
-                tokenCount = 0;
-
-                if (isScript)
-                    ParseScript();
-                else if (isStyle)
-                    ParseStyle();
-                else
-                    ParseToken();
-
-                if (tokenCount==0) break;
-                for (int i=0; i<tokenCount; i++) {
-                    yield return tokens[i];
-                }
-            }
-            yield break;
-        }
-
-        private void ParseScript() {
-            int startIndex = index;
-            while (!IsEof()) {
-                GoToSequence("</");
-                if (HtmlTagHash.GetTag(content, index + 2, "script".Length) == HtmlTag.Script) {
-                    FireValueToken(TokenType.Script, startIndex);
-                    FireToken(TokenType.CloseTag, new QualifiedName(index + 2, "script".Length));
-                    index += "</script>".Length;
-                    isScript = false;
-                    break;
-                }
-                index += "</".Length;
+            stateAction = ParseToken;
+            while (index < length)
+            {
+                if (!stateAction()) continue;
+                yield return currentToken;
             }
         }
 
 
-        private void ParseStyle() {
-            int startIndex = index;
-            while (!IsEof()) {
-                GoToSequence("</");
-                if (HtmlTagHash.GetTag(content, index + 2, "style".Length) == HtmlTag.Script) {
-                    FireValueToken(TokenType.Style, startIndex);
-                    FireToken(TokenType.CloseTag, new QualifiedName(index + 2, "style".Length));
-                    index += "</style>".Length;
-                    isScript = false;
-                    break;
-                }
-                index += "</".Length;
-            }
-        }
+        #region State Actions
 
-        private void ParseToken()  {
+        private bool ParseToken()
+        {
             SkipWhitespace();
-            if (IsEof()) return;
-
-            var c = content[index];
-            if (c == '<')
-                ParseTagOrCommentOrDoctype();
+            if ((index < length) && (content[index] == '<'))
+                stateAction = ParseTagOrCommentOrDoctype;
             else
-                ParseTextValue();
+                stateAction = ParseTextValue;
+            return false;
         }
 
-        private void ParseTagOrCommentOrDoctype()
+
+        private bool ParseTextValue()
+        {
+            int startIndex = index;
+            int lastNonspaceIndex = index;
+            while ((index < length) && (content[index] != '<'))
+            {
+                if (!char.IsWhiteSpace(content[index]))
+                {
+                    lastNonspaceIndex = index;
+                }
+                index++;
+            }
+            stateAction = ParseToken;
+            return FireValueToken(TokenType.Text, startIndex, lastNonspaceIndex + 1);
+        }
+
+        private bool ParseTagOrCommentOrDoctype()
         {
             // index should point to the char '<'
             var c = content[++index];
-            switch (c) {
+            switch (c)
+            {
                 case '!':
                     c = content[++index];
                     if ((c == '-') && (content[index + 1] == '-'))
-                        ParseComment();
+                        stateAction = ParseComment;
                     else
-                        ParseDoctype();
-                    break;
+                        stateAction = ParseDoctype;
+                    return false;
                 case '/':
-                    ParseClosedTag();
-                    break;
+                    stateAction = ParseClosedTag;
+                    return false;
                 default:
-                    ParseTag();
-                    break;
+                    stateAction = ParseTag;
+                    return false;
             }
         }
 
-
-        private void ParseDoctype() { 
-            // index should point to the char next to '<!'
-            int startIndex = index;
-            GoToChar('>');
-            FireValueToken(TokenType.Doctype, startIndex);
-            index++;
-        }
-
-        private void ParseComment() {
+        private bool ParseComment()
+        {
             // index should point to the next char after '<[!]--'
             index += 2;
             int startIndex = index;
             // Quirk mode
             GoToSequence("-->");
-            FireValueToken(TokenType.Comment, startIndex);
+            var result = FireValueToken(TokenType.Comment, startIndex);
             index += 3;
+            stateAction = ParseToken;
+            return result;
         }
 
-        private void ParseClosedTag() {
+        private bool ParseDoctype()
+        {
+            // index should point to the char next to '<!'
+            int startIndex = index;
+            GoToChar('>');
+            var result = FireValueToken(TokenType.Doctype, startIndex);
+            index++;
+            stateAction = ParseToken;
+            return result;
+        }
+
+        private bool ParseClosedTag()
+        {
             // index should point to the char '</'
             index++;
             var name = ParseQualifiedName();
             GoToChar('>');
-            FireToken(TokenType.CloseTag, name);
+            var result = FireToken(TokenType.CloseTag, name);
             index++;
+            stateAction = ParseToken;
+            return result;
         }
 
-        private void ParseTag() {
+        private bool ParseTag()
+        {
             // index should point to the char next to '<'
             var name = ParseQualifiedName();
-            FireOpenTag(name);
-            ParseAttributesOrEndOpenTag(name);
+            if (FireOpenTag(name))
+            {
+                stateAction = ParseAttributesOrEndOpenTag;
+                return true;
+            }
+            else
+            {
+                stateAction = ParseToken;
+                return false;
+            }
         }
 
-        private QualifiedName ParseQualifiedName() {
+        private bool ParseAttributesOrEndOpenTag()
+        {
+            // index should point to to the char next to '<tagname'
+            SkipWhitespace();
+            var c = content[index];
+            if ((c == '>') || (c == '/'))
+            {
+                stateAction = ParseEndBracket;
+            }
+            else
+            {
+                stateAction = ParseAttribute;
+            }
+            return false;
+        }
+
+        private bool ParseEndBracket()
+        {
+            stateAction = ParseToken; // TODO : ???????
+            var result = false;
+            var c = content[index];
+            if (c == '/')
+            {
+                if (content[index + 1] == '>')
+                {
+                    result = FireToken(TokenType.CloseTag, lastTag.Name);
+                    index++;
+                }
+                else
+                {
+                    // Force to close current tag
+                    GoToChar('>');
+                }
+            }
+            else
+            {
+                var tagType = lastTag.GetTag();
+                if (tagType == HtmlTag.Script)
+                {
+                    stateAction = ParseScript;
+                }
+                else if (tagType == HtmlTag.Style)
+                {
+                    stateAction = ParseStyle;
+                }
+            }
+            index++;
+            return result;
+        }
+
+        private bool ParseAttribute()
+        {
+            var attrName = ParseQualifiedName();
+            if (attrName.Name.Length == 0)
+            {
+                index++; // Empty token, something wrong with html. Skip last char and try to continue parse
+                return false;
+            }
+
+            var attrValue = default(StringSegment);
+            SkipWhitespace();
+            var c = content[index];
+            if (c == '=')
+            {
+                index++;
+                attrValue = ParseAttributeValue();
+            }
+            stateAction = ParseAttributesOrEndOpenTag;
+            return FireToken(TokenType.Attribute, attrName, attrValue);
+        }
+
+        private bool ParseScript()
+        {
+            return ParseScriptOrStyle(TokenType.Script);
+        }
+
+        private bool ParseStyle()
+        {
+            return ParseScriptOrStyle(TokenType.Style);
+        }
+
+        private bool ParseScriptOrStyle(TokenType tokenType)
+        {
+            int startIndex = index;
+            var tagType = lastTag.GetTag();
+            var tagNameLength = lastTag.Name.Name.Length;
+            if (tagType == HtmlTag.Script) GoToEndStyle();
+            else GoToEndStyle();
+
+            if (HtmlTagHash.GetTag(content, index + 2, tagNameLength) == tagType)
+            {
+                stateAction = ParseCloseLastTag;
+                return FireValueToken(tokenType, startIndex);
+            }
+            index += "</".Length;
+            return false;
+        }
+
+
+        private bool ParseCloseLastTag()
+        {
+            FireToken(TokenType.CloseTag, lastTag.Name);
+            index += lastTag.Name.Name.Length + "</>".Length;
+            stateAction = ParseToken;
+            return true;
+        }
+
+        //private void ParseStyle() {
+        //    int startIndex = index;
+        //    while (!IsEof()) {
+        //        GoToSequence("</");
+        //        if (HtmlTagHash.GetTag(content, index + 2, "style".Length) == HtmlTag.Script) {
+        //            FireValueToken(TokenType.Style, startIndex);
+        //            FireToken(TokenType.CloseTag, new QualifiedName(index + 2, "style".Length));
+        //            index += "</style>".Length;
+        //            isScript = false;
+        //            break;
+        //        }
+        //        index += "</".Length;
+        //    }
+        //}
+
+
+        private QualifiedName ParseQualifiedName()
+        {
             int startIndex = index;
             int namespaceDelimeterIndex = -1;
-            while (index < length) {
+            while (index < length)
+            {
                 var c = content[index];
-                if (!char.IsLetterOrDigit(c)) {
+                if (!char.IsLetterOrDigit(c))
+                {
                     if (c == ':') namespaceDelimeterIndex = index;
-                    else if ((c!='-') && (c!='_')) break;
+                    else if ((c != '-') && (c != '_')) break;
                 }
                 index++;
             }
@@ -181,69 +305,31 @@ namespace HtmlParser.Lexer {
             return new QualifiedName(startIndex, len, namespaceDelimeterIndex);
         }
 
-        private void ParseAttributesOrEndOpenTag(QualifiedName tagName) {
-            // index should point to to the char next to '<tagname'
-            while (index<length) {
-                SkipWhitespace();
-                var c = content[index];
-                if ((c == '>') || (c == '/')) {
-                    ParseEndBracket(tagName);
-                    return;
-                }
-                ParseAttribute();
-            }
-        }
 
-        private void ParseEndBracket(QualifiedName tagName) { 
-            var c = content[index];
-            if (c == '/') {
-                if (content[index + 1] == '>') {
-                    FireToken(TokenType.CloseTag, tagName);
-                    index++;
-                } else {
-                    // Force to close current tag
-                    GoToChar('>');
-                }
-            }
-            index++;
-        }
 
-        private void ParseAttribute() {
-            var attrName = ParseQualifiedName();
-            if (attrName.Name.Length == 0) {
-                index++; // Empty token, something wrong with html. Skip last char and try to continue parse
-                return;
-            }
-
-            var attrValue = default(StringSegment);
-            SkipWhitespace();
-            var c = content[index];
-            if (c == '=') {
-                index++;
-                attrValue = ParseAttributeValue();
-            }
-            FireToken(TokenType.Attribute, attrName, attrValue);
-        }
 
         private StringSegment ParseAttributeValue()
         {
             SkipWhitespace();
             var c = content[index];
             int startIndex = index;
-            if ((c == '\'') || (c == '"')) {
+            if ((c == '\'') || (c == '"'))
+            {
                 ParseQuotedString();
                 int len = index - startIndex - 2;
                 return new StringSegment(startIndex + 1, len);
             }
-            while (index < length) {
+            while (index < length)
+            {
                 c = content[index];
-                if ((c=='>') || (c=='/') || (char.IsWhiteSpace(c))) break;
+                if ((c == '>') || (c == '/') || (char.IsWhiteSpace(c))) break;
                 index++;
             }
-            return new StringSegment(startIndex, index-startIndex);
+            return new StringSegment(startIndex, index - startIndex);
         }
 
-        private void ParseQuotedString() {
+        private void ParseQuotedString()
+        {
             // TODO : analize escaped quotes
             var quote = content[index];
             index++;
@@ -251,85 +337,109 @@ namespace HtmlParser.Lexer {
             index++;
         }
 
+        #endregion State Actions
 
-        private void ParseTextValue() {
-            int startIndex = index;
-            int lastNonspaceIndex = index;
-            while ((index < length) && (content[index] != '<')) {
-                if (!char.IsWhiteSpace(content[index])) {
-                    lastNonspaceIndex = index;
-                }
-                index++;
-            }
-            FireValueToken(TokenType.Text, startIndex, lastNonspaceIndex+1);
-        }
 
-        private bool IsEof() {
-            return (index>=length);
+        private bool IsEof()
+        {
+            return (index >= length);
         }
 
         private void SkipWhitespace()
         {
-            for (int i = index; (i < content.Length) && (i<length); i++) {
-                var c = content[i];
-                if ((c == ' ') || (c >= '\x0009' && c <= '\x000d') || c == '\x00a0' || c == '\x0085') continue;
-                index = i;
-                return;
-            }
+            while ((index < length) && char.IsWhiteSpace(content[index])) index++;
         }
 
-        private void GoToChar(char value) { 
-            //while ((index<length) && (content[index] != value)) index++;
-            //for (int i = index; i < content.Length; i++) {
-            //    var c = content[i];
-            //    if (c != value) continue;
-            //    index = i;
-            //    return;
-            //}
-            while (index+4 < length) {
-                if (content[index] == value) return;
-                if (content[++index] == value) return;
-                if (content[++index] == value) return;
-                if (content[++index] == value) return;
-            }
+        private void GoToChar(char value)
+        {
+            while ((index < length) && (content[index] != value)) index++;
         }
 
-        private void GoToSequence(string sequence) {
+        private void GoToSequence(string sequence)
+        {
             var len = sequence.Length;
-            while (index < length) {
+
+            while (index < length)
+            {
                 GoToChar(sequence[0]);
                 if ((content[index + 1] == sequence[1]) &&
-                    ((len<3) || (content[index + 2] == sequence[2])) &&
-                    ((len<4) || (content[index + 3] == sequence[3]))) 
+                    ((len < 3) || (content[index + 2] == sequence[2])) &&
+                    ((len < 4) || (content[index + 3] == sequence[3])))
                 {
                     break;
                 }
                 index++;
             }
+
+        }
+
+        private void GoToEndStyle()
+        {
+            var position = 0;
+            while (index < length)
+            {
+                if (content[index] == '{')
+                    GoToChar('}');
+                if (content[index] == '<')
+                {
+                    GoToChar(content[index]);
+                    if (content[index + 1] == '/')
+                        position = index;
+                }
+                index++;
+            }
+            index = position;
+        }
+
+        private void GoToEndScript()
+        {
+            var position = 0;
+            while (index < length)
+            {
+                if (content[index] == '\"' || content[index] == '\'') GoToQuote(content[index]);
+                if (content[index] == '<')
+                {
+                    GoToChar(content[index]);
+                    if (content[index + 1] == '/')
+                        position = index;
+                }
+                index++;
+            }
+            index = position;
+        }
+
+        private void GoToQuote(char value)
+        {
+            while ((index < length) && (content[index] != value) && content[index - 1] != '/') index++;
+        }
+
+        private bool FireToken(TokenType tokenType, QualifiedName name, StringSegment value = default(StringSegment))
+        {
+            currentToken = new HtmlToken(tokenType, content, name, value);
+            return true;
         }
 
 
-        private void FireToken(TokenType tokenType, QualifiedName name, StringSegment value = default(StringSegment)) {
-            var token = new HtmlToken(tokenType, content, name, value);
-            tokens[tokenCount++] = token;
-        }
-
-
-        private void FireValueToken(TokenType tokenType, int startIndex, int lastIndex = -1)
+        private bool FireValueToken(TokenType tokenType, int startIndex, int lastIndex = -1)
         {
             if (lastIndex == -1) lastIndex = index;
-            if (lastIndex == startIndex) return; // Empty token - Nothing to do
+            if (lastIndex == startIndex) return false; // Empty token - Nothing to do
             var value = new StringSegment(startIndex, lastIndex - startIndex);
-            FireToken(tokenType, default(QualifiedName), value);
+            return FireToken(tokenType, default(QualifiedName), value);
         }
 
 
-        private void FireOpenTag(QualifiedName name) {
-            FireToken(TokenType.OpenTag, name);
-            var tokenType = tokens[tokenCount - 1].GetTag();
-            isScript = (tokenType == HtmlTag.Script);
-            isStyle = (tokenType == HtmlTag.Style);
-        }
+        private bool FireOpenTag(QualifiedName name)
+        {
+            var result = FireToken(TokenType.OpenTag, name);
+            var tokenType = currentToken.GetTag();
+            lastTag = currentToken;
+            return result;
 
+            //if (tokenType == HtmlTag.Script) 
+            //isStyle = (tokenType == HtmlTag.Style);
+        }
     }
 }
+
+
