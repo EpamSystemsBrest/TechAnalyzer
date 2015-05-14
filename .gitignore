@@ -170,8 +170,8 @@ ClientBin/
 *.pfx
 *.publishsettings
 node_modules/
+bower_components/
 dist/
-!app/bower_components/jquery/dist/
 .sass-cache/
 
 # RIA/Silverlight projects
