@@ -41,8 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analyser.cs" />
-    <Compile Include="HttpHeaders.cs" />
+    <Compile Include="TestHeaders\Analyser.cs" />
+    <Compile Include="TestHeaders\HttpHeaders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolTests.cs" />
     <Compile Include="TestProtocols\Http2Direct.cs" />
