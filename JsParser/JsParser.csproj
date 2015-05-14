@@ -46,6 +46,12 @@
   <ItemGroup>
     <Folder Include="Lexer\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ParserCommon\ParserCommon.csproj">
+      <Project>{4acab80f-fdc8-4729-a673-275b80d95c18}</Project>
+      <Name>ParserCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
