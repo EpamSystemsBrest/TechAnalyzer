@@ -22,5 +22,12 @@ namespace JsParser.Lexer
             Value = value;
             Hash = -1;
         }
+
+        public JsKeyWord GetKeyword()
+        {
+            return JsKeyWordHash.Hash(Source, Value.StartIndex, Value.Length);
+        }
     }
+
+    
 }

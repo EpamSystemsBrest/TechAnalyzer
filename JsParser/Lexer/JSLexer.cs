@@ -13,6 +13,8 @@ namespace JsParser.Lexer
         public readonly char[] content = new char[1024 * 1024];
         private int length;
         private int index;
+        private JsToken currentToken;
+        private Func<bool> parseAction;
 
         public void Load(Stream stream, Encoding encoding)
         {
@@ -47,12 +49,22 @@ namespace JsParser.Lexer
             throw new NotImplementedException();
         }
 
-        public void ParsePunctuator()
+        public bool ParseToken()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ParsePunctuator(char symbol)
         {
             throw new NotImplementedException();
         }
 
         public void ParseKeyWord()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ParseIdentifier()
         {
             throw new NotImplementedException();
         }
