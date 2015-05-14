@@ -34,13 +34,6 @@ namespace JsParser.Hash
               79, 79, 79, 79, 79, 79
         };
 
-        public static JSKeyWord Hash(char[] content, int offset, int length)
-        {
-            int hash = length + associationValues[content[offset + 1]] + associationValues[content[offset]];
-
-            return (JSKeyWord)hash;
-        }
-
         static readonly string[] wordlist =
         {
             "", "", "","new","enum","super","","in","int","","short","delete","default","debugger",
@@ -51,6 +44,13 @@ namespace JsParser.Hash
             "export","extends","","void","","typeof","boolean","volatile","byte","","import","","var",
             "","implements","", "","abstract"
         };
+
+        public static JSKeyWord Hash(char[] content, int offset, int length)
+        {
+            int hash = length + associationValues[content[offset + 1]] + associationValues[content[offset]];
+
+            return (JSKeyWord)hash;
+        }        
 
         const int TOTAL_KEYWORDS = 56;
         const int MIN_WORD_LENGTH = 2;

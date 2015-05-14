@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Hash\JSKeyWord.cs" />
     <Compile Include="Hash\JSKeyWordHash.cs" />
+    <Compile Include="Hash\JSPunctuatorHash.cs" />
     <Compile Include="Lexer\JSLexer.cs" />
     <Compile Include="Lexer\JSToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
