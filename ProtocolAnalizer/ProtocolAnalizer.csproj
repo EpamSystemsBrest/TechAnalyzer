@@ -34,6 +34,8 @@
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MDot.cs" />
     <Compile Include="TestHeaders\Analyser.cs" />
     <Compile Include="TestHeaders\HttpHeaders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,6 +52,12 @@
     <Compile Include="TestProtocols\Http2Upgrade.cs" />
     <Compile Include="TestProtocols\Tls12Alpn.cs" />
     <Compile Include="TestProtocols\Tls12Npn.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HtmlParser\HtmlParser.csproj">
+      <Project>{965f51eb-e9b7-4f1f-a59c-3500fed3868e}</Project>
+      <Name>HtmlParser</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
