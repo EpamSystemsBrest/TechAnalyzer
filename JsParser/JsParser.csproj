@@ -39,11 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hash\JSKeyWord.cs" />
-    <Compile Include="Hash\JSKeyWordHash.cs" />
-    <Compile Include="Hash\JSPunctuatorHash.cs" />
-    <Compile Include="Lexer\JSLexer.cs" />
-    <Compile Include="Lexer\JSToken.cs" />
+    <Compile Include="Hash\JsKeyWord.cs" />
+    <Compile Include="Hash\JsKeyWordHash.cs" />
+    <Compile Include="Hash\JsPunctuatorHash.cs" />
+    <Compile Include="Lexer\JsLexer.cs" />
+    <Compile Include="Lexer\JsToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

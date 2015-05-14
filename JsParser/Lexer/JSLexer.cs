@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using JsParser.Hash;
 
 namespace JsParser.Lexer
 {
-    public class JSLexer
+    public class JsLexer
     {
         public readonly char[] content = new char[1024 * 1024];
         private int length;
@@ -41,7 +42,7 @@ namespace JsParser.Lexer
             length = startIndex;
         }
 
-        public IEnumerable<JSToken> Parse()
+        public IEnumerable<JsToken> Parse()
         {
             throw new NotImplementedException();
         }

@@ -3,7 +3,7 @@ using ParserCommon;
 
 namespace JsParser.Hash
 {
-    public class JSPunctuatorHash
+    public class JsPunctuatorHash
     {
         static byte[] associationValues = new byte[] {
               97, 97, 97, 97, 97, 97, 97, 97, 97, 97,

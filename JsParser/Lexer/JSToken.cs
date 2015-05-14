@@ -8,10 +8,19 @@ using ParserCommon;
 
 namespace JsParser.Lexer
 {
-    public struct JSToken
+    public struct JsToken
     {
-        public JSKeyWord TokenType;
+        public JsKeyWord TokenType;
         private char[] Source;
-        public StringSegment value;
+        private StringSegment Value;
+        private int Hash;
+
+        public JsToken(JsKeyWord tokenType, char[] source, StringSegment value)
+        {
+            TokenType = tokenType;
+            Source = source;
+            Value = value;
+            Hash = -1;
+        }
     }
 }
