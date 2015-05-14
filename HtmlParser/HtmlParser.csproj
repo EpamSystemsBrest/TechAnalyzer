@@ -45,7 +45,6 @@
     <Compile Include="Hash\HtmlTagHash.cs" />
     <Compile Include="Hash\HtmlTag.cs" />
     <Compile Include="Lexer\HtmlLexer.cs" />
-    <Compile Include="Lexer\HtmlLexer2.cs" />
     <Compile Include="Lexer\HtmlToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

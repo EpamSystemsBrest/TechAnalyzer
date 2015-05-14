@@ -308,5 +308,6 @@ namespace HtmlParser.Test
 
 
         #endregion Style
+
     }
 }

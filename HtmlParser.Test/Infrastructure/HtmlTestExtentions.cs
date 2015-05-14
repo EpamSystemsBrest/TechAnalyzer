@@ -13,7 +13,7 @@ namespace HtmlParser.Test.Infrastructure
 
         public static void ShouldReturn(this string html, params string[] expectedItems)
         {
-            var lexer = new HtmlLexer2();
+            var lexer = new HtmlLexer();
             lexer.Load(html);
             int i = 0;
             foreach (var item in lexer.Parse())
