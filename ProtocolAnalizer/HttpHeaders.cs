@@ -11,7 +11,7 @@ namespace ProtocolAnalizer {
         Other = 0,
         Apache = 1,
         IIS = 2,
-        ngnix = 3,
+        nginx = 3,
         GSE = 4,
         LiteSpeed = 5,
         lighttpd = 6,
@@ -37,7 +37,7 @@ namespace ProtocolAnalizer {
             {
                 case "apache": return HttpServerName.Apache;
                 case "iis": return HttpServerName.IIS;
-                case "ngnix": return HttpServerName.ngnix;
+                case "ngnix": return HttpServerName.nginx;
                 case "gse": return HttpServerName.GSE;
                 case "litespeed": return HttpServerName.LiteSpeed;
                 case "lighttpd": return HttpServerName.Apache;

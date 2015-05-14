@@ -26,11 +26,11 @@ namespace ProtocolAnalizer.Tests
         [InlineData("Oracle Application Server/10g (10.1.2) Microsoft-IIS/6.0 OracleAS-Web-Cache-10g/10.1.2.0.2 (N;ecid=72071959521272998,0)", HttpServerName.IIS)]
         [InlineData("Microsoft-IIS/7.5,Apache", HttpServerName.IIS)]
 
-        [InlineData("nginx", HttpServerName.ngnix)]
-        [InlineData("cloudflare-nginx", HttpServerName.ngnix)]
-        [InlineData("FreeBSD 9.0 (Resin 5 + Nginx 1.3 + Varnish 4)", HttpServerName.ngnix)]
-        [InlineData("NGINX(CnPanel,LNMP)", HttpServerName.ngnix)]
-        [InlineData("Alibaba.com 1688.HK - Global Trade Starts Here.nginx/0.9.5", HttpServerName.ngnix)]
+        [InlineData("nginx", HttpServerName.nginx)]
+        [InlineData("cloudflare-nginx", HttpServerName.nginx)]
+        [InlineData("FreeBSD 9.0 (Resin 5 + Nginx 1.3 + Varnish 4)", HttpServerName.nginx)]
+        [InlineData("NGINX(CnPanel,LNMP)", HttpServerName.nginx)]
+        [InlineData("Alibaba.com 1688.HK - Global Trade Starts Here.nginx/0.9.5", HttpServerName.nginx)]
 
         [InlineData("GSE", HttpServerName.GSE)]
 
