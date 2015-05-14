@@ -41,11 +41,11 @@
   <ItemGroup>
     <Compile Include="Hash\JSKeyWord.cs" />
     <Compile Include="Hash\JSKeyWordHash.cs" />
+    <Compile Include="Lexer\JSLexer.cs" />
+    <Compile Include="Lexer\JSToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Lexer\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ParserCommon\ParserCommon.csproj">
       <Project>{4acab80f-fdc8-4729-a673-275b80d95c18}</Project>
