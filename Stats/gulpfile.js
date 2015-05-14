@@ -2,7 +2,7 @@
 
 var gulp = require('gulp');
 var del = require('del');
-
+var install = require("gulp-install");
 
 
 // Load plugins
@@ -18,6 +18,13 @@ var source = require('vinyl-source-stream'),
 
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
+
+
+gulp.task('bower', function(cb) {
+	var result = gulp.src(['./bower.json', './package.json'])
+  .pipe(install());		
+	return result;
+});
 
 // Styles
 gulp.task('styles', ['sass']);
@@ -110,7 +117,7 @@ gulp.task('images', function () {
 });
 
 // Fonts
-gulp.task('fonts', function () {
+gulp.task('fonts', ['bower'], function () {
     return gulp.src(require('main-bower-files')({
             filter: '**/*.{eot,svg,ttf,woff,woff2}'
         }).concat('app/fonts/**/*'))
@@ -138,15 +145,6 @@ gulp.task('buildBundle', ['styles', 'buildScripts', 'bower'], function () {
         .pipe($.useref.restore())
         .pipe($.useref())
         .pipe(gulp.dest('dist'));
-});
-
-// Bower helper
-gulp.task('bower', function () {
-    gulp.src('app/bower_components/**/*.js', {
-            base: 'app/bower_components'
-        })
-        .pipe(gulp.dest('dist/bower_components/'));
-
 });
 
 gulp.task('json', function () {
@@ -202,4 +200,4 @@ gulp.task('build', ['html', 'buildBundle', 'images', 'fonts', 'extras'], functio
 });
 
 // Default task
-gulp.task('default', ['clean', 'build']);
+gulp.task('default', ['clean', 'bower', 'build']);
