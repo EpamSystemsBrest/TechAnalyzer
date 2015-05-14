@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace ProtocolAnalizer {
 
-    public enum HttpServerName { 
+    public enum HttpServerName2 { 
         Other = 0,
         Apache = 1,
         IIS = 2,
@@ -23,7 +23,7 @@ namespace ProtocolAnalizer {
     
     public class HttpHeaders {
 
-        static Regex regex = new Regex("(apache)|(iis)|(ngnix)|(gse)|(litespeed)|(lighttpd)|(userv)|(ats)|(ibm)|(yts)", RegexOptions.IgnoreCase);
+        static Regex regex = new Regex("(apache)|(iis)|(nginx)|(gse)|(litespeed)|(lighttpd)|(userv)|(ats)|(ibm)|(yts)", RegexOptions.IgnoreCase);
         public static HttpServerName ParseServerName(string name) {
 
             if (name == null)

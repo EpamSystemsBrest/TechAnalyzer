@@ -11,7 +11,7 @@ namespace ProtocolAnalizer {
         Other = 0,
         Apache = 1,
         IIS = 2,
-        ngnix = 3,
+        nginx = 3,
         GSE = 4,
         LiteSpeed = 5,
         lighttpd = 6,
@@ -23,7 +23,7 @@ namespace ProtocolAnalizer {
     
     public class HttpHeaders {
 
-        static Regex regex = new Regex("(apache)|(iis)|(ngnix)|(gse)|(litespeed)|(lighttpd)|(userv)|(ats)|(ibm)|(yts)", RegexOptions.IgnoreCase);
+        static Regex regex = new Regex(@"(apache)|(iis)|(nginx)|(gse)|(litespeed)|(lighttpd)|(userv)|(ats[,. \n|\r/])|(ibm)|(yts)", RegexOptions.IgnoreCase);
         public static HttpServerName ParseServerName(string name) {
 
             if (name == null)
@@ -31,16 +31,21 @@ namespace ProtocolAnalizer {
                 throw new ArgumentNullException();
             }
 
-            string aaa = regex.Match(name).Value.ToLower();
+            if (name.ToLower() == "ats") return HttpServerName.ATS;
+            string aaa = regex.Match(name.Replace("Server","")).Value.ToLower();
+            if (aaa.Contains("ats")) aaa = "ats";
 
-            switch (regex.Match(name).Value.ToLower())
+
+            
+
+            switch (aaa)
             {
                 case "apache": return HttpServerName.Apache;
                 case "iis": return HttpServerName.IIS;
-                case "ngnix": return HttpServerName.ngnix;
+                case "nginx": return HttpServerName.nginx;
                 case "gse": return HttpServerName.GSE;
                 case "litespeed": return HttpServerName.LiteSpeed;
-                case "lighttpd": return HttpServerName.Apache;
+                case "lighttpd": return HttpServerName.lighttpd;
                 case "userv": return HttpServerName.uServ;
                 case "ats": return HttpServerName.ATS;
                 case "ibm": return HttpServerName.IBM;
