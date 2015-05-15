@@ -69,12 +69,5 @@ namespace ProtocolAnalizer.Tests
             var actual = HttpHeaders.ParseServerName(serverName);
             Assert.Equal(expected, actual);
         }
-
-        [Fact]
-        public void ParseServerNameMustThrowArgumentNullException()
-        {
-            var ex = Assert.Throws<ArgumentNullException>(() => HttpHeaders.ParseServerName(null));
-            Assert.Equal("Value cannot be null.", ex.Message);
-        }
     }
 }

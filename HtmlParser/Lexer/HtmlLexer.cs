@@ -250,7 +250,7 @@ namespace HtmlParser.Lexer
             int startIndex = index;
             var tagType = lastTag.GetTag();
             var tagNameLength = lastTag.Name.Name.Length;
-            if (tagType == HtmlTag.Script) GoToEndStyle();
+            if (tagType == HtmlTag.Script) GoToEndScript();
             else GoToEndStyle();
 
             if (HtmlTagHash.GetTag(content, index + 2, tagNameLength) == tagType)
@@ -375,42 +375,54 @@ namespace HtmlParser.Lexer
 
         private void GoToEndStyle()
         {
-            var position = 0;
             while (index < length)
             {
                 if (content[index] == '{')
+                {
+                    index++;
                     GoToChar('}');
+                }
+                    
                 if (content[index] == '<')
                 {
                     GoToChar(content[index]);
                     if (content[index + 1] == '/')
-                        position = index;
+                        break;
                 }
                 index++;
             }
-            index = position;
         }
 
         private void GoToEndScript()
         {
-            var position = 0;
             while (index < length)
             {
-                if (content[index] == '\"' || content[index] == '\'') GoToQuote(content[index]);
+                if (content[index] == '\"' || content[index] == '\'')
+                {
+                    index++;
+                    GoToQuote(content[index - 1]);
+                }
                 if (content[index] == '<')
                 {
                     GoToChar(content[index]);
                     if (content[index + 1] == '/')
-                        position = index;
+                        break;
                 }
                 index++;
             }
-            index = position;
         }
 
         private void GoToQuote(char value)
         {
-            while ((index < length) && (content[index] != value) && content[index - 1] != '/') index++;
+            while ((index < length) && (content[index] != value))
+            {
+                index++;
+                if (content[index - 1] == '\\')
+                {
+                    index++;
+                    GoToQuote(content[index - 1]);
+                }
+            }
         }
 
         private bool FireToken(TokenType tokenType, QualifiedName name, StringSegment value = default(StringSegment))
