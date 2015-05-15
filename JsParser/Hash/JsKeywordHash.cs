@@ -52,27 +52,34 @@ namespace JsParser.Hash
             return (JsKeyword)hash;
         }
 
-        const int TOTAL_KEYWORDS = 56;
-        const int MIN_WORD_LENGTH = 2;
-        const int MAX_WORD_LENGTH = 12;
-        const int MIN_HASH_VALUE = 3;
-        const int MAX_HASH_VALUE = 78;
-
         public static bool IsJsKeyword(char[] content, int offset, int length)
         {
-            if (length <= MAX_WORD_LENGTH && length >= MIN_WORD_LENGTH)
-            {
-                int key = (int)GetKeyword(content, offset, length);
-
-                if (key <= MAX_HASH_VALUE && key >= 0) // >= MIN_HASH_VALUE ???
-                {
-                    string s = wordlist[key];
-
-                    if (new StringSegment(offset, length).ToString(content) == s)
-                        return true;
-                }
-            }
-            return false;
+            return Enum.IsDefined(typeof(JsKeyword), GetKeyword(content, offset, length));
         }
+
+        // gperf-generated function identifying whether given string belongs to wordlist using perfect hash
+        // 
+        //const int TOTAL_KEYWORDS = 56;
+        //const int MIN_WORD_LENGTH = 2;
+        //const int MAX_WORD_LENGTH = 12;
+        //const int MIN_HASH_VALUE = 3;
+        //const int MAX_HASH_VALUE = 78;
+
+        //public static bool IsJsKeyword(char[] content, int offset, int length)
+        //{
+        //    if (length <= MAX_WORD_LENGTH && length >= MIN_WORD_LENGTH)
+        //    {
+        //        int key = (int)GetKeyword(content, offset, length);
+
+        //        if (key <= MAX_HASH_VALUE && key >= 0) // >= MIN_HASH_VALUE ???
+        //        {
+        //            string s = wordlist[key];
+
+        //            if (new StringSegment(offset, length).ToString(content) == s)
+        //                return true;
+        //        }
+        //    }
+        //    return false;
+        //}
     }
 }
