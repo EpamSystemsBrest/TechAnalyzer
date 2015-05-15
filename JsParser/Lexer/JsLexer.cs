@@ -117,6 +117,12 @@ namespace JsParser.Lexer
             while ((index < length) && char.IsWhiteSpace(content[index])) index++;
         }
 
+        private void SkipComment()
+        {
+            GoToChar('\n');
+            index++;
+        }
+
         private void SkipMultilineComment()
         {
             GoToSequence("*/");
