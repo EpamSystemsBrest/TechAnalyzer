@@ -63,7 +63,7 @@ namespace JsParser.Lexer
             {
                 if(content[index].IsJsPunctuator())
 
-                GoToPunctuator();
+                //GoToPunctuator();
                 //ParseWord
                 //parseAction= ParsePunctuator;
                 prevPunctuator = index;
