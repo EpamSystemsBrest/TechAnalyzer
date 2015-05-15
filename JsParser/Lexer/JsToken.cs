@@ -22,12 +22,12 @@ namespace JsParser.Lexer
 
     public struct JsToken
     {
-        public JsKeyword TokenType;
+        public TokenType TokenType;
         private char[] Source;
         private StringSegment Value;
         private int Hash;
 
-        public JsToken(JsKeyword tokenType, char[] source, StringSegment value)
+        public JsToken(TokenType tokenType, char[] source, StringSegment value)
         {
             TokenType = tokenType;
             Source = source;
@@ -41,7 +41,10 @@ namespace JsParser.Lexer
             Hash = (int) JsKeywordHash.GetKeyword(Source, Value.StartIndex, Value.Length);
             return (JsKeyword) Hash;
         }
+
+        public override string ToString()
+        {
+            return Enum.GetName(TokenType.GetType(), TokenType);
+        }
     }
-
-
 }
