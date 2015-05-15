@@ -7,12 +7,13 @@ var React = window.React = require('react'),
 var FeaturesList = React.createClass({ 	
   render: function() {		
   	var createFeatures = function(item) {			
-			var Spec = React.createClass({
+			var Spec = React.createClass({				
 				render: function(){
+					var iconClassName = "icon icon-"+item.spec.organization;
 					return(
 						<li>
 							<a href={item.spec.link}>
-								<span className="icon icon-w3c"></span>
+								<span className={iconClassName}></span>
 								{item.spec.status}
 							</a>
 						</li>

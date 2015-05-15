@@ -189,6 +189,264 @@ ul {
 	background-position: -64px -160px;
 }
 
+.icon-check {
+	background-position: -219px -26px;
+	width: 13px;
+	height: 13px
+}
+
+.icon-chrome,
+.icon-chrome-deprecated,
+.icon-clip {
+	width: 30px;
+	height: 30px
+}
+
+.icon-chrome-deprecated {
+	background-position: -32px -160px
+}
+
+.icon-chrome {
+	background-position: 0 -160px
+}
+
+.icon-clip {
+	background-position: -32px -128px
+}
+
+.icon-css {
+	background-position: -81px -192px;
+	width: 25px;
+	height: 25px
+}
+
+.icon-demo {
+	background-position: -160px -64px;
+	width: 30px;
+	height: 30px
+}
+
+.icon-device,
+.icon-dom {
+	width: 25px;
+	height: 25px
+}
+
+.icon-device {
+	background-position: -192px -162px
+}
+
+.icon-dom {
+	background-position: -192px -135px
+}
+
+.icon-ecma {
+	background-position: -128px -96px;
+	width: 30px;
+	height: 30px
+}
+
+.icon-edge,
+.icon-edge-deprecated {
+	width: 60px;
+	height: 60px
+}
+
+.icon-edge-deprecated {
+	background-position: -34px 0;
+	background-size: 170px 109px
+}
+
+.icon-edge {
+	background-position: 0 -33px;
+	background-size: 163px 109px
+}
+
+.icon-fileapis {
+	background-position: -192px -54px;
+	width: 25px;
+	height: 25px
+}
+
+.icon-firefox,
+.icon-firefox-deprecated {
+	width: 30px;
+	height: 30px
+}
+
+.icon-firefox-deprecated {
+	background-position: -96px -128px
+}
+
+.icon-firefox {
+	background-position: -128px -128px
+}
+
+.icon-graphics {
+	background-position: -192px -27px;
+	width: 25px;
+	height: 25px
+}
+
+.icon-ie,
+.icon-ie-deprecated {
+	width: 60px;
+	height: 60px
+}
+
+.icon-ie-deprecated {
+	background-position: 0 0;
+	background-size: 160px 100px
+}
+
+.icon-ie {
+	background-position: -31px -34px;
+	background-size: 166px 109px
+}
+
+.icon-ietf {
+	background-position: -160px -96px;
+	width: 30px;
+	height: 30px
+}
+
+.icon-javascript {
+	background-position: -192px -108px;
+	width: 25px;
+	height: 25px
+}
+
+.icon-khronos {
+	background-position: -128px 0;
+	width: 30px;
+	height: 30px
+}
+
+.icon-microsoft-logo {
+	background-position: -219px 0;
+	width: 112px;
+	height: 24px
+}
+
+.icon-misc {
+	background-position: -96px -160px;
+	width: 25px;
+	height: 25px
+}
+
+.icon-msdn {
+	background-position: -160px -128px;
+	width: 30px;
+	height: 30px
+}
+
+.icon-multimedia,
+.icon-networkconnectivity,
+.icon-offlinestorage {
+	width: 25px;
+	height: 25px
+}
+
+.icon-multimedia {
+	background-position: -123px -160px
+}
+
+.icon-networkconnectivity {
+	background-position: -150px -160px
+}
+
+.icon-offlinestorage {
+	background-position: -192px 0
+}
+
+.icon-opera-deprecated {
+	background-position: -160px 0;
+	width: 30px;
+	height: 30px
+}
+
+.icon-opera {
+	background-position: -64px -128px;
+	width: 30px;
+	height: 30px
+}
+
+.icon-performance,
+.icon-realtimecommunication {
+	width: 25px;
+	height: 25px
+}
+
+.icon-performance {
+	background-position: -192px -81px
+}
+
+.icon-realtimecommunication {
+	background-position: -135px -192px
+}
+
+.icon-remove-icon {
+	background-position: -234px -26px;
+	width: 8px;
+	height: 8px
+}
+
+.icon-safari {
+	background-position: -128px -32px;
+	width: 30px;
+	height: 30px
+}
+
+.icon-security,
+.icon-semantics,
+.icon-userinput {
+	width: 25px;
+	height: 25px
+}
+
+.icon-security {
+	background-position: 0 -192px
+}
+
+.icon-semantics {
+	background-position: -27px -192px
+}
+
+.icon-userinput {
+	background-position: -54px -192px
+}
+
+.icon-w3c {
+	background-position: -160px -32px;
+	width: 30px;
+	height: 30px
+}
+
+.icon-webcomponents {
+	background-position: -108px -192px;
+	width: 25px;
+	height: 25px
+}
+
+.icon-webplatform,
+.icon-whatwg,
+.icon-xiph {
+	width: 30px;
+	height: 30px
+}
+
+.icon-webplatform {
+	background-position: -64px -160px
+}
+
+.icon-whatwg {
+	background-position: -128px -64px
+}
+
+.icon-xiph {
+	background-position: 0 -128px
+}
+
 .icon {
 	background-image: url(images/browsers.png);
 	width: 30px;
