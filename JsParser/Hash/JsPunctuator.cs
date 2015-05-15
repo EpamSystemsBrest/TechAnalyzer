@@ -7,7 +7,7 @@ namespace JsParser.Hash
     {
         static readonly char[] SingleCharPunctuators = 
         {
-            '\t','\n',' ', ',', '.', '(', ')', '[', ']', '{', '}', '/', '=', '+', '-', '*', '%', '&', '|', '^', '!', '~', '?', ':', '<', '>'
+           '\0', '\r', '\t', '\n', ' ', ',', '.', '(', ')', '[', ']', '{', '}', '/', '=', '+', '-', '*', '%', '&', '|', '^', '!', '~', '?', ':', ';', '<', '>'
         };
 
         public static bool IsJsPunctuator(this char c)
