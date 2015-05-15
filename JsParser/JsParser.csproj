@@ -39,8 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hash\JsKeyWord.cs" />
-    <Compile Include="Hash\JsKeyWordHash.cs" />
+    <Compile Include="Hash\JsKeyword.cs" />
+    <Compile Include="Hash\JsKeywordHash.cs" />
     <Compile Include="Hash\JsPunctuator.cs" />
     <Compile Include="Lexer\JsLexer.cs" />
     <Compile Include="Lexer\JsToken.cs" />

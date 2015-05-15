@@ -10,12 +10,12 @@ namespace JsParser.Lexer
 {
     public struct JsToken
     {
-        public JsKeyWord TokenType;
+        public JsKeyword TokenType;
         private char[] Source;
         private StringSegment Value;
         private int Hash;
 
-        public JsToken(JsKeyWord tokenType, char[] source, StringSegment value)
+        public JsToken(JsKeyword tokenType, char[] source, StringSegment value)
         {
             TokenType = tokenType;
             Source = source;
@@ -23,11 +23,11 @@ namespace JsParser.Lexer
             Hash = -1;
         }
 
-        public JsKeyWord GetKeyword()
+        public JsKeyword GetKeyword()
         {
-            return JsKeyWordHash.Hash(Source, Value.StartIndex, Value.Length);
+            return JsKeywordHash.Hash(Source, Value.StartIndex, Value.Length);
         }
     }
 
-    
+
 }

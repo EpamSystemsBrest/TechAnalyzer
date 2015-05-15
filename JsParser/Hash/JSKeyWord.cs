@@ -1,7 +1,6 @@
-﻿
-namespace JsParser.Hash
+﻿namespace JsParser.Hash
 {
-    public enum JsKeyWord
+    public enum JsKeyword
     {
         CUSTOM = 0,       // Not recognized
 

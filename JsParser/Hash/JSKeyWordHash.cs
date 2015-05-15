@@ -3,7 +3,7 @@ using ParserCommon;
 
 namespace JsParser.Hash
 {
-    public class JsKeyWordHash
+    public class JsKeywordHash
     {
         static byte[] associationValues = new byte[] {
               79, 79, 79, 79, 79, 79, 79, 79, 79, 79,
@@ -45,20 +45,20 @@ namespace JsParser.Hash
             "","implements","", "","abstract"
         };
 
-        public static JsKeyWord Hash(char[] content, int offset, int length)
+        public static JsKeyword Hash(char[] content, int offset, int length)
         {
             int hash = length + associationValues[content[offset + 1]] + associationValues[content[offset]];
 
-            return (JsKeyWord)hash;
-        }        
+            return (JsKeyword)hash;
+        }
 
         const int TOTAL_KEYWORDS = 56;
         const int MIN_WORD_LENGTH = 2;
         const int MAX_WORD_LENGTH = 12;
         const int MIN_HASH_VALUE = 3;
-        const int MAX_HASH_VALUE = 78;        
+        const int MAX_HASH_VALUE = 78;
 
-        public static bool IsJSKeyWord(char[] content, int offset, int length)
+        public static bool IsJsKeyword(char[] content, int offset, int length)
         {
             if (length <= MAX_WORD_LENGTH && length >= MIN_WORD_LENGTH)
             {
