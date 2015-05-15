@@ -23,37 +23,22 @@ namespace ProtocolAnalizer {
     
     public class HttpHeaders {
 
-        static Regex regex = new Regex(@"(apache)|(iis)|(nginx)|(gse)|(litespeed)|(lighttpd)|(userv)|(ats[,. \n|\r/])|(ibm)|(yts)", RegexOptions.IgnoreCase);
+        static Regex regex = new Regex(@"(apache)|(iis[\W]|^iis)|(nginx)|(gse[\W]|^gse)|(litespeed)|(lighttpd)|(userv)|(ats[\W]|^ATS)|(ibm)|(yts)", RegexOptions.IgnoreCase);
         public static HttpServerName ParseServerName(string name) {
 
-            if (name == null)
+            if(name==null)
             {
                 throw new ArgumentNullException();
             }
-
-            if (name.ToLower() == "ats") return HttpServerName.ATS;
-            string aaa = regex.Match(name.Replace("Server","")).Value.ToLower();
-            if (aaa.Contains("ats")) aaa = "ats";
-
-
-            
-
-            switch (aaa)
+            var groups = regex.Match(name).Groups;
+            for (int i = 1; i < groups.Count; i++)
             {
-                case "apache": return HttpServerName.Apache;
-                case "iis": return HttpServerName.IIS;
-                case "nginx": return HttpServerName.nginx;
-                case "gse": return HttpServerName.GSE;
-                case "litespeed": return HttpServerName.LiteSpeed;
-                case "lighttpd": return HttpServerName.lighttpd;
-                case "userv": return HttpServerName.uServ;
-                case "ats": return HttpServerName.ATS;
-                case "ibm": return HttpServerName.IBM;
-                case "yts": return HttpServerName.YTS;
-                case "": return HttpServerName.Other;
-                default: throw new ArgumentException();
+                if (!string.IsNullOrEmpty(groups[i].Value))
+                {
+                    return (HttpServerName)(i);
+                }
             }
+            return HttpServerName.Other;
         }
-
     }
 }

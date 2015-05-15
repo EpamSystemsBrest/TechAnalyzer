@@ -278,10 +278,44 @@ namespace HtmlParser.Test
              ",
                 @"Tag: </script>"
              );
+        }
 
+         [Fact]
+        public void Parsing_Specific_Script()
+        {
+            @"<script>
+                    alert(""Hello, \"" World"");
+             </script>"
+            .ShouldReturn(
+                @"Tag: <script>",
+                @"Script: 
+                    alert(""Hello, \"" World"");
+             ",
+                @"Tag: </script>"
+             );
+        }
 
+      
+        [Fact]
+        public void Parsing_Several_Scripts()
+        {
+            @"<script>
+                  this.AccessDatas = [{""data"":""<a href=\""/business/?SmRcid=ss_s_st_top_left\"" id=\""hsh_tx_setuzoku106no\"">法人インターネット</a></h3>\r\n""}];
+             </script>
+<script> var value = window.document; </script>"
+            .ShouldReturn(
+                @"Tag: <script>",
+                @"Script: 
+                  this.AccessDatas = [{""data"":""<a href=\""/business/?SmRcid=ss_s_st_top_left\"" id=\""hsh_tx_setuzoku106no\"">法人インターネット</a></h3>\r\n""}];
+             ",
+                @"Tag: </script>",
+                   @"Tag: <script>",
+                @"Script:  var value = window.document; ",
+                @"Tag: </script>"
+             );
 
         }
+
         #endregion Script
 
         #region Style
@@ -305,9 +339,77 @@ namespace HtmlParser.Test
             );
         }
 
+        [Fact]
+        public void Parsing_Several__Style()
+        {
+            @"<style> 
+                .sli1 {
+                    filter: url(""data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"");
+                }
+div {
+    height: 200px;
+    width: 200px;
+    overflow: auto;
+    padding-left: 15px;
+    background: url(images/hand.png) repeat-y #fc0; 
+   }
+              </style>
+            <style>
+                    div { 
+                      height: 200px; 
+                    }
+            </style>"
+                .ShouldReturn(
+                    @"Tag: <style>",
+                    @"Style:  
+                .sli1 {
+                    filter: url(""data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"");
+                }
+div {
+    height: 200px;
+    width: 200px;
+    overflow: auto;
+    padding-left: 15px;
+    background: url(images/hand.png) repeat-y #fc0; 
+   }
+              ",
+                    @"Tag: </style>",
+                    @"Tag: <style>",
+                    @"Style: 
+                    div { 
+                      height: 200px; 
+                    }
+            ",
+             @"Tag: </style>"
+                );
+        }
+
 
 
         #endregion Style
+
+//        [Fact]
+//        public void Parsing_Script_And_Tags()
+//        {
+//            @"<link rel=""stylesheet"" href=""https://abs.twimg.com/a/1431362606/css/t1/twitter_core.bundle.css"">
+//    <link rel=""stylesheet"" href=""https://abs.twimg.com/a/1431362606/css/t1/twitter_logged_out.bundle.css"">
+// <meta name=""robots"" content=""NOODP"">
+//  <link rel=""alternate"" media=""handheld, only screen and (max-width: 640px)"" href=""https://mobile.twitter.com/"">"
+
+//            .ShouldReturn(
+//             "Doctype: \"DOCTYPE html\"",
+//               "Tag: <head>",
+//               "Tag: <script>",
+//               "Attr: id=\"resolve_inline_redirects\"",
+//                @"Script: 
+//                  this.AccessDatas = [{""data"":""<a href=\""/business/?SmRcid=ss_s_st_top_left\"" id=\""hsh_tx_setuzoku106no\"">法人インターネット</a></h3>\r\n""}];
+//             ",
+//                @"Tag: </script>"
+//             );
+
+
+
+//        }
 
     }
 }
