@@ -31,25 +31,7 @@ namespace ProtocolAnalizer
         {
             var mobile = GetResponseHost(host, MobileUserAgent);
             var desktop = GetResponseHost(host, DesktopUserAgent);
-
-            var lexer = new HtmlLexer();
-            lexer.Load(GetContent(host));
-
-            foreach (var item in lexer.Parse())
-            {
-                //TODO: сделать проверку на наличие <link rel="alternate" media="handheld, only screen and (max-width: 640px) и вытащить оттуда  href="url"
-                //Почему-то не до конца парсит файл
-
-            }
             return desktop != mobile ? mobile : null;
-        }
-
-        private static string GetContent(IPHostEntry host)
-        {
-            using (var client = new WebClient())
-            {
-                return client.DownloadString("http://" + host.HostName);
-            }
         }
     }
 }

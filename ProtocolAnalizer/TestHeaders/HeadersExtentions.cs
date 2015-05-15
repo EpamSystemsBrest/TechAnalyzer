@@ -71,15 +71,15 @@ namespace ProtocolAnalizer.TestHeaders
             return Tuple.Create(host, result.Aggregate((x, y) => x | y));
         }
 
-        private static HeadersTest TestHostHeaders(this HttpWebResponse response, KeyValuePair<string, HeadersTest> pair)
+        private static HeadersTest TestHostHeaders(this WebResponse response, KeyValuePair<string, HeadersTest> pair)
         {
             if (response.Headers[pair.Key] != null) return pair.Value;
             return HeadersTest.None;
         }
 
-        private static HttpWebResponse GetResponse(string host)
+        private static WebResponse GetResponse(string host)
         {
-            return (HttpWebResponse) WebRequest.Create(host).GetResponse();
+            return WebRequest.CreateHttp(host).GetResponse();
         }
     }
 }

@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MDot.cs" />
-    <Compile Include="TestHeaders\Analyser.cs" />
     <Compile Include="TestHeaders\HttpHeaders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolTests.cs" />
