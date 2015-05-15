@@ -8,6 +8,18 @@ using ParserCommon;
 
 namespace JsParser.Lexer
 {
+    public enum TokenType
+    {
+        Punctuator,
+        Identifier,
+        Keyword,
+        String,
+        Numeric,
+        Boolean,
+        Null,
+        RegularExpression
+    }
+
     public struct JsToken
     {
         public JsKeyword TokenType;
@@ -25,7 +37,9 @@ namespace JsParser.Lexer
 
         public JsKeyword GetKeyword()
         {
-            return JsKeywordHash.Hash(Source, Value.StartIndex, Value.Length);
+            if (Hash >= 0) return (JsKeyword)Hash;
+            Hash = (int) JsKeywordHash.GetKeyword(Source, Value.StartIndex, Value.Length);
+            return (JsKeyword) Hash;
         }
     }
 

@@ -45,7 +45,7 @@ namespace JsParser.Hash
             "","implements","", "","abstract"
         };
 
-        public static JsKeyword Hash(char[] content, int offset, int length)
+        public static JsKeyword GetKeyword(char[] content, int offset, int length)
         {
             int hash = length + associationValues[content[offset + 1]] + associationValues[content[offset]];
 
@@ -62,7 +62,7 @@ namespace JsParser.Hash
         {
             if (length <= MAX_WORD_LENGTH && length >= MIN_WORD_LENGTH)
             {
-                int key = (int)Hash(content, offset, length);
+                int key = (int)GetKeyword(content, offset, length);
 
                 if (key <= MAX_HASH_VALUE && key >= 0) // >= MIN_HASH_VALUE ???
                 {
