@@ -3,14 +3,13 @@ using System.Linq;
 
 namespace JsParser.Hash
 {
-    public class JsPunctuator
+    public static class JsPunctuator
     {
         static readonly char[] SingleCharPunctuators = 
         {
-            ' ', ',', '.', '(', ')', '[', ']', '{', '}', '/', '=', '+', '-', '*', '%', '&', '|', '^', '!', '~', '?', ':', '<', '>'
         };
 
-        public static bool IsJsPunctuator(char c)
+        public static bool IsJsPunctuator(this char c)
         {
             return SingleCharPunctuators.Contains(c);
         }

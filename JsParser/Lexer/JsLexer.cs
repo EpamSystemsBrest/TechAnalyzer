@@ -16,7 +16,7 @@ namespace JsParser.Lexer
         private int index;
         private int prevPunctuator;
         private JsToken currentToken;
-        //private Func<bool> parseAction;
+        private Func<bool> parseAction;
 
         public void Load(Stream stream, Encoding encoding)
         {
@@ -49,10 +49,10 @@ namespace JsParser.Lexer
         public IEnumerable<JsToken> Parse()
         {
             index = 0;
-            //parseAction = ParseToken;
+            parseAction = ParseToken;
             while (index < length)
             {
-                //if (!parseAction()) continue;
+                if (!parseAction()) continue;
                 yield return currentToken;
             }
         }
@@ -61,22 +61,15 @@ namespace JsParser.Lexer
         {
             if (index < length)
             {
-                PunctuatorPosition();
+                if(content[index].IsJsPunctuator())
+
+                GoToPunctuator();
                 //ParseWord
                 //parseAction= ParsePunctuator;
                 prevPunctuator = index;
             }
             return false;
         }
-
-        private void PunctuatorPosition()
-        {
-            while (!JsPunctuator.IsJsPunctuator(content[index]))
-            {
-                index++;
-            }
-        }
-
 
         private void ParseWord()
         {
@@ -127,6 +120,11 @@ namespace JsParser.Lexer
         {
             GoToSequence("*/");
             index += 2;
+        }
+
+        private void GoToPunctuator()
+        {
+            while ((index < length) && (!content[index].IsJsPunctuator())) index++;
         }
 
         private void GoToChar(char value)
