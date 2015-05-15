@@ -59,7 +59,7 @@ namespace JsParser.Lexer
             throw new NotImplementedException();
         }
 
-        public void ParseKeyWord()
+        public void ParseKeyword()
         {
             throw new NotImplementedException();
         }
@@ -67,6 +67,45 @@ namespace JsParser.Lexer
         public void ParseIdentifier()
         {
             throw new NotImplementedException();
+        }
+
+        private bool IsEof()
+        {
+            return (index >= length);
+        }
+
+        private void SkipWhitespace()
+        {
+            while ((index < length) && char.IsWhiteSpace(content[index])) index++;
+        }
+
+        private void SkipMultilineComment()
+        {
+            GoToSequence("*/");
+            index += 2;
+        }
+
+        private void GoToChar(char value)
+        {
+            while ((index < length) && (content[index] != value)) index++;
+        }
+
+        private void GoToSequence(string sequence)
+        {
+            var len = sequence.Length;
+
+            while (index < length)
+            {
+                GoToChar(sequence[0]);
+                if ((content[index + 1] == sequence[1]) &&
+                    ((len < 3) || (content[index + 2] == sequence[2])) &&
+                    ((len < 4) || (content[index + 3] == sequence[3])))
+                {
+                    break;
+                }
+                index++;
+            }
+
         }
     }
 }
