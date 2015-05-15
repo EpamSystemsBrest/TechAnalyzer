@@ -23,15 +23,7 @@ namespace ProtocolAnalizer {
     
     public class HttpHeaders {
 
-        static Regex regex = new Regex(@"(apache)
-                                        |(iis[\W]|^iis)
-                                        |(nginx)
-                                        |(gse[\W]|^gse)
-                                        |(litespeed)
-                                        |(lighttpd)
-                                        |(userv)
-                                        |(ats[\W]|^ATS)
-                                        |(ibm)|(yts)", RegexOptions.IgnoreCase);
+        static Regex regex = new Regex(@"(apache)|(iis[\W]|^iis)|(nginx)|(gse[\W]|^gse)|(litespeed)|(lighttpd)|(userv)|(ats[\W]|^ATS)|(ibm)|(yts)", RegexOptions.IgnoreCase);
         public static HttpServerName ParseServerName(string name) {
 
             if(name==null)
