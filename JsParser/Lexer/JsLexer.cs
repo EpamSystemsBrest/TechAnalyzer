@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using JsParser.Hash;
+using ParserCommon;
 
 namespace JsParser.Lexer
 {
@@ -13,8 +14,9 @@ namespace JsParser.Lexer
         public readonly char[] content = new char[1024 * 1024];
         private int length;
         private int index;
+        private int prevPunctuator;
         private JsToken currentToken;
-        private Func<bool> parseAction;
+        //private Func<bool> parseAction;
 
         public void Load(Stream stream, Encoding encoding)
         {
@@ -46,22 +48,57 @@ namespace JsParser.Lexer
 
         public IEnumerable<JsToken> Parse()
         {
-            throw new NotImplementedException();
+            index = 0;
+            //parseAction = ParseToken;
+            while (index < length)
+            {
+                //if (!parseAction()) continue;
+                yield return currentToken;
+            }
         }
 
-        public bool ParseToken()
+        private bool ParseToken()
+        {
+            if (index < length)
+            {
+                PunctuatorPosition();
+                //ParseWord
+                //parseAction= ParsePunctuator;
+                prevPunctuator = index;
+            }
+            return false;
+        }
+
+        private void PunctuatorPosition()
+        {
+            while (!JsPunctuator.IsJsPunctuator(content[index]))
+            {
+                index++;
+            }
+        }
+
+        private void ParseWord()
+        {
+            if (ParseKeyword()) return;
+            else
+            {
+                //otherParse
+            }
+        }
+
+        private bool ParsePunctuator(int startIndex)
         {
             throw new NotImplementedException();
         }
 
-        public bool ParsePunctuator(char symbol)
+        public bool ParseKeyword() 
         {
-            throw new NotImplementedException();
-        }
-
-        public void ParseKeyWord()
-        {
-            throw new NotImplementedException();
+            if (!JsKeywordHash.IsJsKeyword(content, prevPunctuator, index - prevPunctuator))
+                return false;
+            var tokenType = TokenType.Keyword;
+            var value = new StringSegment(prevPunctuator,index - prevPunctuator);
+            currentToken = new JsToken(tokenType, content, value);
+            return true;
         }
 
         public void ParseIdentifier()
