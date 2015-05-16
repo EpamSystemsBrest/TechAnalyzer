@@ -5,14 +5,44 @@ namespace JsParser.Hash
 {
     public static class JsPunctuator
     {
-        static readonly char[] SingleCharPunctuators = 
+        static readonly char[] Punctuators = 
         {
            '\0', '\r', '\t', '\n', ' ', ',', '.', '(', ')', '[', ']', '{', '}', '/', '=', '+', '-', '*', '%', '&', '|', '^', '!', '~', '?', ':', ';', '<', '>'
         };
 
-        public static bool IsJsPunctuator(this char c)
+        static readonly char[] SingleCharPunctuators =
+        {
+            '(', ')', '[', ']', '{', '}', '~', '?', ':', ';', ','
+        };
+
+        static readonly string[] DoubleCharPunctuators =
+        {
+            "&&", "||", "==", "!=", "+=", "-=", "*=", "/=", "++", "--", "<<", ">>", "&=", "|=", "^=", "%=", "<=", ">=", "=>"
+        };
+
+        static readonly string[] ThreeCharPunctuators =
+        {
+            "...", "===", "!==", ">>>", "<<=", ">>="
+        };
+
+        public static bool IsPunctuator(this char c)
+        {
+            return Punctuators.Contains(c);
+        }
+
+        public static bool IsSingleCharPunctuator(this char c)
         {
             return SingleCharPunctuators.Contains(c);
+        }
+
+        public static bool IsDoubleCharPunctuator(this string c)
+        {
+            return DoubleCharPunctuators.Contains(c);
+        }
+
+        public static bool IsThreeCharPunctuator(this string c)
+        {
+            return ThreeCharPunctuators.Contains(c);
         }
     }
 }

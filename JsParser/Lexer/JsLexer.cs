@@ -50,7 +50,7 @@ namespace JsParser.Lexer
             SkipWhitespace();
             while (!IsEof())
             {
-                if (content[index].IsJsPunctuator())
+                if (content[index].IsPunctuator())
                 {
                     if (ParsePunctuator())
                         yield return currentToken;
@@ -74,14 +74,14 @@ namespace JsParser.Lexer
 
             string stringValue = value.ToString(content);
 
-            if(stringValue == "true" || stringValue == "false")
+            if (stringValue == "true" || stringValue == "false")
                 return FireToken(TokenType.Boolean, value);
 
-            if(stringValue == "null")
+            if (stringValue == "null")
                 return FireToken(TokenType.Null, value);
 
             double result;
-            if (double.TryParse(stringValue, out result))
+            if (double.TryParse(stringValue, out result))   //JS hex/octal/binary parsing not tested
                 return FireToken(TokenType.Numeric, value);
 
             return FireToken(TokenType.Identifier, value);
@@ -89,7 +89,52 @@ namespace JsParser.Lexer
 
         private bool ParsePunctuator()
         {
-            throw new NotImplementedException();
+            int startIndex = index;
+
+            if (char.IsWhiteSpace(content[index]))
+            {
+                SkipWhitespace();
+                return false;
+            }
+
+            if (content[index].IsSingleCharPunctuator())
+                return FirePunctuatorToken(startIndex, 1);
+
+            // comment
+            if (content[index] == '/')
+            {
+                if (content[index + 1] == '/')
+                {
+                    SkipComment();
+                    return false;
+                }
+                else if (content[index + 1] == '*')
+                {
+                    SkipMultilineComment();
+                    return false;
+                }                
+            }
+
+            // 4-character punctuator
+            if (new string(content, index, 4) == ">>>=")
+                return FirePunctuatorToken(startIndex, 4);
+
+            // 3-character punctuator
+            if (new string(content, index, 3).IsThreeCharPunctuator())
+                return FirePunctuatorToken(startIndex, 3);
+
+            // 2-character punctuator
+            if (new string(content, index, 2).IsDoubleCharPunctuator())
+                return FirePunctuatorToken(startIndex, 2);
+
+            // 1-character punctuator
+            return FirePunctuatorToken(startIndex, 1);
+        }
+
+        private bool FirePunctuatorToken(int startIndex, int punctuatorLength)
+        {
+            index += punctuatorLength;
+            return FireToken(TokenType.Punctuator, new StringSegment(startIndex, punctuatorLength));
         }
 
         private bool FireToken(TokenType tokenType, StringSegment value = default(StringSegment))
@@ -122,7 +167,7 @@ namespace JsParser.Lexer
 
         private void GoToPunctuator()
         {
-            while ((index < length) && (!content[index].IsJsPunctuator())) index++;
+            while ((index < length) && (!content[index].IsPunctuator())) index++;
         }
 
         private void GoToChar(char value)
