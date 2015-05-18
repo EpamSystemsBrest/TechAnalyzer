@@ -174,10 +174,6 @@ namespace JsParser.Lexer
                 {
                     endIndex = startIndex;
                 }
-                else if (content[startIndex].IsPunctuator())
-                {
-                    break;
-                }
                 startIndex++;
             }
             return endIndex;

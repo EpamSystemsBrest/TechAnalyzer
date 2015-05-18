@@ -42,7 +42,7 @@
     <Compile Include="Hash\JsKeyword.cs" />
     <Compile Include="Hash\JsKeywordHash.cs" />
     <Compile Include="Lexer\JsPunctuator.cs" />
-    <Compile Include="Hash\JsLexer.cs" />
+    <Compile Include="Lexer\JsLexer.cs" />
     <Compile Include="Lexer\JsToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
