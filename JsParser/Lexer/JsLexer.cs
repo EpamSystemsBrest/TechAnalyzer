@@ -14,9 +14,7 @@ namespace JsParser.Lexer
         public readonly char[] content = new char[1024 * 1024];
         private int length;
         private int index;
-        private int prevPunctuator;
         private JsToken currentToken;
-        //private Func<bool> parseAction;
 
         public void Load(Stream stream, Encoding encoding)
         {
@@ -28,7 +26,7 @@ namespace JsParser.Lexer
 
         public void Load(string code)
         {
-            using (var reader = new StreamReader(code))
+            using (var reader = new StringReader(code))
             {
                 Load(reader);
             }
@@ -49,67 +47,105 @@ namespace JsParser.Lexer
         public IEnumerable<JsToken> Parse()
         {
             index = 0;
-            //parseAction = ParseToken;
-            while (index < length)
+            SkipWhitespace();
+            while (!IsEof())
             {
-                //if (!parseAction()) continue;
-                yield return currentToken;
+                if (content[index].IsPunctuator())
+                {
+                    if (ParsePunctuator())
+                        yield return currentToken;
+                }
+                else if (ParseWord())
+                    yield return currentToken;
             }
         }
 
-        private bool ParseToken()
+        private bool ParseWord()
         {
-            if (index < length)
+            int startIndex = index;
+            GoToPunctuator();
+            StringSegment value = new StringSegment(startIndex, index - startIndex);
+
+            if (JsKeywordHash.IsJsKeyword(content, startIndex, index - startIndex))
+                return FireToken(TokenType.Keyword, value);
+
+            if (content[startIndex] == '\'' || content[startIndex] == '\"')
+                return FireToken(TokenType.String, value);
+
+            string stringValue = value.ToString(content);
+
+            if (stringValue == "true" || stringValue == "false")
+                return FireToken(TokenType.Boolean, value);
+
+            if (stringValue == "null")
+                return FireToken(TokenType.Null, value);
+
+            double result;
+            if (double.TryParse(stringValue, out result))   //JS hex/octal/binary parsing not tested
+                return FireToken(TokenType.Numeric, value);
+
+            return FireToken(TokenType.Identifier, value);
+        }
+
+        private bool ParsePunctuator()
+        {
+            int startIndex = index;
+
+            if (char.IsWhiteSpace(content[index]))
             {
-                PunctuatorPosition();
-                //ParseWord
-                //parseAction= ParsePunctuator;
-                prevPunctuator = index;
-            }
-            return false;
-        }
-
-        private void PunctuatorPosition()
-        {
-            while (!JsPunctuator.IsJsPunctuator(content[index]))
-            {
-                index++;
-            }
-        }
-
-
-        private void ParseWord()
-        {
-            if (ParseKeyword()) return;
-            else
-            {
-                //otherParse
-            }
-        }
-
-        private bool ParsePunctuator(int startIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ParseKeyword() 
-        {
-            if (!JsKeywordHash.IsJsKeyword(content, prevPunctuator, index - prevPunctuator))
+                SkipWhitespace();
                 return false;
-            var tokenType = TokenType.Keyword;
-            var value = new StringSegment(prevPunctuator,index - prevPunctuator);
+            }
+
+            if (content[index].IsSingleCharPunctuator())
+                return FirePunctuatorToken(startIndex, 1);
+
+            // comment
+            if (content[index] == '/')
+            {
+                if (content[index + 1] == '/')
+                {
+                    SkipComment();
+                    return false;
+                }
+                else if (content[index + 1] == '*')
+                {
+                    SkipMultilineComment();
+                    return false;
+                }                
+            }
+
+            // 4-character punctuator
+            if (new string(content, index, 4) == ">>>=")
+                return FirePunctuatorToken(startIndex, 4);
+
+            // 3-character punctuator
+            if (new string(content, index, 3).IsThreeCharPunctuator())
+                return FirePunctuatorToken(startIndex, 3);
+
+            // 2-character punctuator
+            if (new string(content, index, 2).IsDoubleCharPunctuator())
+                return FirePunctuatorToken(startIndex, 2);
+
+            // 1-character punctuator
+            return FirePunctuatorToken(startIndex, 1);
+        }
+
+        private bool FirePunctuatorToken(int startIndex, int punctuatorLength)
+        {
+            index += punctuatorLength;
+            return FireToken(TokenType.Punctuator, new StringSegment(startIndex, punctuatorLength));
+        }
+
+        private bool FireToken(TokenType tokenType, StringSegment value = default(StringSegment))
+        {
             currentToken = new JsToken(tokenType, content, value);
             return true;
         }
 
-        public void ParseIdentifier()
-        {
-            throw new NotImplementedException();
-        }
-
         private bool IsEof()
         {
-            return (index >= length);
+            return (index > length);
         }
 
         private void SkipWhitespace()
@@ -127,6 +163,11 @@ namespace JsParser.Lexer
         {
             GoToSequence("*/");
             index += 2;
+        }
+
+        private void GoToPunctuator()
+        {
+            while ((index < length) && (!content[index].IsPunctuator())) index++;
         }
 
         private void GoToChar(char value)
