@@ -220,6 +220,7 @@ namespace HtmlParser.Lexer
             if (attrName.Name.Length == 0)
             {
                 index++; // Empty token, something wrong with html. Skip last char and try to continue parse
+                stateAction = ParseAttributesOrEndOpenTag;
                 return false;
             }
 
