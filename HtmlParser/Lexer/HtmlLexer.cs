@@ -237,31 +237,31 @@ namespace HtmlParser.Lexer
 
         private bool ParseScript()
         {
-            return ParseScriptOrStyle(TokenType.Script);
-        }
-
-        private bool ParseStyle()
-        {
-            return ParseScriptOrStyle(TokenType.Style);
-        }
-
-        private bool ParseScriptOrStyle(TokenType tokenType)
-        {
             int startIndex = index;
-            var tagType = lastTag.GetTag();
-            var tagNameLength = lastTag.Name.Name.Length;
-            if (tagType == HtmlTag.Script) GoToEndScript();
-            else GoToEndStyle();
 
-            if (HtmlTagHash.GetTag(content, index + 2, tagNameLength) == tagType)
-            {
+            GoToEndScript();
+
+            if (HtmlTagHash.GetTag(content, index + 2, "script".Length) == HtmlTag.Script) {
                 stateAction = ParseCloseLastTag;
-                return FireValueToken(tokenType, startIndex);
+                return FireValueToken(TokenType.Script, startIndex);
             }
             index += "</".Length;
             return false;
         }
 
+        private bool ParseStyle()
+        {
+            int startIndex = index;
+
+            GoToEndStyle();
+
+            if (HtmlTagHash.GetTag(content, index + 2, "style".Length) == HtmlTag.Style) {
+                stateAction = ParseCloseLastTag;
+                return FireValueToken(TokenType.Style, startIndex);
+            }
+            index += "</".Length;
+            return false;
+        }
 
         private bool ParseCloseLastTag()
         {
@@ -377,18 +377,9 @@ namespace HtmlParser.Lexer
         {
             while (index < length)
             {
-                if (content[index] == '{')
-                {
-                    index++;
-                    GoToChar('}');
-                }
-                    
-                if (content[index] == '<')
-                {
-                    GoToChar(content[index]);
-                    if (content[index + 1] == '/')
-                        break;
-                }
+                var c = content[index];
+                if (c == '{')  GoToChar('}');
+                if ((c == '<') && (content[index + 1] == '/')) break;
                 index++;
             }
         }
@@ -397,31 +388,19 @@ namespace HtmlParser.Lexer
         {
             while (index < length)
             {
-                if (content[index] == '\"' || content[index] == '\'')
-                {
-                    index++;
-                    GoToQuote(content[index - 1]);
-                }
-                if (content[index] == '<')
-                {
-                    GoToChar(content[index]);
-                    if (content[index + 1] == '/')
-                        break;
-                }
+                var c = content[index];
+                if ( c == '\"' || c == '\'') GoToQuote(c);
+                if ((c == '<') && (content[index + 1] == '/')) break;
                 index++;
             }
         }
 
         private void GoToQuote(char value)
         {
-            while ((index < length) && (content[index] != value))
+            index++;
+            while ((index < length) && (content[index] != value) && (content[index - 1] != '\\'))
             {
                 index++;
-                if (content[index - 1] == '\\')
-                {
-                    index++;
-                    GoToQuote(content[index - 1]);
-                }
             }
         }
 
