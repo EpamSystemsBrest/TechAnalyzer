@@ -35,6 +35,16 @@ namespace JsParser.Hash
             return SingleCharPunctuators.Contains(c);
         }
 
+        public static bool IsDot(this char c)
+        {
+            return c == '.';
+        }
+
+        public static bool IsScreening(this char c)
+        {
+            return c == '\'' || c == '\"';
+        }
+
         public static bool IsDoubleCharPunctuator(this string c)
         {
             return DoubleCharPunctuators.Contains(c);
