@@ -395,6 +395,19 @@ div {
         {
             @"<!doctype html public ""-//w3c//dtd xhtml 1.0 transitional//en"" ""http://www.w3.org/tr/xhtml1/dtd/xhtml1-transitional.dtd"">".ShouldReturn(@"Doctype: ""doctype html public ""-//w3c//dtd xhtml 1.0 transitional//en"" ""http://www.w3.org/tr/xhtml1/dtd/xhtml1-transitional.dtd""""");
         }
+
+
+        [Fact]
+        public void Parsing_Empty_Doctype()
+        {
+            @"<!doctype>".ShouldReturn(@"Doctype: ""doctype""");
+        }
+        [Fact]
+        public void Parsing_Specific_Doctype()
+        {
+            @"<!doctype html public>".ShouldReturn(@"Doctype: ""doctype html public""");
+        }
+        
         #endregion 
 
         //        [Fact]
