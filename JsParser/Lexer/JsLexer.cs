@@ -71,9 +71,7 @@ namespace JsParser.Lexer
 
             if (content[startIndex] == '\'' || content[startIndex] == '\"')
             {
-                EndOfString();
-                value = new StringSegment(startIndex, index - startIndex);
-                return FireToken(TokenType.String, value);
+                return FireStringToken(startIndex);
             }   
 
             string stringValue = value.ToString(content);
@@ -164,19 +162,22 @@ namespace JsParser.Lexer
             return true;
         }
 
-        private int EndOfString() // TODO: finish function
+        private bool FireStringToken(int startIndex)
         {
-            var startIndex = index+1;
-            var endIndex = startIndex;
-            while (endIndex <length)
+            index = startIndex + 1;
+            GoToChar(content[startIndex]);
+            while (true)
             {
-                if (content[startIndex].IsScreening())
+                if (content[index] == content[startIndex] && content[index - 1] != '\\')
                 {
-                    endIndex = startIndex;
+                    index++;
+                    return FireToken(TokenType.String, new StringSegment(startIndex, index - startIndex));
                 }
-                startIndex++;
+                index++;
+                GoToChar(content[startIndex]);
+                if (index == length && content[index] != content[startIndex]) //EoF
+                    return false;
             }
-            return endIndex;
         }
 
         private bool IsEof()
