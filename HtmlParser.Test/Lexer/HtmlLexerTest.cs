@@ -402,12 +402,13 @@ div {
         {
             @"<!doctype>".ShouldReturn(@"Doctype: ""doctype""");
         }
+
         [Fact]
         public void Parsing_Specific_Doctype()
         {
             @"<!doctype html public>".ShouldReturn(@"Doctype: ""doctype html public""");
         }
-        
+
         #endregion 
 
         //        [Fact]

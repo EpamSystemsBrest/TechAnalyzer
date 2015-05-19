@@ -47,7 +47,8 @@ namespace HtmlParser
                 doctype.Contains("http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"))
                 return CompatibilityModeDoctype.Quirks;
 
-            var item = doctype.Split('"');
+            var separator = doctype.Contains("@@") ? '@' : '"';
+            var item = doctype.Split(separator);
 
             if (RegexForQuirks.IsMatch(item[2]) || (Regex.IsMatch(item[2]) && item.Length == 5))
                 return CompatibilityModeDoctype.Quirks;
