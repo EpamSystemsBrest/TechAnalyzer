@@ -437,7 +437,7 @@ namespace HtmlParser.Test
 
             foreach (var doctype in data) {
                 var actual = CompatibilityMode.GetCompatibilityModeFromDoctype(doctype.Trim(new[] { '<', '>', '!' }));
-                Assert.Equal(CompatibilityModeDoctype.LimitedQuirks, actual);
+                Assert.Equal(CompatibilityModeDoctype.NoQuirks, actual);
             }
         }
 
