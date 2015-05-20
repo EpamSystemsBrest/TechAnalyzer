@@ -70,7 +70,9 @@ namespace JsParser.Lexer
                 return FireToken(TokenType.Keyword, value);
 
             if (content[startIndex] == '\'' || content[startIndex] == '\"')
-                return FireToken(TokenType.String, value);
+            {
+                return FireStringToken(startIndex);
+            }   
 
             string stringValue = value.ToString(content);
 
@@ -80,9 +82,12 @@ namespace JsParser.Lexer
             if (stringValue == "null")
                 return FireToken(TokenType.Null, value);
 
-            double result;
-            if (double.TryParse(stringValue, out result))   //JS hex/octal/binary parsing not tested
+            if (char.IsDigit(stringValue[0]))
+            {
+                if (ContinuationNumeric())
+                    value = new StringSegment(startIndex, index - startIndex);
                 return FireToken(TokenType.Numeric, value);
+            }
 
             return FireToken(TokenType.Identifier, value);
         }
@@ -112,7 +117,7 @@ namespace JsParser.Lexer
                 {
                     SkipMultilineComment();
                     return false;
-                }                
+                }
             }
 
             // 4-character punctuator
@@ -137,10 +142,42 @@ namespace JsParser.Lexer
             return FireToken(TokenType.Punctuator, new StringSegment(startIndex, punctuatorLength));
         }
 
+        private bool FireNumericToken(int startIndex, int numericLength)
+        {
+            index += numericLength;
+            return FireToken(TokenType.Numeric, new StringSegment(startIndex, numericLength));
+        }
+
         private bool FireToken(TokenType tokenType, StringSegment value = default(StringSegment))
         {
             currentToken = new JsToken(tokenType, content, value);
             return true;
+        }
+
+        private bool ContinuationNumeric()
+        {
+            if (!content[index].IsDot()) return false;
+            index++;
+            GoToPunctuator();
+            return true;
+        }
+
+        private bool FireStringToken(int startIndex)
+        {
+            index = startIndex + 1;
+            GoToChar(content[startIndex]);
+            while (true)
+            {
+                if (content[index] == content[startIndex] && content[index - 1] != '\\')
+                {
+                    index++;
+                    return FireToken(TokenType.String, new StringSegment(startIndex, index - startIndex));
+                }
+                index++;
+                GoToChar(content[startIndex]);
+                if (index == length && content[index] != content[startIndex]) //EoF
+                    return false;
+            }
         }
 
         private bool IsEof()
