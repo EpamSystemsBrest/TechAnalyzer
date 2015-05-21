@@ -63,16 +63,15 @@ namespace JsParser.Lexer
         private bool ParseWord()
         {
             int startIndex = index;
+
+            if (content[startIndex] == '\'' || content[startIndex] == '\"')
+                return FireStringToken(startIndex);
+
             GoToPunctuator();
             StringSegment value = new StringSegment(startIndex, index - startIndex);
 
             if (JsKeywordHash.IsJsKeyword(content, startIndex, index - startIndex))
-                return FireToken(TokenType.Keyword, value);
-
-            if (content[startIndex] == '\'' || content[startIndex] == '\"')
-            {
-                return FireStringToken(startIndex);
-            }   
+                return FireToken(TokenType.Keyword, value);            
 
             string stringValue = value.ToString(content);
 
@@ -82,9 +81,9 @@ namespace JsParser.Lexer
             if (stringValue == "null")
                 return FireToken(TokenType.Null, value);
 
-            if (char.IsDigit(stringValue[0]))
+            if (char.IsDigit(content[startIndex]))
             {
-                if (ContinuationNumeric())
+                if (IsFloat())
                     value = new StringSegment(startIndex, index - startIndex);
                 return FireToken(TokenType.Numeric, value);
             }
@@ -142,33 +141,14 @@ namespace JsParser.Lexer
             return FireToken(TokenType.Punctuator, new StringSegment(startIndex, punctuatorLength));
         }
 
-        private bool FireNumericToken(int startIndex, int numericLength)
-        {
-            index += numericLength;
-            return FireToken(TokenType.Numeric, new StringSegment(startIndex, numericLength));
-        }
-
-        private bool FireToken(TokenType tokenType, StringSegment value = default(StringSegment))
-        {
-            currentToken = new JsToken(tokenType, content, value);
-            return true;
-        }
-
-        private bool ContinuationNumeric()
-        {
-            if (!content[index].IsDot()) return false;
-            index++;
-            GoToPunctuator();
-            return true;
-        }
-
         private bool FireStringToken(int startIndex)
         {
             index = startIndex + 1;
             GoToChar(content[startIndex]);
             while (true)
             {
-                if (content[index] == content[startIndex] && content[index - 1] != '\\')
+                if (content[index] == content[startIndex] && (content[index - 1] != '\\' ||
+                                                              content[index - 1] == '\\' && content[index - 2] == '\\'))
                 {
                     index++;
                     return FireToken(TokenType.String, new StringSegment(startIndex, index - startIndex));
@@ -178,6 +158,20 @@ namespace JsParser.Lexer
                 if (index == length && content[index] != content[startIndex]) //EoF
                     return false;
             }
+        }
+
+        private bool FireToken(TokenType tokenType, StringSegment value = default(StringSegment))
+        {
+            currentToken = new JsToken(tokenType, content, value);
+            return true;
+        }
+
+        private bool IsFloat()
+        {
+            if (!content[index].IsDot()) return false;
+            index++;
+            GoToPunctuator();
+            return true;
         }
 
         private bool IsEof()
