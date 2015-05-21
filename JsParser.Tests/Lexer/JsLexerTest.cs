@@ -122,5 +122,41 @@ namespace JsParser.Tests.Lexer
         }
 
         #endregion Punctuators
+
+        #region General
+
+        [Fact]
+        public void Parsing_Simple_Code()
+        {
+
+            // Keyword
+            // Punctuator
+            // Identifier
+            // Null
+            // String
+            // 
+            @"var map = new google.maps.Map(document.getElementById('map-canvas',355), mapOptions);"
+            .ShouldReturn(
+                "Keyword: var", "Identifier: map", "Punctuator: =", "Keyword: new", "Identifier: google", "Punctuator: .",
+                "Identifier: maps", "Punctuator: .", "Identifier: Map", "Punctuator: (", "Identifier: document", "Punctuator: .",
+                "Identifier: getElementById", "Punctuator: (", "String: 'map-canvas'", "Punctuator: ,", "Numeric: 355", "Punctuator: )",
+                "Punctuator: ,", "Identifier: mapOptions", "Punctuator: )", "Punctuator: ;"
+            );
+        }
+
+        [Fact]
+        public void Parsing_Simple_Addition_Code()
+        {
+            @"var a = 42;
+            var b = 5;
+            var c = a + b;"
+            .ShouldReturn(
+                "Keyword: var", "Identifier: a", "Punctuator: =", "Numeric: 42", "Punctuator: ;",
+                "Keyword: var", "Identifier: b", "Punctuator: =", "Numeric: 5", "Punctuator: ;",
+                "Keyword: var", "Identifier: c", "Punctuator: =", "Identifier: a", "Punctuator: +", "Identifier: b", "Punctuator: ;"
+            );
+        }
+
+        #endregion General
     }
 }
