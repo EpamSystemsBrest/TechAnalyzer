@@ -71,7 +71,7 @@ namespace JsParser.Lexer
             StringSegment value = new StringSegment(startIndex, index - startIndex);
 
             if (JsKeywordHash.IsJsKeyword(content, startIndex, index - startIndex))
-                return FireToken(TokenType.Keyword, value);            
+                return FireToken(TokenType.Keyword, value);
 
             string stringValue = value.ToString(content);
 
@@ -147,8 +147,7 @@ namespace JsParser.Lexer
             GoToChar(content[startIndex]);
             while (true)
             {
-                if (content[index] == content[startIndex] && (content[index - 1] != '\\' ||
-                                                              content[index - 1] == '\\' && content[index - 2] == '\\'))
+                if (content[index] == content[startIndex] && IsStringEnding(startIndex))
                 {
                     index++;
                     return FireToken(TokenType.String, new StringSegment(startIndex, index - startIndex));
@@ -164,6 +163,25 @@ namespace JsParser.Lexer
         {
             currentToken = new JsToken(tokenType, content, value);
             return true;
+        }
+
+        private bool IsStringEnding(int startIndex)
+        {
+            if (content[index - 1] != '\\')
+                return true;
+
+            int screeningCount = 0;
+            int tempIndex = index - 1;
+
+            while (content[tempIndex] == '\\')
+            {
+                screeningCount++;
+                tempIndex--;
+            }
+
+            if (screeningCount % 2 == 0)
+                return true;
+            return false;
         }
 
         private bool IsFloat()
