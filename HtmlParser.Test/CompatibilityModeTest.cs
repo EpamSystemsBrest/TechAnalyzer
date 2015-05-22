@@ -14,6 +14,8 @@ namespace HtmlParser.Test
         {
             var data = new[]
             {
+                 @"<!doctype html public ' -//w3c//dtd html 3.2//en'>",
+                 @"<!doctype html public "" -//w3c//dtd html 4.01 transitional//en"">",
                 @"<!doctype html public ""-//w3c//dtd xhtml 1.0 strict//en"" ""http://www.w3.org/tr/xhtml1/dtd/xhtml1-strict.dtd"">",
                 @"<!doctype html public ""-//w3c//dtd html 4.01//en"" ""http://www.w3.org/tr/html4/strict.dtd"">",
                 @"<!doctype html public ""-//w3c//dtd xhtml 1.1//en"" ""http://www.w3.org/tr/xhtml11/dtd/xhtml11.dtd"">",
@@ -115,7 +117,6 @@ namespace HtmlParser.Test
                 @"<!doctype html public '-//w3c//dtd html 4.0 //en'>",
                 @"<!doctype html public '-//w3c//dtd xhtml 1.0 strict//en' 'dtd/xhtml1-strict.dtd'>",
                 @"<!doctype html public '-//w3c//dtd xhtml 1.1//en' 'http://www.w3.org/tr/xhtml11/dtd/xhtml11.dtd'>",
-               
                 @"<!doctype html public ""&#150;//w3c//dtd html 3.2//en"">",
                 @"<!doctype html public ""&#150;//w3c//dtd html 4.0 transitional//en"" ""http://www.w3.org/tr/rec&#150;html40/loose.dtd"">",
                 @"<!doctype html public ""+//isbn 82-7640-037::www//dtd html//en//2.0"" ""html.dtd"" >",
@@ -312,14 +313,12 @@ namespace HtmlParser.Test
                 @"<!doctype html public ""-//w3c//dtd html 4.0 frameset//en"" ""http://www.w3.org/tr/html4/frameset.dtd"">",
                 @"<!doctype html public ""-//w3c//dtd html 4.0 transitional//en"" ""http://www.w3c.org/tr/rec-html40/loose.dtd"">",
                 @"<!doctype html public ""-//w3c//dtd html 4.0 transitional//en"" />",
-              
                 @"<!doctype html public '-//w3c//dtd html 3.2//en'>",
                 @"<!doctype html public ""-//w3c//dtd html 4.01 transitional//en>""",
                 @"<!doctype html public @@-//w3c//dtd html 3.2 final//en@@>",
                 @"<!doctype html public""-//w3c//dtd html 3.2 final//en"">",
                 @"<!doctype html public=""-//w3c//dtd html 4.0 transitional//en"">",
-                //@"<!doctype ""html public""/>",
-            
+                @"<!doctype ""html public""/>",
                 @"<!doctype doctype public ""-//w3c//dtd html 4.0 transitional//cat"">",
                 @"<!doctype doctype public ""-//w3c//dtd html 4.01 transitional//en"">",
                 //@"<!doctype doctype public ""-//w3w//dtd xhtml 1.0 transitional//en"" ""http://www.w3.org/tr/xhtml1/dtd/transitional.dtd"">",
@@ -343,7 +342,6 @@ namespace HtmlParser.Test
                 @"<!doctype html public ""-//softquad software//dtd hotmetal pro 6.0::19990601::extensions to html 4.0//en"">",
                 @"<!doctype html public ""-//w3o//dtd w3 html 3.0//en"" -->",
                 //@"<!doctype html public ""-//w3c// dtd xhtml 1.0 frameset//en"" http://www.w3.org/tr/xhtml1/dtd/xhtml-frameset.dtd>",
-              
                 @"<!doctype html public ""-//w3c//dtd html 3.2//en"" >",
                 @"<!doctype html public ""-//w3c//dtd html 3.2//en""-->",
 
