@@ -25,6 +25,11 @@ namespace JsParser.Hash
             "...", "===", "!==", ">>>", "<<=", ">>="
         };
 
+        public static bool IsDot(this char c)
+        {
+            return c == '.';
+        }
+
         public static bool IsPunctuator(this char c)
         {
             return Punctuators.Contains(c);
@@ -33,17 +38,7 @@ namespace JsParser.Hash
         public static bool IsSingleCharPunctuator(this char c)
         {
             return SingleCharPunctuators.Contains(c);
-        }
-
-        public static bool IsDot(this char c)
-        {
-            return c == '.';
-        }
-
-        public static bool IsScreening(this char c)
-        {
-            return c == '\'' || c == '\"';
-        }
+        }        
 
         public static bool IsDoubleCharPunctuator(this string c)
         {
