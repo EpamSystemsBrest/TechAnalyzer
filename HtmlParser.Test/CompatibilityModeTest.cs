@@ -115,9 +115,7 @@ namespace HtmlParser.Test
                 @"<!doctype html public '-//w3c//dtd html 4.0 //en'>",
                 @"<!doctype html public '-//w3c//dtd xhtml 1.0 strict//en' 'dtd/xhtml1-strict.dtd'>",
                 @"<!doctype html public '-//w3c//dtd xhtml 1.1//en' 'http://www.w3.org/tr/xhtml11/dtd/xhtml11.dtd'>",
-                @"<!doctype html public "" -//w3c//dtd html 4.0 transitional//en "">",
-                @"<!doctype html public "" -//w3c//dtd html 4.01 frameset//en"" ""http://www.w3.org/tr/html14/frameset.dtd"">",
-                @"<!doctype html public "" -//w3c//dtd html 4.01 transitional//en"">",
+               
                 @"<!doctype html public ""&#150;//w3c//dtd html 3.2//en"">",
                 @"<!doctype html public ""&#150;//w3c//dtd html 4.0 transitional//en"" ""http://www.w3.org/tr/rec&#150;html40/loose.dtd"">",
                 @"<!doctype html public ""+//isbn 82-7640-037::www//dtd html//en//2.0"" ""html.dtd"" >",
