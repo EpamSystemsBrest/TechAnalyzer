@@ -61,6 +61,12 @@ namespace JsParser.Tests.Lexer
         }
 
         [Fact]
+        public void Parsing_Simple_String1()
+        {
+            @"'utf-8'".ShouldReturn("String: 'utf-8'");
+        }
+
+        [Fact]
         public void Parsing_Simple_Bool()
         {
             "true".ShouldReturn("Boolean: true");
