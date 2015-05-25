@@ -58,10 +58,8 @@ namespace HtmlParser
         public static CompatibilityModeDoctype GetCompatibilityModeFromDoctype(string doctype)
         {
             if (RegexForQuirks.IsMatch(doctype)) return CompatibilityModeDoctype.Quirks;
-
-            return RegexForLimit.IsMatch(doctype)
-                ? CompatibilityModeDoctype.LimitedQuirks
-                : CompatibilityModeDoctype.NoQuirks;
+            if (RegexForLimit.IsMatch(doctype)) return CompatibilityModeDoctype.LimitedQuirks;
+            return CompatibilityModeDoctype.NoQuirks;
         }
     }
 }
