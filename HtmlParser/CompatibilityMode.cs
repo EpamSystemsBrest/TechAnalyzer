@@ -22,13 +22,14 @@ namespace HtmlParser
 
         private static readonly Regex RegexForLimit =
             new Regex(
-                @"((\w+\s+)+(""|')-//W3C//DTD XHTML 1.0 (Frameset|Transitional)//(en)?(""|'))" +
-                @"|((\w+\s+)+(""|')-//w3c//dtd html 4.01 (Transitional|Frameset)//(en)?(""|'))",
+                @"((\w+\s+)+(""|')-//W3C//DTD XHTML 1.0 (Frameset|Transitional)//(en)?(""|'))(\sSystem)?" +
+                @"|((\w+\s+)+(""|')-//w3c//dtd html 4.01 (Transitional|Frameset)//(en)?(""|'))(\sSystem)?",
                 RegexOptions.IgnoreCase);
 
         private static readonly Regex RegexForQuirks =
             new Regex(
-                @"(public((\s)?(""|'|@@)|(\s)?\\+(""|'|@@)|=(""|'|@@))-(//|/)W3C(//|/)DTD HTML (3 1995-03-24|3.2 Draft|3.2 Final|3.2|3.2S Draft|4.0 Frameset|4.0 transitional|Experimental 19960712|Experimental 970421|Strict 3.0)(//|/)(en)?)" +
+                @"(public((\s)?(""|'|@@)|(\s)?\\+(""|'|@@)|=(""|'|@@))-(//|/)W3C(//|/)DTD HTML " +
+                @"(3 1995-03-24|3.2 Draft|3.2 Final|3.2|3.2S Draft|4.0 Frameset|4.0 transitional|Experimental 19960712|Experimental 970421|Strict 3.0)(//|/)(en)?)" +
                 @"|(\S-(//|/)W3O(//|/)DTD W3 HTML 3.0(//|/))" +
                 @"|(\S-(//|/)W3C//DTD W3 HTML(//|/))" +
                 @"|(\S-//IETF//DTD HTML(\s(2.0 Level [1-2]|2.0 Strict Level [1-2]|2.0 Strict|2.0|2.1E|3.0|3.2 Final|3.2|3|Level [0-3]|Strict Level [0-3]|Strict))?//)" +
@@ -47,18 +48,15 @@ namespace HtmlParser
                 @"|(aol hometown//html 3.0 transitional//)" +
                 @"|((\w+\s+)+(""|')-//w3c//dtd html 4.01 transitional//en(\D)?(""|')(\s)?(\D)?$)" +
                 @"|((\w+\s+)+""-//w3c//dtd html 4.01 Frameset//(en)?""$)" +
-                @"|(doctype( ("")?html (public(""/)?|system)?)?)$" +
+                @"|(^doctype html (public|system)$)|(^doctype(?!\shtml) (public|system))" +
+                @"|(^(doctype(\s)?)+$)|(^doctype \D+html (public\D+|system\D+)$)" +
                 @"|(""http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd"")" +
-                @"|(doctype doctype)" + @"|(^(?!doctype html (public|system)).+$)"
+                @"|(^doctype(?!\shtml)(.+)? public.+$)" +
+                @"|(^doctype html(?!\spublic|\ssystem).+$)"
                 , RegexOptions.IgnoreCase);
-
-        private static readonly Regex RegexForNoQuirks =
-            new Regex(@"(^doctype html$|^doctype html public ""$)");
 
         public static CompatibilityModeDoctype GetCompatibilityModeFromDoctype(string doctype)
         {
-            if (RegexForNoQuirks.IsMatch(doctype)) return CompatibilityModeDoctype.NoQuirks;
-
             if (RegexForQuirks.IsMatch(doctype)) return CompatibilityModeDoctype.Quirks;
 
             return RegexForLimit.IsMatch(doctype)
