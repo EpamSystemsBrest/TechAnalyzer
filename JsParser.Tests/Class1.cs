@@ -10,7 +10,7 @@ namespace JsParser.Tests
     public class Class1
     {
         [Fact]
-      public void JsParser()
+        public void JsParser()
         {
 
         }

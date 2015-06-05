@@ -18,7 +18,7 @@ namespace HtmlParser.Lexer {
         public TokenType TokenType;
         internal QualifiedName Name;
         private StringSegment Value;
-        private char[] Source;
+        public char[] Source;
         private int hash;
 
         public HtmlToken(TokenType tokenType, char[] source, QualifiedName name, StringSegment value)  

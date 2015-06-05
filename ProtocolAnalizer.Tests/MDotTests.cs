@@ -13,8 +13,8 @@ namespace ProtocolAnalizer.Tests
         [Fact]
         public void MDotSupportTest()
         {
-           var actual= MDot.MDotTest(Dns.GetHostEntry("vk.com"));
-           Assert.Equal("m.vk.com", actual);
+            var actual = MDot.MDotTest(Dns.GetHostEntry("vk.com"));
+            Assert.Equal("m.vk.com", actual);
         }
     }
 }
