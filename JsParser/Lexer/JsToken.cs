@@ -44,7 +44,7 @@ namespace JsParser.Lexer
 
         public override string ToString()
         {
-            return Enum.GetName(TokenType.GetType(), TokenType);
+            return TokenType.ToString() + ": " + Value.ToString(Source);
         }
     }
 }

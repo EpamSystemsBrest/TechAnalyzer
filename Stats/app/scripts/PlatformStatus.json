@@ -1657,7 +1657,7 @@
         "name": "CSS unset value",
         "show": false,
         "normalized_name": "cssunsetvalue",
-        "summary": "If the cascaded value of a property is the â€˜â€˜unsetâ€™#â€™ keyword, then if it is an inherited property, this is treated as â€˜inheritâ€™, and if it is not, this is treated as â€˜initialâ€™. This keyword effectively erases all declared values occurring earlier in the cascade, correctly inheriting or not as appropriate for the property (or all longhands of a shorthand).",
+        "summary": "If the cascaded value of a property is the unset keyword, then if it is an inherited property, this is treated as inherit, and if it is not, this is treated as initial. This keyword effectively erases all declared values occurring earlier in the cascade, correctly inheriting or not as appropriate for the property (or all longhands of a shorthand).",
         "normalized_summary": "ifthecascadedvalueofapropertyistheunsetkeywordthenifitisaninheritedpropertythisistreatedasinheritandifitisnotthisistreatedasinitialthiskeywordeffectivelyerasesalldeclaredvaluesoccurringearlierinthecascadecorrectlyinheritingornotasappropriateforthepropertyoralllonghandsofashorthand",
         "category": "CSS",
         "normalized_category": "css",
@@ -8549,7 +8549,7 @@
             "wpd": ""
         }
     }, {
-        "name": "WebRTC â€“ Object RTC API",
+        "name": "WebRTC Object RTC API",
         "show": false,
         "normalized_name": "webrtcobjectrtcapi",
         "summary": "Enables mobile endpoints to talk to servers and web browsers with Real-Time Communications (RTC) capabilities via native and simple JavaScript APIs",
@@ -8593,7 +8593,7 @@
             "wpd": ""
         }
     }, {
-        "name": "WebRTC â€“ WebRTC v1.0 API",
+        "name": "WebRTC v1.0 API",
         "show": false,
         "normalized_name": "webrtcwebrtcv10api",
         "summary": "Real-time communication in the browser. See also \"Web RTC - Object RTC API\".",

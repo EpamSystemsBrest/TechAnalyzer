@@ -5,14 +5,22 @@ var filter = function () {
 	var key = document.getElementById('select').value == 'Class' ? 1 : 0;
 
 	var items = $('.features .feature').get();
-	items.sort(function (a, b) {
-		var keyA = a.innerText.split(' - ')[key].toLowerCase();
-		var keyB = b.innerText.split(' - ')[key].toLowerCase();
-
-		var koef = 1;
-		if (keyA[0] < 'a' || keyA[0] > 'z' || keyB[0] < 'a' || keyB[0] > 'z') koef *= -1;
-		if (keyA < keyB) return -1 * koef;
-		if (keyA > keyB) return 1 * koef;
+	items.sort(function (a, b) {       
+        var keyA = key == 0 ? a.innerText : a.firstChild.firstChild.className;
+		var keyB = key == 0 ? b.innerText : b.firstChild.firstChild.className;
+        keyA = myTrim(keyA).toLowerCase();
+        keyB = myTrim(keyB).toLowerCase();		
+      
+		if (keyA < keyB) return -1;
+		if (keyA > keyB) return 1;
+        
+        keyA = key != 0 ? a.innerText : a.firstChild.firstChild.className;
+        keyB = key != 0 ? b.innerText : b.firstChild.firstChild.className;
+        keyA = myTrim(keyA).toLowerCase();
+        keyB = myTrim(keyB).toLowerCase();	
+      
+        if (keyA < keyB) return -1;
+		if (keyA > keyB) return 1;
 		return 0;
 	});
 
@@ -38,3 +46,7 @@ var filter = function () {
 
 	$(".search").append("<h4 class=\"noresult\">We have no'result for this  search.</h4>")
 };
+
+function myTrim(x) {
+    return x.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/gm,'');
+}

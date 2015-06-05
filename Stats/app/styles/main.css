@@ -152,8 +152,26 @@ ul {
 }
 
 .browsers li a {
+	display: block;
 	height: 100%;
 	width: 100%;
+}
+
+.icon {
+	background-image: url(images/browsers.png);
+	width: 30px;
+	height: 30px;
+	display: inline-block;
+	margin-right: 5px;	
+}
+
+li.feature.jumbotron h4 {
+	cursor: default;
+}
+
+li.feature.jumbotron h4 span.icon {
+	margin-bottom: -4px;
+	margin-right: 10px;
 }
 
 .icon-Chrome {
@@ -447,20 +465,10 @@ ul {
 	background-position: 0 -128px
 }
 
-.icon {
-	background-image: url(images/browsers.png);
-	width: 30px;
-	height: 30px;
-}
-
 .info a span {
 	display: inline-block;
 	vertical-align: middle;
 	margin-top: 0;
-}
-
-.icon {
-	margin-right: 5px;
 }
 
 .info li {

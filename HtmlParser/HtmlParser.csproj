@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompatibilityMode.cs" />
     <Compile Include="Hash\HtmlAttribute.cs" />
     <Compile Include="Hash\HtmlAttributeHash.cs" />
     <Compile Include="Hash\HtmlEntityHash.cs" />

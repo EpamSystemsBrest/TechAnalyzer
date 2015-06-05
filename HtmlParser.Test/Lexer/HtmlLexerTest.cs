@@ -388,7 +388,30 @@ div {
 
         #endregion Style
 
-//        [Fact]
+        #region Doctype
+    
+        [Fact]
+        public void Parsing_Simple_Doctype()
+        {
+            @"<!doctype html public ""-//w3c//dtd xhtml 1.0 transitional//en"" ""http://www.w3.org/tr/xhtml1/dtd/xhtml1-transitional.dtd"">".ShouldReturn(@"Doctype: ""doctype html public ""-//w3c//dtd xhtml 1.0 transitional//en"" ""http://www.w3.org/tr/xhtml1/dtd/xhtml1-transitional.dtd""""");
+        }
+
+
+        [Fact]
+        public void Parsing_Empty_Doctype()
+        {
+            @"<!doctype>".ShouldReturn(@"Doctype: ""doctype""");
+        }
+
+        [Fact]
+        public void Parsing_Specific_Doctype()
+        {
+            @"<!doctype html public>".ShouldReturn(@"Doctype: ""doctype html public""");
+        }
+
+        #endregion 
+
+        //        [Fact]
 //        public void Parsing_Script_And_Tags()
 //        {
 //            @"<link rel=""stylesheet"" href=""https://abs.twimg.com/a/1431362606/css/t1/twitter_core.bundle.css"">
