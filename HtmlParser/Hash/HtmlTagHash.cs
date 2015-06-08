@@ -78,12 +78,23 @@ namespace HtmlParser.Hash
 
             index = (int)content[offset + 0] & 0xFF;
             hash += associationValues[index + 6];
-
             index = (int)content[offset + length - 1] & 0xFF;
             hash += associationValues[index];
-
             return (HtmlTag)hash;
         }
 
+        public static HtmlTag2 Hash(string str, int len)
+        {
+            int hval = len;
+            if (hval != 1)
+            {
+                hval += associationValues2[(char)str[1] + 2];
+            }
+            hval += associationValues2[(char)str[0]];
+            return (HtmlTag2)(hval + associationValues2[(char)str[len - 1]] + 1);
+        }
     }
+
+
 }
+
