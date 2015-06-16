@@ -20,17 +20,16 @@ namespace ServiceLibrary
         public static readonly ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
         public static volatile ConcurrentBag<string> AdressList = new ConcurrentBag<string>();
         private readonly Action<Uri, Stream, Encoding> _action;
-        public static double Speed { get { return GetDownloadSpeed(); } }
-        private static IEnumerable<string> Adress { get { return GenerateAdressList("url.txt"); } }
 
-        private readonly Dictionary<string, Encoding> _myEncodings = new Dictionary<string, Encoding>
+        public static double Speed
         {
-            {"UTF-8", Encoding.UTF8},
-            {"UTF-16", Encoding.Unicode},
-            {"ASCII", Encoding.ASCII},
-            {"UTF-32", Encoding.UTF32},
-            {"UTF-7", Encoding.UTF7}
-        };
+            get { return GetDownloadSpeed(); }
+        }
+
+        private static IEnumerable<string> Adress
+        {
+            get { return GenerateAdressList("url.txt"); }
+        }
 
         public Service(Action<Uri, Stream, Encoding> action)
         {
@@ -56,15 +55,12 @@ namespace ServiceLibrary
                 var adress = "http://" + url;
                 var request = WebRequest.CreateHttp(adress);
                 request.AllowAutoRedirect = true;
-                using (var response = (HttpWebResponse) request.GetResponse())
+                request.AutomaticDecompression = DecompressionMethods.GZip;
+                using (var response = (HttpWebResponse)request.GetResponse())
                 {
                     var stream = response.GetResponseStream();
-                    using (var reader = new StreamReader(stream))
-                    {
-                        var result = reader.ReadToEnd();
-                        _countByte = Interlocked.Add(ref _countByte, Encoding.UTF8.GetByteCount(result));
-                        _action.Invoke(new Uri(adress), stream, GetEncoding(response));
-                    }
+                    _countByte = Interlocked.Add(ref _countByte, response.ContentLength);
+                    if (_action != null) _action(new Uri(adress), stream, GetEncoding(response));
                 }
             }
             catch (Exception ex)
@@ -73,12 +69,9 @@ namespace ServiceLibrary
             }
         }
 
-        private Encoding GetEncoding(HttpWebResponse response)
+        private static Encoding GetEncoding(HttpWebResponse response)
         {
-            return _myEncodings.FirstOrDefault(
-                x =>
-                    x.Key.Equals(response.CharacterSet,
-                        StringComparison.InvariantCultureIgnoreCase)).Value ?? Encoding.UTF8;
+            return response.CharacterSet == null ? Encoding.UTF8 : Encoding.GetEncoding(response.CharacterSet);
         }
 
         public void DownloadContext()
@@ -99,9 +92,9 @@ namespace ServiceLibrary
 
         private static double GetDownloadSpeed()
         {
-            var resultSecond = Math.Abs((DateTime.Now - StartTime).TotalSeconds);
-            var speedByte = _countByte/resultSecond;
-            return speedByte/1024;
+            var resultSecond = (DateTime.Now - StartTime).TotalSeconds;
+            var speedByte = _countByte / resultSecond;
+            return speedByte / 1024;
         }
 
         private static int GetCountDownloadUrl()
