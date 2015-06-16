@@ -27,7 +27,6 @@ namespace DownloadContextService
 
         public DownloadServise()
         {
-
             InitializeComponent();
         }
 
@@ -53,6 +52,7 @@ namespace DownloadContextService
         protected override void OnPause()
         {
             _thead.Abort();
+            Service.OnPause = true;
             SavePositions();
             Service.Log("Servise pause! It happened save state");
         }
@@ -61,6 +61,7 @@ namespace DownloadContextService
         {
             Service.Log("Servise resume! Сontinue process with saved state");
             Service.AdressList = GetListUrl();
+            Service.OnPause = false;
             new Thread(new Service(action).DownloadContext).Start();
         }
 
@@ -75,14 +76,8 @@ namespace DownloadContextService
         {
             try
             {
-                using (var stream = new StreamWriter(BaseDirectory + "list.txt"))
-                {
-                    foreach (var x in Service.AdressList)
-                    {
-                        stream.WriteLine(x);
-                    }
-                }
-                WriteCountDowloadToFile();
+                SaveList();
+                WriteToFile();
             }
             catch (Exception ex)
             {
@@ -90,11 +85,24 @@ namespace DownloadContextService
             }
         }
 
-        private static void WriteCountDowloadToFile()
+        private static void SaveList()
         {
-            using (var stream = new StreamWriter(BaseDirectory + "count.txt"))
+            using (var stream = new StreamWriter(BaseDirectory + "list.txt"))
+            {
+                foreach (var x in Service.AdressList)
+                {
+                    stream.WriteLine(x);
+                }
+            }
+        }
+
+        private static void WriteToFile()
+        {
+            using (var stream = new StreamWriter(BaseDirectory + "save.txt"))
             {
                 stream.WriteLine(Service.CountDownloadUrl.ToString());
+                stream.WriteLine(Service.StartTime.ToString("G"));
+                stream.WriteLine(Service.CountByte);
             }
         }
 

@@ -14,22 +14,15 @@ namespace ServiceLibrary
     {
         public static DateTime StartTime;
         public static volatile int CountDownloadUrl;
-        private static long _countByte;
+        public static long CountByte;
         private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private static readonly object objLock = new object();
+        public static bool OnPause;
         public static readonly ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
         public static volatile ConcurrentBag<string> AdressList = new ConcurrentBag<string>();
         private readonly Action<Uri, Stream, Encoding> _action;
-
-        public static double Speed
-        {
-            get { return GetDownloadSpeed(); }
-        }
-
-        private static IEnumerable<string> Adress
-        {
-            get { return GenerateAdressList("url.txt"); }
-        }
+        public static double Speed { get { return GetDownloadSpeed(); } }
+        private static IEnumerable<string> Adress { get { return GenerateAdressList("url.txt"); } }
 
         public Service(Action<Uri, Stream, Encoding> action)
         {
@@ -59,7 +52,7 @@ namespace ServiceLibrary
                 using (var response = (HttpWebResponse)request.GetResponse())
                 {
                     var stream = response.GetResponseStream();
-                    _countByte = Interlocked.Add(ref _countByte, response.ContentLength);
+                    CountByte = Interlocked.Add(ref CountByte, response.ContentLength);
                     if (_action != null) _action(new Uri(adress), stream, GetEncoding(response));
                 }
             }
@@ -76,8 +69,7 @@ namespace ServiceLibrary
 
         public void DownloadContext()
         {
-            StartTime = DateTime.Now;
-            CountDownloadUrl = GetCountDownloadUrl();
+            GetSavePosition();
             Parallel.ForEach(Adress.Except(AdressList), url =>
             {
                 CurrentUrl.Add(url);
@@ -86,22 +78,27 @@ namespace ServiceLibrary
                 AdressList.Add(url);
                 CurrentUrl.TryTake(out url);
             });
+            OnPause = true;
             File.WriteAllText(BaseDirectory + "list.txt", string.Empty);
-            File.WriteAllText(BaseDirectory + "count.txt", string.Empty);
+            File.WriteAllText(BaseDirectory + "save.txt", string.Empty);
         }
 
         private static double GetDownloadSpeed()
         {
+            if (OnPause) return 0;
             var resultSecond = (DateTime.Now - StartTime).TotalSeconds;
-            var speedByte = _countByte / resultSecond;
+            var speedByte = CountByte / resultSecond;
             return speedByte / 1024;
         }
 
-        private static int GetCountDownloadUrl()
+        private static void GetSavePosition()
         {
-            using (var str = new StreamReader(BaseDirectory + "count.txt"))
+            using (var str = new StreamReader(BaseDirectory + "save.txt"))
             {
-                return Convert.ToInt32(str.ReadLine());
+                CountDownloadUrl = Convert.ToInt32(str.ReadLine());
+                var time = str.ReadLine();
+                StartTime = string.IsNullOrEmpty(time) ? DateTime.Now : Convert.ToDateTime(time);
+                CountByte = Convert.ToInt64(str.ReadLine());
             }
         }
 
