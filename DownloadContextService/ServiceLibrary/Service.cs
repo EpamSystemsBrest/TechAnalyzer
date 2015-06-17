@@ -12,15 +12,16 @@ namespace ServiceLibrary
 {
     public class Service
     {
-        public static volatile int CountDownloadUrl;
         public static long CountByte;
+        public static volatile int CountDownloadUrl;
         public static DateTime StartTime = DateTime.Now;
-        public static readonly ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
-        public static volatile ConcurrentBag<string> AdressList = new ConcurrentBag<string>();
         public static ServiseStatus Status { get; set; }
         public static double Speed { get { return GetDownloadSpeed(); } }
-        private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        public static readonly ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
+        public static volatile ConcurrentBag<string> AdressList = new ConcurrentBag<string>();
+
         private static readonly object objLock = new object();
+        private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private static IEnumerable<string> Adress { get { return GenerateAdressList("url.txt"); } }
         private readonly Action<Uri, Stream, Encoding> _action;
 
@@ -52,7 +53,7 @@ namespace ServiceLibrary
         {
             try
             {
-                var adress = "http://" + url;
+                var adress = string.Format("{0}{1}{2}/", Uri.UriSchemeHttp, Uri.SchemeDelimiter, url);
                 var request = WebRequest.CreateHttp(adress);
                 request.AutomaticDecompression = DecompressionMethods.GZip;
                 using (var response = (HttpWebResponse)request.GetResponse())
