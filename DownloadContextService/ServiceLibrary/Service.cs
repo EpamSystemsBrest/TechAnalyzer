@@ -18,20 +18,10 @@ namespace ServiceLibrary
         public static readonly ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
         public static volatile ConcurrentBag<string> AdressList = new ConcurrentBag<string>();
         public static ServiseStatus Status { get; set; }
-
-        public static double Speed
-        {
-            get { return GetDownloadSpeed(); }
-        }
-
+        public static double Speed { get { return GetDownloadSpeed(); } }
         private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private static readonly object objLock = new object();
-
-        private static IEnumerable<string> Adress
-        {
-            get { return GenerateAdressList("url.txt"); }
-        }
-
+        private static IEnumerable<string> Adress { get { return GenerateAdressList("url.txt"); } }
         private readonly Action<Uri, Stream, Encoding> _action;
 
         public enum ServiseStatus
