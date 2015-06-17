@@ -13,8 +13,8 @@ namespace DownloadContextService
 {
     public partial class DownloadServise : ServiceBase, IDisposable
     {
+        private IDisposable _webLog;
         private readonly Thread _thead = new Thread(new Service(action).DownloadContext);
-        private IDisposable _webLog = null;
         private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
         private static readonly Action<Uri, Stream, Encoding> action = (uri, stream, encoding) =>
@@ -37,6 +37,7 @@ namespace DownloadContextService
                 ConfigurationManager.AppSettings["EndpointProtocol"],
                 ConfigurationManager.AppSettings["EndpointPort"]));
 
+            Service.Status = Service.ServiseStatus.Running;
             Service.Log("Servise start!");
             Service.AdressList = GetListUrl();
             _thead.Start();
@@ -52,7 +53,7 @@ namespace DownloadContextService
         protected override void OnPause()
         {
             _thead.Abort();
-            Service.OnPause = true;
+            Service.Status = Service.ServiseStatus.Pause;
             SavePositions();
             Service.Log("Servise pause! It happened save state");
         }
@@ -61,7 +62,7 @@ namespace DownloadContextService
         {
             Service.Log("Servise resume! Сontinue process with saved state");
             Service.AdressList = GetListUrl();
-            Service.OnPause = false;
+            Service.Status = Service.ServiseStatus.Running;
             new Thread(new Service(action).DownloadContext).Start();
         }
 

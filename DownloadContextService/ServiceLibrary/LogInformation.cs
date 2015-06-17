@@ -9,5 +9,6 @@ namespace ServiceLibrary
         public ConcurrentBag<string> CurrentUrl { get; set; }
         public string Speed { get; set; }
         public int СountThead { get; set; }
+        public string Status { get; set; }
     }
 }

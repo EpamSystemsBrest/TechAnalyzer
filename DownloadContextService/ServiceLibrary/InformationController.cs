@@ -14,11 +14,11 @@ namespace ServiceLibrary
                 CurrentUrl = Service.CurrentUrl,
                 CountDownloadUrl = Service.CountDownloadUrl,
                 StartTime = Service.StartTime.ToString(),
+                Status = Service.Status.ToString(),
                 Speed = string.Format("{0:F3} {1}", Service.Speed, "КB/s"),
                 СountThead = Process.GetCurrentProcess().Threads.Count,
             };
             return Json(JsonConvert.SerializeObject(log));
         }
     }
-
 }

@@ -15,14 +15,31 @@ namespace ServiceLibrary
         public static DateTime StartTime;
         public static volatile int CountDownloadUrl;
         public static long CountByte;
-        private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        private static readonly object objLock = new object();
-        public static bool OnPause;
         public static readonly ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
         public static volatile ConcurrentBag<string> AdressList = new ConcurrentBag<string>();
+        public static ServiseStatus Status { get; set; }
+
+        public static double Speed
+        {
+            get { return GetDownloadSpeed(); }
+        }
+
+        private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly object objLock = new object();
+
+        private static IEnumerable<string> Adress
+        {
+            get { return GenerateAdressList("url.txt"); }
+        }
+
         private readonly Action<Uri, Stream, Encoding> _action;
-        public static double Speed { get { return GetDownloadSpeed(); } }
-        private static IEnumerable<string> Adress { get { return GenerateAdressList("url.txt"); } }
+
+        public enum ServiseStatus
+        {
+            Running = 1,
+            Pause = 2,
+            Done = 3
+        }
 
         public Service(Action<Uri, Stream, Encoding> action)
         {
@@ -78,14 +95,15 @@ namespace ServiceLibrary
                 AdressList.Add(url);
                 CurrentUrl.TryTake(out url);
             });
-            OnPause = true;
+
+            Status = ServiseStatus.Done;
             File.WriteAllText(BaseDirectory + "list.txt", string.Empty);
             File.WriteAllText(BaseDirectory + "save.txt", string.Empty);
         }
 
         private static double GetDownloadSpeed()
         {
-            if (OnPause) return 0;
+            if (Status == ServiseStatus.Pause || Status == ServiseStatus.Done) return 0;
             var resultSecond = (DateTime.Now - StartTime).TotalSeconds;
             var speedByte = CountByte / resultSecond;
             return speedByte / 1024;
