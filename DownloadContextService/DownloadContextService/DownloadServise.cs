@@ -46,7 +46,7 @@ namespace DownloadContextService
         protected override void OnStop()
         {
             _thead.Abort();
-            SavePositions();
+            SaveToFile();
             Service.Log("Servise stop! It happened save state");
         }
 
@@ -54,7 +54,7 @@ namespace DownloadContextService
         {
             _thead.Abort();
             Service.Status = Service.ServiseStatus.Pause;
-            SavePositions();
+            SaveToFile();
             Service.Log("Servise pause! It happened save state");
         }
 
@@ -69,20 +69,20 @@ namespace DownloadContextService
         protected override void OnShutdown()
         {
             _thead.Abort();
-            SavePositions();
+            SaveToFile();
             Service.Log("Servise shutdown! Сontinue process with saved state");
         }
 
-        private static void SavePositions()
+        private static void SaveToFile()
         {
             try
             {
                 SaveList();
-                WriteToFile();
+                SavePositions();
             }
             catch (Exception ex)
             {
-                Service.Log("it is impossible to save the state" + ex.Message);
+                Service.Log("It is impossible to save the state" + ex.Message);
             }
         }
 
@@ -97,7 +97,7 @@ namespace DownloadContextService
             }
         }
 
-        private static void WriteToFile()
+        private static void SavePositions()
         {
             using (var stream = new StreamWriter(BaseDirectory + "save.txt"))
             {

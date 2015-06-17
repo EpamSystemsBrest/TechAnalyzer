@@ -12,9 +12,9 @@ namespace ServiceLibrary
 {
     public class Service
     {
-        public static DateTime StartTime;
         public static volatile int CountDownloadUrl;
         public static long CountByte;
+        public static DateTime StartTime = DateTime.Now;
         public static readonly ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
         public static volatile ConcurrentBag<string> AdressList = new ConcurrentBag<string>();
         public static ServiseStatus Status { get; set; }
@@ -54,7 +54,6 @@ namespace ServiceLibrary
             {
                 var adress = "http://" + url;
                 var request = WebRequest.CreateHttp(adress);
-                request.AllowAutoRedirect = true;
                 request.AutomaticDecompression = DecompressionMethods.GZip;
                 using (var response = (HttpWebResponse)request.GetResponse())
                 {
@@ -85,7 +84,6 @@ namespace ServiceLibrary
                 AdressList.Add(url);
                 CurrentUrl.TryTake(out url);
             });
-
             Status = ServiseStatus.Done;
             File.WriteAllText(BaseDirectory + "list.txt", string.Empty);
             File.WriteAllText(BaseDirectory + "save.txt", string.Empty);
@@ -101,12 +99,13 @@ namespace ServiceLibrary
 
         private static void GetSavePosition()
         {
-            using (var str = new StreamReader(BaseDirectory + "save.txt"))
+            var path = BaseDirectory + "save.txt";
+            if (new FileInfo(path).Length == 0) return;
+            using (var str = new StreamReader(path))
             {
-                CountDownloadUrl = Convert.ToInt32(str.ReadLine());
-                var time = str.ReadLine();
-                StartTime = string.IsNullOrEmpty(time) ? DateTime.Now : Convert.ToDateTime(time);
-                CountByte = Convert.ToInt64(str.ReadLine());
+                CountDownloadUrl = int.Parse(str.ReadLine());
+                StartTime = DateTime.Parse(str.ReadLine());
+                CountByte = long.Parse(str.ReadLine());
             }
         }
 
