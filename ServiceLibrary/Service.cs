@@ -17,7 +17,7 @@ namespace ServiceLibrary
         public static DateTime StartTime = DateTime.Now;
         public static ServiseStatus Status { get; set; }
         public static double Speed { get { return GetDownloadSpeed(); } }
-        public static readonly ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
+        public static volatile ConcurrentBag<string> CurrentUrl = new ConcurrentBag<string>();
         public static volatile ConcurrentBag<string> AdressList = new ConcurrentBag<string>();
 
         private static readonly object objLock = new object();
