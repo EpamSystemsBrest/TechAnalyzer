@@ -14,7 +14,7 @@ namespace DownloadContextService
     public partial class DownloadServise : ServiceBase, IDisposable
     {
         private IDisposable _webLog;
-        private readonly Thread _thead = new Thread(new Service(action).DownloadContext);
+        private Thread _thead = new Thread(new Service(action).DownloadContext);
         private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
         private static readonly Action<Uri, Stream, Encoding> action = (uri, stream, encoding) =>
@@ -63,7 +63,8 @@ namespace DownloadContextService
             Service.Log("Servise resume! Сontinue process with saved state");
             Service.AdressList = GetListUrl();
             Service.Status = Service.ServiseStatus.Running;
-            new Thread(new Service(action).DownloadContext).Start();
+            _thead = new Thread(new Service(action).DownloadContext);
+            _thead.Start();
         }
 
         protected override void OnShutdown()

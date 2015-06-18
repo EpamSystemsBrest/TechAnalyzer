@@ -58,8 +58,11 @@ namespace ServiceLibrary
                 request.AutomaticDecompression = DecompressionMethods.GZip;
                 using (var response = (HttpWebResponse) request.GetResponse())
                 {
+                    lock (objLock)
+                    {
+                        CountByte += response.ContentLength;
+                    }
                     var stream = response.GetResponseStream();
-                    CountByte = Interlocked.Add(ref CountByte, response.ContentLength);
                     if (_action != null) _action(new Uri(adress), stream, GetEncoding(response));
                 }
             }
@@ -74,6 +77,8 @@ namespace ServiceLibrary
             return response.CharacterSet == null ? Encoding.UTF8 : Encoding.GetEncoding(response.CharacterSet);
         }
 
+#pragma warning disable 0420, 3021
+        [CLSCompliant(false)]
         public void DownloadContext()
         {
             GetSavePosition();

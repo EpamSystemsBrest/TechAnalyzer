@@ -49,7 +49,7 @@ namespace HtmlParser.Test
                     {
                         foreach (var token in lexer.Parse()) ;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         Debug.WriteLine("Failed: " + entry.FullName);
                         failedCount++;
