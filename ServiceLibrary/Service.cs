@@ -22,7 +22,7 @@ namespace ServiceLibrary
 
         private static readonly object objLock = new object();
         private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        private static IEnumerable<string> Adress { get { return GenerateAdressList("url.txt"); } }
+        private static IEnumerable<string> Adress { get { return GenerateAdressList(); } }
         private readonly Action<Uri, Stream, Encoding> _action;
 
         public enum ServiseStatus
@@ -37,9 +37,9 @@ namespace ServiceLibrary
             _action = action;
         }
 
-        private static IEnumerable<string> GenerateAdressList(string url)
+        private static IEnumerable<string> GenerateAdressList()
         {
-            using (var stream = new StreamReader(BaseDirectory + url))
+            using (var stream = new StreamReader(BaseDirectory + "url.txt"))
             {
                 string line;
                 while (!string.IsNullOrEmpty(line = stream.ReadLine()))
@@ -53,10 +53,10 @@ namespace ServiceLibrary
         {
             try
             {
-                var adress = string.Format("{0}{1}{2}/", Uri.UriSchemeHttp, Uri.SchemeDelimiter, url);
+                var adress = string.Format("{0}{1}{2}", Uri.UriSchemeHttp, Uri.SchemeDelimiter, url);
                 var request = WebRequest.CreateHttp(adress);
                 request.AutomaticDecompression = DecompressionMethods.GZip;
-                using (var response = (HttpWebResponse)request.GetResponse())
+                using (var response = (HttpWebResponse) request.GetResponse())
                 {
                     var stream = response.GetResponseStream();
                     CountByte = Interlocked.Add(ref CountByte, response.ContentLength);
@@ -94,8 +94,8 @@ namespace ServiceLibrary
         {
             if (Status == ServiseStatus.Pause || Status == ServiseStatus.Done) return 0;
             var resultSecond = (DateTime.Now - StartTime).TotalSeconds;
-            var speedByte = CountByte / resultSecond;
-            return speedByte / 1024;
+            var speedByte = CountByte/resultSecond;
+            return speedByte/1024;
         }
 
         private static void GetSavePosition()
