@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DownloadContextService
+namespace DownloadService
 {
     static class Program
     {
@@ -17,7 +17,7 @@ namespace DownloadContextService
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[] 
             { 
-                new DownloadServise() 
+                new DownloadService() 
             };
             ServiceBase.Run(ServicesToRun);
         }

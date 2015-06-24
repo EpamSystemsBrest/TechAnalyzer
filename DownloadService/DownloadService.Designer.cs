@@ -1,6 +1,6 @@
-﻿namespace DownloadContextService
+﻿namespace DownloadService
 {
-    partial class DownloadServise
+    partial class DownloadService
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,17 +29,14 @@
         private void InitializeComponent()
         {
             // 
-            // DownloadServise
+            // DownloadService
             // 
-            this.CanHandlePowerEvent = true;
-            this.CanHandleSessionChangeEvent = true;
             this.CanPauseAndContinue = true;
             this.CanShutdown = true;
-            this.ServiceName = "DownloadServise";
+            this.ServiceName = "DownloadService";
 
         }
 
         #endregion
-
     }
 }

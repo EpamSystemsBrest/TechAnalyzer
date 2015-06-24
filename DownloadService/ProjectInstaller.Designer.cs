@@ -1,4 +1,4 @@
-﻿namespace DownloadContextService
+﻿namespace DownloadService
 {
     partial class ProjectInstaller
     {
@@ -39,7 +39,9 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "DownloadServise";
+            this.serviceInstaller1.Description = "Get context from top websites";
+            this.serviceInstaller1.DisplayName = "DownloadServise";
+            this.serviceInstaller1.ServiceName = "DownloadService";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller

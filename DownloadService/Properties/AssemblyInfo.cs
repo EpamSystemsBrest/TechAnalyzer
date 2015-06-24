@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DownloadContextService")]
+[assembly: AssemblyTitle("DownloadService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DownloadContextService")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("EPAM Systems")]
+[assembly: AssemblyProduct("DownloadService")]
+[assembly: AssemblyCopyright("Copyright © EPAM Systems 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7a88f7cf-2f6f-4394-8846-839c2ba5209f")]
+[assembly: Guid("6c343d45-6ed9-435f-b4b6-1b4802dfb95c")]
 
 // Version information for an assembly consists of the following four values:
 //
