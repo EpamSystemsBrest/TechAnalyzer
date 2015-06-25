@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using System.Threading;
 using DownloadService.ServiseState;
 using Newtonsoft.Json.Converters;
 
@@ -18,27 +19,28 @@ namespace DownloadService
     [DataContract(Name = "Statistics")]
     public class Statistics
     {
+
         public Statistics()
         {
             StartTime = DateTime.Now;
-            Status = ServiseStatus.Running;
             CurrentUrl = new ConcurrentBag<string>();
             AdressList = new ConcurrentBag<string>();
+            newTime = DateTime.Now;
         }
 
-        [DataMember] 
+        [DataMember]
         public DateTime StartTime;
 
-        [IgnoreDataMember] 
-        public ServiseStatus Status;
-
-        [DataMember] 
+        [DataMember]
         public volatile int CountDownloadUrl;
 
-        [IgnoreDataMember] 
+        [DataMember]
+        public long CountByte { get; set; }
+
+        [IgnoreDataMember]
         public volatile ConcurrentBag<string> CurrentUrl;
 
-        [DataMember] 
+        [DataMember]
         public volatile ConcurrentBag<string> AdressList;
 
         [IgnoreDataMember]
@@ -48,19 +50,74 @@ namespace DownloadService
         private string Speed { get { return string.Format("{0:F3} {1}", GetDownloadSpeed(), "КB/s"); } }
 
         [DataMember]
-        public long CountByte { get; set; }
+        private DateTime newTime;
+
+        [DataMember]
+        private DateTime pauseTime;
+
+        [IgnoreDataMember]
+        private ServiseStatus status;
+
+        [IgnoreDataMember]
+        private readonly object objLock = new object();
+
+        [IgnoreDataMember]
+        public ServiseStatus Status
+        {
+            private get { return status; }
+            set
+            {
+                status = value;
+                SetPauseTime(value);
+                ChangeServiseState(value);
+                SetNewTime(value);
+            }
+        }
+
+        private void SetPauseTime(ServiseStatus value)
+        {
+            if (value == ServiseStatus.Pause)
+                pauseTime = DateTime.Now;
+        }
+
+        private void SetNewTime(ServiseStatus value)
+        {
+            if (value == ServiseStatus.Resume)
+            {
+                newTime = DateTime.Now - (pauseTime - newTime);
+            }
+        }
+
+        private void ChangeServiseState(ServiseStatus value)
+        {
+            if (value == ServiseStatus.Done) return;
+            if (value != ServiseStatus.Running && value != ServiseStatus.Resume)
+            {
+                ServiceStateSerializer.SerializeServiceStateToXml(this);
+                return;
+            }
+
+            var statistic = ServiceStateSerializer.DeserializeServiceState();
+            CountDownloadUrl = statistic.CountDownloadUrl;
+            AdressList = statistic.AdressList;
+            StartTime = statistic.StartTime;
+            CountByte = statistic.CountByte;
+            newTime = statistic.newTime;
+            pauseTime = statistic.pauseTime;
+        }
 
         private double GetDownloadSpeed()
         {
             if (Status == ServiseStatus.Pause || Status == ServiseStatus.Done) return 0;
-            var resultSecond = (DateTime.Now - StartTime).TotalSeconds;
-            var speedByte = CountByte/resultSecond;
-            return speedByte/1024;
+
+            var resultSecond = (DateTime.Now - newTime).TotalSeconds;
+            var speedByte = CountByte / resultSecond;
+            return speedByte / 1024;
         }
 
         public UsageDetails GetUsageDetails()
         {
-            return new UsageDetails()
+            return new UsageDetails
             {
                 StartTime = StartTime,
                 CountDownloadUrl = CountDownloadUrl,
@@ -69,6 +126,24 @@ namespace DownloadService
                 СountThead = СountThead,
                 Speed = Speed
             };
+        }
+
+        public void DownloadStarted(string url)
+        {
+            CurrentUrl.Add(url);
+        }
+
+#pragma warning disable 0420, 3021
+        [CLSCompliant(false)]
+        public void DownloadFinished(string url, long size)
+        {
+            lock (objLock)
+            {
+                CountByte += size;
+            }
+            Interlocked.Increment(ref CountDownloadUrl);
+            AdressList.Add(url);
+            CurrentUrl.TryTake(out url);
         }
     }
 }

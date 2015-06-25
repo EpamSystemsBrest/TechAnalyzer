@@ -6,16 +6,16 @@ namespace DownloadService
 {
     public class InformationController : ApiController
     {
-        private readonly Statistics _statistics;
+        private readonly Statistics statistics;
 
         public InformationController(Statistics statistic)
         {
-            _statistics = statistic;
+            statistics = statistic;
         }
 
         public JsonResult<string> Get()
         {
-            return Json(JsonConvert.SerializeObject(_statistics.GetUsageDetails()));
+            return Json(JsonConvert.SerializeObject(statistics.GetUsageDetails()));
         }
     }
 }

@@ -7,11 +7,11 @@ namespace DownloadService
 {
     public class Startup
     {
-        private readonly Statistics _statistics;
+        private readonly Statistics statistics;
 
         public Startup(Statistics statistics)
         {
-            _statistics = statistics;
+            this.statistics = statistics;
         }
 
         public void Configuration(IAppBuilder appBuilder)
@@ -24,7 +24,7 @@ namespace DownloadService
                 );
 
             var kernel = new StandardKernel();
-            kernel.Bind<Statistics>().ToConstant(_statistics).InThreadScope();
+            kernel.Bind<Statistics>().ToConstant(statistics).InThreadScope();
             config.DependencyResolver = new NinjectDependencyResolver(kernel);
             appBuilder.UseWebApi(config);
         }

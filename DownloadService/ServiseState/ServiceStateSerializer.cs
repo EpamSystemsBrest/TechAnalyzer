@@ -11,16 +11,19 @@ namespace DownloadService.ServiseState
     {
         Running = 1,
         Pause = 2,
-        Done = 3
+        Done = 3,
+        Stop = 4,
+        Shutdown = 5,
+        Resume = 6
     }
 
     public class ServiceStateSerializer
     {
-        private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
         public static void SerializeServiceStateToXml(Statistics statistics)
         {
-            using (var file = new FileStream(BaseDirectory + "save.xml", FileMode.OpenOrCreate))
+            using (var file = new FileStream(baseDirectory + "save.xml", FileMode.OpenOrCreate))
             {
                 var serializer = new DataContractSerializer(typeof (Statistics));
                 serializer.WriteObject(file, statistics);
@@ -30,7 +33,7 @@ namespace DownloadService.ServiseState
 
         public static Statistics DeserializeServiceState()
         {
-            var path = BaseDirectory + "save.xml";
+            var path = baseDirectory + "save.xml";
             if (new FileInfo(path).Length == 0) return new Statistics();
 
             var dataContractSerializer = new DataContractSerializer(typeof (Statistics));
@@ -45,7 +48,7 @@ namespace DownloadService.ServiseState
 
         public static void ServiseStateClear()
         {
-            File.WriteAllText(BaseDirectory + "save.xml", string.Empty);
+            File.WriteAllText(baseDirectory + "save.xml", string.Empty);
         }
     }
 }

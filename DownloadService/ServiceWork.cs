@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using DownloadService.ServiseState;
 
@@ -15,7 +12,7 @@ namespace DownloadService
     public class ServiceWork
     {
         private Statistics Statistic { get; set; }
-        private readonly object objLock = new object();
+
         private readonly Action<Uri, Stream, Encoding> _action;
         public bool IsFinished;
 
@@ -37,26 +34,24 @@ namespace DownloadService
             }
         }
 
-        private void ParseContextFromUrl(string url)
+        private long ParseContextFromUrl(string url)
         {
             try
             {
                 var adress = string.Format("{0}{1}{2}", Uri.UriSchemeHttp, Uri.SchemeDelimiter, url);
                 var request = WebRequest.CreateHttp(adress);
                 request.AutomaticDecompression = DecompressionMethods.GZip;
-                using (var response = (HttpWebResponse) request.GetResponse())
+                using (var response = (HttpWebResponse)request.GetResponse())
                 {
-                    lock (objLock)
-                    {
-                        Statistic.CountByte += response.ContentLength;
-                    }
                     var stream = response.GetResponseStream();
                     if (_action != null) _action(new Uri(adress), stream, GetEncoding(response));
+                    return response.ContentLength;
                 }
             }
             catch (Exception ex)
             {
                 Log.WriteLog(string.Join(":", url, ex.Message));
+                return 0;
             }
         }
 
@@ -65,19 +60,13 @@ namespace DownloadService
             return response.CharacterSet == null ? Encoding.UTF8 : Encoding.GetEncoding(response.CharacterSet);
         }
 
-#pragma warning disable 0420, 3021
-        [CLSCompliant(false)]
         public void DownloadContext()
         {
-            Statistic.Status = ServiseStatus.Running;
             var isDone = Parallel.ForEach(GenerateAdressList().Except(Statistic.AdressList), (url, state) =>
             {
-
-                Statistic.CurrentUrl.Add(url);
-                ParseContextFromUrl(url);
-                Interlocked.Increment(ref Statistic.CountDownloadUrl);
-                Statistic.AdressList.Add(url);
-                Statistic.CurrentUrl.TryTake(out url);
+                Statistic.DownloadStarted(url);
+                var size = ParseContextFromUrl(url);
+                Statistic.DownloadFinished(url, size);
                 if (IsFinished) state.Break();
             }).IsCompleted;
 
