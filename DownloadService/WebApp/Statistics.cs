@@ -44,22 +44,7 @@ namespace DownloadService
         public volatile ConcurrentBag<string> AdressList;
 
         [IgnoreDataMember]
-        private int СountThead { get { return Process.GetCurrentProcess().Threads.Count; } }
-
-        [IgnoreDataMember]
-        private string Speed { get { return string.Format("{0:F3} {1}", GetDownloadSpeed(), "КB/s"); } }
-
-        [DataMember]
-        private DateTime newTime;
-
-        [DataMember]
-        private DateTime pauseTime;
-
-        [IgnoreDataMember]
-        private ServiseStatus status;
-
-        [IgnoreDataMember]
-        private readonly object objLock = new object();
+        public string Speed { get { return string.Format("{0:F3} {1}", GetDownloadSpeed(), "КB/s"); } }
 
         [IgnoreDataMember]
         public ServiseStatus Status
@@ -73,6 +58,18 @@ namespace DownloadService
                 SetNewTime(value);
             }
         }
+
+        [IgnoreDataMember]
+        private int СountThead { get { return Process.GetCurrentProcess().Threads.Count; } }
+
+        [DataMember]
+        private DateTime newTime;
+
+        [DataMember]
+        private DateTime pauseTime;
+
+        [IgnoreDataMember]
+        private ServiseStatus status;
 
         private void SetPauseTime(ServiseStatus value)
         {
@@ -126,24 +123,6 @@ namespace DownloadService
                 СountThead = СountThead,
                 Speed = Speed
             };
-        }
-
-        public void DownloadStarted(string url)
-        {
-            CurrentUrl.Add(url);
-        }
-
-#pragma warning disable 0420, 3021
-        [CLSCompliant(false)]
-        public void DownloadFinished(string url, long size)
-        {
-            lock (objLock)
-            {
-                CountByte += size;
-            }
-            Interlocked.Increment(ref CountDownloadUrl);
-            AdressList.Add(url);
-            CurrentUrl.TryTake(out url);
         }
     }
 }

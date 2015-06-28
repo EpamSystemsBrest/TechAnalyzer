@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DownloadService.ServiseState;
 
@@ -12,6 +13,7 @@ namespace DownloadService
     public class ServiceWork
     {
         private Statistics Statistic { get; set; }
+        private readonly object objLock = new object();
 
         private readonly Action<Uri, Stream, Encoding> _action;
         public bool IsFinished;
@@ -64,15 +66,33 @@ namespace DownloadService
         {
             var isDone = Parallel.ForEach(GenerateAdressList().Except(Statistic.AdressList), (url, state) =>
             {
-                Statistic.DownloadStarted(url);
+                DownloadStarted(url);
                 var size = ParseContextFromUrl(url);
-                Statistic.DownloadFinished(url, size);
+                DownloadFinished(url, size);
                 if (IsFinished) state.Break();
             }).IsCompleted;
 
             if (!isDone) return;
             Statistic.Status = ServiseStatus.Done;
             ServiceStateSerializer.ServiseStateClear();
+        }
+
+        private void DownloadStarted(string url)
+        {
+            Statistic.CurrentUrl.Add(url);
+        }
+
+#pragma warning disable 0420, 3021
+        [CLSCompliant(false)]
+        private void DownloadFinished(string url, long size)
+        {
+            lock (objLock)
+            {
+                Statistic.CountByte += size;
+            }
+            Interlocked.Increment(ref Statistic.CountDownloadUrl);
+            Statistic.AdressList.Add(url);
+            Statistic.CurrentUrl.TryTake(out url);
         }
     }
 }
