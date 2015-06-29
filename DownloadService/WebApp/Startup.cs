@@ -7,14 +7,8 @@ namespace DownloadService
 {
     public class Startup
     {
-        private readonly Statistics statistics;
 
-        public Startup(Statistics statistics)
-        {
-            this.statistics = statistics;
-        }
-
-        public void Configuration(IAppBuilder appBuilder)
+        public void Configuration(IAppBuilder appBuilder, params object[] singletons)
         {
             var config = new HttpConfiguration();
             config.Routes.MapHttpRoute(
@@ -24,7 +18,10 @@ namespace DownloadService
                 );
 
             var kernel = new StandardKernel();
-            kernel.Bind<Statistics>().ToConstant(statistics).InThreadScope();
+            foreach (var singleton in singletons)
+            {
+                kernel.Bind(singleton.GetType()).ToConstant(singleton).InThreadScope();  
+            }
             config.DependencyResolver = new NinjectDependencyResolver(kernel);
             appBuilder.UseWebApi(config);
         }

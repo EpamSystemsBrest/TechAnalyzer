@@ -39,10 +39,11 @@ namespace DownloadService
                 Status = ServiseStatus.Running
             };
 
-            webLog = WebApp.Start(string.Format("{0}://{1}",
+            var endpoint = string.Format("{0}://{1}",
                 ConfigurationManager.AppSettings["EndpointProtocol"],
-                ConfigurationManager.AppSettings["EndpointPort"]), new Startup(statistic).Configuration);
+                ConfigurationManager.AppSettings["EndpointPort"]);
 
+            webLog = WebApp.Start(endpoint, appBuilder => new Startup().Configuration(appBuilder, statistic));
             
             serviceWork = new ServiceWork(action, statistic);
             
