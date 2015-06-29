@@ -15,7 +15,7 @@ namespace DownloadService
         private Thread thead;
         private IDisposable webLog;
         private ServiceWork serviceWork;
-        private Statistics statistic = new Statistics();
+        private Statistics statistic;
 
         private static readonly Action<Uri, Stream, Encoding> action = (uri, stream, encoding) =>
         {
@@ -34,46 +34,60 @@ namespace DownloadService
         {
             ServicePointManager.DefaultConnectionLimit = 12;
 
+            statistic = new Statistics
+            {
+                Status = ServiseStatus.Running
+            };
+
             webLog = WebApp.Start(string.Format("{0}://{1}",
                 ConfigurationManager.AppSettings["EndpointProtocol"],
                 ConfigurationManager.AppSettings["EndpointPort"]), new Startup(statistic).Configuration);
 
-            statistic.Status = ServiseStatus.Running;
+            
             serviceWork = new ServiceWork(action, statistic);
-            thead = new Thread(serviceWork.DownloadContext);
-            thead.Start();
-            Log.WriteLog("Servise start!");
+            
+            StartThread();
 
+            Log.WriteLog("Servise start!");
         }
 
         protected override void OnStop()
         {
-            serviceWork.IsFinished = true;
-            statistic.Status = ServiseStatus.Stop;
+            FinishThread(ServiseStatus.Stop);
             Log.WriteLog("Servise stop! It happened save state");
         }
 
         protected override void OnPause()
         {
-            serviceWork.IsFinished = true;
-            statistic.Status = ServiseStatus.Pause;
+            FinishThread(ServiseStatus.Pause);
             Log.WriteLog("Servise pause! It happened save state");
         }
 
         protected override void OnContinue()
         {
             statistic.Status = ServiseStatus.Resume;
-            serviceWork = new ServiceWork(action, statistic);
-            thead = new Thread(serviceWork.DownloadContext);
-            thead.Start();
+            StartThread();
             Log.WriteLog("Servise resume! Сontinue process with saved state");
         }
 
         protected override void OnShutdown()
         {
-            serviceWork.IsFinished = true;
-            statistic.Status = ServiseStatus.Shutdown;
+            FinishThread(ServiseStatus.Shutdown);
             Log.WriteLog("Servise shutdown! Сontinue process with saved state");
+        }
+
+        private void StartThread()
+        {
+            thead = new Thread(serviceWork.DownloadContext);
+            thead.Start();
+        }
+
+        private void FinishThread(ServiseStatus status)
+        {
+            serviceWork.IsFinished = true;
+            thead.Join();        // Wait when thread is finished
+            statistic.Status = status;
+            thead = null;
         }
 
         public new void Dispose()
