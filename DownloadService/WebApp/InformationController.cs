@@ -13,9 +13,9 @@ namespace DownloadService
             statistics = statistic;
         }
 
-        public JsonResult<string> Get()
+        public UsageDetails Get()
         {
-            return Json(JsonConvert.SerializeObject(statistics.GetUsageDetails()));
+            return statistics.GetUsageDetails();
         }
     }
 }
