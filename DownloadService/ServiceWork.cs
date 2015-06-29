@@ -13,7 +13,6 @@ namespace DownloadService
     public class ServiceWork
     {
         private Statistics Statistic { get; set; }
-        private readonly object objLock = new object();
 
         private readonly Action<Uri, Stream, Encoding> _action;
         public bool IsFinished;
@@ -47,7 +46,7 @@ namespace DownloadService
                 {
                     var stream = response.GetResponseStream();
                     if (_action != null) _action(new Uri(adress), stream, GetEncoding(response));
-                    return response.ContentLength;
+                    return stream.Length;
                 }
             }
             catch (Exception ex)
@@ -66,9 +65,9 @@ namespace DownloadService
         {
             var isDone = Parallel.ForEach(GenerateAdressList().Except(Statistic.AdressList), (url, state) =>
             {
-                DownloadStarted(url);
+                Statistic.DownloadStarted(url);
                 var size = ParseContextFromUrl(url);
-                DownloadFinished(url, size);
+                Statistic.DownloadFinished(url, size);
                 if (IsFinished) state.Break();
             }).IsCompleted;
 
@@ -77,22 +76,5 @@ namespace DownloadService
             ServiceStateSerializer.ServiseStateClear();
         }
 
-        private void DownloadStarted(string url)
-        {
-            Statistic.CurrentUrl.Add(url);
-        }
-
-#pragma warning disable 0420, 3021
-        [CLSCompliant(false)]
-        private void DownloadFinished(string url, long size)
-        {
-            lock (objLock)
-            {
-                Statistic.CountByte += size;
-            }
-            Interlocked.Increment(ref Statistic.CountDownloadUrl);
-            Statistic.AdressList.Add(url);
-            Statistic.CurrentUrl.TryTake(out url);
-        }
     }
 }

@@ -19,6 +19,7 @@ namespace DownloadService
     [DataContract(Name = "Statistics")]
     public class Statistics
     {
+        private readonly object objLock = new object();
 
         public Statistics()
         {
@@ -44,9 +45,6 @@ namespace DownloadService
         public volatile ConcurrentBag<string> AdressList;
 
         [IgnoreDataMember]
-        public string Speed { get { return string.Format("{0:F3} {1}", GetDownloadSpeed(), "КB/s"); } }
-
-        [IgnoreDataMember]
         public ServiseStatus Status
         {
             private get { return status; }
@@ -59,9 +57,6 @@ namespace DownloadService
             }
         }
 
-        [IgnoreDataMember]
-        private int СountThead { get { return Process.GetCurrentProcess().Threads.Count; } }
-
         [DataMember]
         private DateTime newTime;
 
@@ -70,6 +65,21 @@ namespace DownloadService
 
         [IgnoreDataMember]
         private ServiseStatus status;
+
+        public void DownloadStarted(string url) {
+            CurrentUrl.Add(url);
+        }
+
+        #pragma warning disable 0420, 3021
+        [CLSCompliant(false)]
+        public void DownloadFinished(string url, long size) {
+            lock (objLock) {
+                CountByte += size;
+            }
+            Interlocked.Increment(ref CountDownloadUrl);
+            AdressList.Add(url);
+            CurrentUrl.TryTake(out url);
+        }
 
         private void SetPauseTime(ServiseStatus value)
         {
@@ -120,8 +130,8 @@ namespace DownloadService
                 CountDownloadUrl = CountDownloadUrl,
                 CurrentUrl = CurrentUrl,
                 Status = Status,
-                СountThead = СountThead,
-                Speed = Speed
+                СountThead = Process.GetCurrentProcess().Threads.Count,
+                Speed = string.Format("{0:F3} {1}", GetDownloadSpeed(), "КB/s")
             };
         }
     }
