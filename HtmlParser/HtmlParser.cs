@@ -10,9 +10,9 @@ namespace HtmlParser
 {
     public class HtmlParser
     {
-        private static readonly string[] buttonScopeOpenTags = {"div","li","ul","p","h1","h2","h3","h4","h5","h6","ol","dl","fieldset","figcaption","figure","article","aside","blockquote",
+        private static readonly string[] buttonScopeOpenTags = {"div","ul","p","h1","h2","h3","h4","h5","h6","ol","dl","fieldset","figcaption","figure","article","aside","blockquote",
                                                                 "center","address","dialog","dir","summary","details","main","footer","header","nav","section","menu","hgroup","pre","listing",
-                                                                "dd","dt","hr","xmp","plaintext"}; //+ </p> + <table>
+                                                                "dd","dt","hr","xmp","plaintext"};
 
         private static readonly string[] scopeCloseTags = {"ol","ul","dl","fieldset","button","figcaption","figure","article","aside","blockquote","center","address","dialog","div",
                                                            "summary","details","listing","footer","header","nav","section","menu","hgroup","main","pre","h1","h2","h3","h4","h5","h6",
@@ -22,12 +22,14 @@ namespace HtmlParser
                                                             // + mi mo mn ms mtext annotation-xml foreignObject dese
 
         private static readonly string[] impliedEndTags = { "dd", "dt", "li", "p", "rp", "rt", "option", "optgroup", "rb", "rtc" };
-        //private static readonly HtmlTag[] impliedEndTags = { HtmlTag.Dd, HtmlTag.Dt, HtmlTag.Li, HtmlTag.P, HtmlTag.Rp, HtmlTag.Rt, HtmlTag.Option, HtmlTag.Optgroup, HtmlTag.Rb, HtmlTag.Rtc };
+
+        private static readonly string[] rubyTags = { "rb", "rtc", "rp", "rt" };
 
 
         private IEnumerable<HtmlToken> htmlTokens;
         private List<HtmlToken> stackOfOpenElements;
         private StringBuilder fixedHtml;
+        private int insertPosition;
         private int indexShift;
 
         private HtmlToken CurrentTag
@@ -35,30 +37,92 @@ namespace HtmlParser
             get { return stackOfOpenElements.Count > 0 ? stackOfOpenElements[stackOfOpenElements.Count - 1] : default(HtmlToken); }
         }
 
+        private int InsertPosition
+        {
+            get { return insertPosition + indexShift; }
+        }
+
+
         public string FixHtmlTags(string html)
         {
             var lexer = new HtmlLexer();
             lexer.Load(html);
             htmlTokens = lexer.Parse();
+            stackOfOpenElements = new List<HtmlToken>();
             indexShift = 0;
             fixedHtml = new StringBuilder(html);
 
             foreach (var token in htmlTokens)
             {
-                var tokenType = token.TokenType;
-                var tokenName = token.Name.Name.ToString(token.Source);
+                var tokenName = token.GetTagName();
 
-                if(tokenType == TokenType.OpenTag)
+                if (token.TokenType == TokenType.OpenTag)
                 {
+                    insertPosition = token.Name.Name.StartIndex - 1;
 
+                    if (buttonScopeOpenTags.Contains(tokenName) && IsInButtonScope())
+                        GenerateImpliedEndTags();
+
+                    else if (tokenName == "li" && IsInListItemScope())
+                    {
+                        ClearStackBackTo("li", "dd", "dt");
+                        InsertCloseTag(tokenName);
+                        stackOfOpenElements.Pop();
+                    }
+
+                    else if (tokenName == "form" && "form".IsInStack(stackOfOpenElements) == false && IsInButtonScope())
+                        GenerateImpliedEndTags();
+
+                    else if (tokenName == "button" && IsInScope(tokenName))
+                        GenerateImpliedEndTags();
+
+                    else if (rubyTags.Contains(tokenName) && IsInScope("ruby"))
+                        GenerateImpliedEndTags();
+
+                    stackOfOpenElements.Push(token);
                 }
-                else if(tokenType == TokenType.CloseTag)
+                else if (token.TokenType == TokenType.CloseTag)
                 {
+                    insertPosition = token.Name.Name.StartIndex - 2;
 
+                    if (tokenName == "div" && IsInScope(tokenName))
+                    {
+                        ClearStackBackTo(tokenName);
+                        stackOfOpenElements.Pop();
+                    }
+
+                    else if (tokenName == "li" && IsInListItemScope())
+                    {
+                        ClearStackBackTo("li", "dd", "dt");
+                        stackOfOpenElements.Pop();
+                    }
+
+                    else if (tokenName == "p" && IsInButtonScope())
+                    {
+                        ClearStackBackTo(tokenName);
+                        stackOfOpenElements.Pop();
+                    }
+
+                    else if (tokenName == "form" && "form".IsInStack(stackOfOpenElements) && IsInScope("form"))
+                    {
+                        GenerateImpliedEndTags();
+                        stackOfOpenElements.Remove(stackOfOpenElements.FindLast(t => t.GetTag() == HtmlTag.Form));
+                    }
+
+                    else if (scopeCloseTags.Contains(tokenName) && IsInScope(tokenName))
+                    {
+                        ClearStackBackTo(tokenName);
+                        stackOfOpenElements.Pop();
+                    }
+
+                    else
+                    {
+                        InBodyEndTagAnythingElse(tokenName);
+                    }
                 }
             }
 
-            throw new NotImplementedException();
+            return fixedHtml.ToString();
         }
 
         private void GenerateImpliedEndTags()
@@ -66,26 +130,33 @@ namespace HtmlParser
             var currentTag = CurrentTag;
             var currentTagName = currentTag.GetTagName();
 
-            while(impliedEndTags.Contains(currentTagName))
+            while (impliedEndTags.Contains(currentTagName))
             {
-                //TODO: insert closing tag in sb
-                //
+                InsertCloseTag(currentTagName);
                 stackOfOpenElements.Pop();
+                currentTag = CurrentTag;
+                currentTagName = currentTag.GetTagName();
             }
         }
 
-        private void ClearStackBackTo(string tagName)
+        private void ClearStackBackTo(params string[] tagNames)
         {
             var currentTag = CurrentTag;
             var currentTagName = currentTag.GetTagName();
 
-            while (currentTagName != tagName && currentTagName != "html" && currentTagName != "template")
+            while (tagNames.Contains(currentTagName) == false && currentTagName != "html" && currentTagName != "template")
             {
-                // TODO: insert closing tag in sb if needed
-                //
+                InsertCloseTag(currentTagName);
                 stackOfOpenElements.Pop();
                 currentTag = CurrentTag;
+                currentTagName = currentTag.GetTagName();
             }
+        }
+
+        private void InsertCloseTag(string insertTagName)
+        {
+            fixedHtml.Insert(InsertPosition, string.Format("</" + insertTagName + ">"));
+            indexShift += insertTagName.Length + 3;
         }
 
         private bool IsInScope(string tagName)
@@ -120,20 +191,47 @@ namespace HtmlParser
             return false;
         }
 
+        private bool IsInListItemScope()
+        {
+            for (int i = stackOfOpenElements.Count - 1; i >= 0; i--)
+            {
+                var currentTag = stackOfOpenElements[i];
+                var currentTagName = currentTag.GetTagName();
+
+                if (currentTagName == "li" || currentTagName == "dd" || currentTagName == "dt")
+                    return true;
+                else if (scopedElements.Contains(currentTagName) || currentTagName == "ol" || currentTagName == "ul")
+                    return false;
+            }
+
+            return false;
+        }
+
+        private void InBodyEndTagAnythingElse(string tokenName)
+        {
+            var index = stackOfOpenElements.Count - 1;
+            var currentTag = CurrentTag;
+
+            while (index >= 0)
+            {
+                if (currentTag.GetTagName() == tokenName)
+                {
+                    ClearStackBackTo(tokenName);
+                    stackOfOpenElements.Pop();
+                    break;
+                }
+
+                currentTag = stackOfOpenElements[--index];
+            }
+        }
+
     }
 
-    static class Extensions
+    static class HtmlTokenExtensions
     {
-        //internal static HtmlToken Pop(this List<HtmlToken> list)
-        //{
-        //    var temp = list[list.Count - 1];
-        //    list.RemoveAt(list.Count - 1);
-        //    return temp;
-        //}
-
         internal static void Pop(this List<HtmlToken> list)
-        {            
-            list.RemoveAt(list.Count - 1);         
+        {
+            list.RemoveAt(list.Count - 1);
         }
 
         internal static void Push(this List<HtmlToken> list, HtmlToken token)
@@ -144,6 +242,11 @@ namespace HtmlParser
         internal static string GetTagName(this HtmlToken token)
         {
             return token.Name.Name.ToString(token.Source).ToLower();
+        }
+
+        internal static bool IsInStack(this string tagName, List<HtmlToken> stackOfOpenElements)
+        {
+            return stackOfOpenElements.Any(token => token.GetTagName() == tagName);
         }
     }
 }
