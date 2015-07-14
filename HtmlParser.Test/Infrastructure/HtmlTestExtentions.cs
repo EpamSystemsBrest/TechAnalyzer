@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlParser.Lexer;
+using HtmlParser;
 using Xunit;
 
 namespace HtmlParser.Test.Infrastructure
@@ -46,6 +47,13 @@ namespace HtmlParser.Test.Infrastructure
             {
                 Assert.True(false, String.Join("\r\n", asserts));
             }
+        }
+
+        public static void ShouldBeFixedAs(this string html, string expectedFixedHtml)
+        {
+            var parser = new HtmlParser();
+            var actual = parser.FixHtmlTags(html);
+            Assert.Equal(expectedFixedHtml, actual);
         }
     }
 }
