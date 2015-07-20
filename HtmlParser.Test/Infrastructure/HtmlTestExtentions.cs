@@ -57,22 +57,23 @@ namespace HtmlParser.Test.Infrastructure
             var tokens = lexer.Parse();
             lexer = new HtmlLexer();
             lexer.Load(expectedHtml);
-            var expectedTokens = lexer.Parse();
+            var expectedTokens = lexer.Parse().ToList();
             var actualTokens = tokens.FixClosingTags();
-            Assert.Equal(expectedTokens, actualTokens);
-
-            //Assert.Equal(expectedTokens.Count(), tokens.FixClosingTags().Count());
-            //foreach (var actualToken in tokens.FixClosingTags())
-            //    foreach (var expectedToken in expectedTokens)
-            //    {
-            //        if (actualToken.TokenType == TokenType.OpenTag || actualToken.TokenType == TokenType.CloseTag)
-            //        {
-            //            Assert.Equal(expectedToken.GetTag(), actualToken.GetTag());
-            //            Assert.Equal(expectedToken.TokenType, actualToken.TokenType);
-            //        }
-            //        else
-            //            Assert.Equal(expectedToken.ToString(), actualToken.ToString());
-            //    }
+            var i = 0;            
+            foreach (var actualToken in actualTokens)
+            {
+                if (i > expectedTokens.Count) break;
+                var expectedToken = expectedTokens[i++];
+                if (actualToken.TokenType == TokenType.OpenTag || actualToken.TokenType == TokenType.CloseTag)
+                {
+                    Assert.Equal(expectedToken.GetTag(), actualToken.GetTag());
+                    Assert.Equal(expectedToken.TokenType, actualToken.TokenType);
+                }
+                else
+                    Assert.Equal(expectedToken.ToString(), actualToken.ToString());
+            }
+            if (i != expectedTokens.Count)
+                throw new Xunit.Sdk.EqualException(expectedHtml, html);
         }
     }
 }
