@@ -31,7 +31,7 @@ namespace HtmlParser
         
         private List<HtmlToken> stackOfOpenElements;
         private List<HtmlToken> tokensQueue;
-        private bool tokensReady;
+        private bool tokensReady = false;
 
         private HtmlToken CurrentTag
         {
@@ -129,8 +129,13 @@ namespace HtmlParser
 
                     if (tokensQueue[0].TokenType != TokenType.OpenTag)
                         yield return tokensQueue.Dequeue();
+
+                    tokensReady = false;
                 }
             }
+
+            foreach (var token in tokensQueue)
+                yield return token;
         }
 
         private void GenerateImpliedEndTags()
@@ -145,6 +150,8 @@ namespace HtmlParser
                 currentTag = CurrentTag;
                 currentTagName = currentTag.GetTag();
             }
+
+            tokensReady = true;
         }
 
         private void ClearStackBackTo(params HtmlTag[] tagNames)
@@ -159,6 +166,8 @@ namespace HtmlParser
                 currentTag = CurrentTag;
                 currentTagName = currentTag.GetTag();
             }
+
+            tokensReady = true;
         }
 
         private void InsertCloseTag(HtmlTag insertTag)
