@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlParser.Lexer;
+using HtmlParser.Hash;
 using HtmlParser;
 using Xunit;
 
@@ -49,11 +50,25 @@ namespace HtmlParser.Test.Infrastructure
             }
         }
 
-        public static void ShouldBeFixedAs(this string html, string expectedFixedHtml)
+        public static void ShouldBeFixedAs(this string html, string expectedHtml)
         {
-            var parser = new HtmlParser();
-            var actual = parser.FixHtmlTags(html);
-            Assert.Equal(expectedFixedHtml, actual);
+            var lexer = new HtmlLexer();
+            lexer.Load(html);
+            var tokens = lexer.Parse();
+            lexer = new HtmlLexer();
+            lexer.Load(expectedHtml);
+            var expectedTokens = lexer.Parse();
+            foreach (var actualToken in tokens.FixClosingTags())
+                foreach (var expectedToken in expectedTokens)
+                {
+                    if (actualToken.TokenType == TokenType.OpenTag || actualToken.TokenType == TokenType.CloseTag)
+                    {
+                        Assert.Equal(expectedToken.GetTag(), actualToken.GetTag());
+                        Assert.Equal(expectedToken.TokenType, actualToken.TokenType);
+                    }
+                    else
+                        Assert.Equal(expectedToken.ToString(), actualToken.ToString());
+                }
         }
     }
 }
