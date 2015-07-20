@@ -122,7 +122,7 @@ namespace HtmlParser
 
                 if(tokensReady)
                 {
-                    for (int i = 0; i < tokensQueue.Count - 1; i++)
+                    for (int i = 0; i < tokensQueue.Count - 2; i++)
                     {
                         yield return tokensQueue.Dequeue();
                     }
