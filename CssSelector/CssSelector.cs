@@ -78,6 +78,8 @@ namespace CssSelector
                 }
             }
         }
+
+
         public void TokenSelector(IEnumerable<HtmlToken> tokens, IEnumerable<Tuple<string, Action<string>>> selectors)
         {
             States = selectors.Select(w => new State(w.Item1, w.Item2));
@@ -102,6 +104,7 @@ namespace CssSelector
                 }
             }
         }
+
         private string TransformAttribute(string source)
         {
             return '[' + source.Replace("Attr: ", string.Empty).Replace("\"", "") + ']';

@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CssSelector", "CssSelector\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{09BC6E68-3CA7-4368-8D30-3D6EC2C132E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CssSelector.Tests", "CssSelector.Tests\CssSelector.Tests.csproj", "{F59C748B-07A7-498E-97CD-BDD086731579}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{09BC6E68-3CA7-4368-8D30-3D6EC2C132E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09BC6E68-3CA7-4368-8D30-3D6EC2C132E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09BC6E68-3CA7-4368-8D30-3D6EC2C132E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F59C748B-07A7-498E-97CD-BDD086731579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F59C748B-07A7-498E-97CD-BDD086731579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F59C748B-07A7-498E-97CD-BDD086731579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F59C748B-07A7-498E-97CD-BDD086731579}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
