@@ -71,6 +71,10 @@
       <Project>{965f51eb-e9b7-4f1f-a59c-3500fed3868e}</Project>
       <Name>HtmlParser</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ParserCommon\ParserCommon.csproj">
+      <Project>{4acab80f-fdc8-4729-a673-275b80d95c18}</Project>
+      <Name>ParserCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

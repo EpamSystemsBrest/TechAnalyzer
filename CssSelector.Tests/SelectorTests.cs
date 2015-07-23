@@ -44,7 +44,7 @@ namespace CssSelector.Tests
 
             sel.TokenSelector(tokens, new List<Tuple<string, Action<string>>>()
                 {
-                    new Tuple<string,Action<string>>("[http-equiv=$result]",w=>list.Add(w + " - Selector1")),
+                    new Tuple<string,Action<string>>("[httpequiv=$result]",w=>list.Add(w + " - Selector1")),
                     new Tuple<string,Action<string>>("[name=$result]",w=>list.Add(w + " - Selector2")),
                     new Tuple<string,Action<string>>("[id=13][name=$result]",w=>list.Add(w + " - Selector3")),
                     new Tuple<string,Action<string>>("[content=$result]",w=>list.Add(w + " - Selector4"))
@@ -55,6 +55,20 @@ namespace CssSelector.Tests
                      && list.ElementAt(2) == "GENERATOR - Selector2"
                      && list.ElementAt(3) == "wraper - Selector2"
                      && list.ElementAt(4) == "wraper - Selector3");
+        }
+
+        [Fact]
+        public void TokenSelector_Must_Do_Tokens_With_Tag_Name()
+        {
+            Selector sel = new Selector();
+            var list = new List<string>();
+
+            sel.TokenSelector(tokens, new List<Tuple<string, Action<string>>>()
+                {
+                    new Tuple<string,Action<string>>("div[id=$result]",w=>list.Add(w)),
+                });
+
+            Assert.True(list.ElementAt(0) == "13");
         }
 
         [Fact]

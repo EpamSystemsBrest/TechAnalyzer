@@ -17,7 +17,7 @@ namespace HtmlParser.Lexer {
     public struct HtmlToken {
         public TokenType TokenType;
         internal QualifiedName Name;
-        private StringSegment Value;
+        public StringSegment Value;
         public char[] Source;
         public int hash;
 

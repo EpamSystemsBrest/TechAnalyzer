@@ -5,26 +5,41 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using HtmlParser.Lexer;
+using ParserCommon;
+using HtmlParser.Hash;
 
 namespace CssSelector
 {
     public class Attribute
     {
-        public string Name;
+        public HtmlAttribute Name;
         public string Value;
         public Attribute() { }
         public Attribute(string attribs)
         {
-            Name = attribs.Substring(1, attribs.IndexOf('=') - 1);
+            string tempName = attribs.Substring(1, attribs.IndexOf('=') - 1);
+            char temp = (char)(Char.IsUpper(tempName[0])?tempName[0]:tempName[0]-32);
+            Name = (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), temp + tempName.Substring(1,tempName.Length-1));
             Value = attribs.Substring(attribs.IndexOf('=') + 1, attribs.Length - attribs.IndexOf('=') - 2);
+        }
+        public Attribute(HtmlAttribute name, string value)
+        {
+            Name = name;
+            Value = value;
         }
     }
 
     public class Element
     {
+        public HtmlParser.Hash.HtmlTag Name;
         public IEnumerable<Attribute> Attributes;
         public IEnumerable<Element> Children;
-        public string GetAttributeValue(string attributeName)
+        public Element(HtmlParser.Hash.HtmlTag name)
+        {
+            Name = name;
+        }
+        public Element() { }
+        public string GetAttributeValue(HtmlAttribute attributeName)
         {
             if (Attributes == null || Attributes.All(w => w.Name != attributeName))
             {
@@ -34,8 +49,11 @@ namespace CssSelector
         }
         public override string ToString()
         {
-            if (Attributes == null) return "Empty";
-            return string.Join("", Attributes.Select(w => "[" + w.Name + " = " + w.Value + "]"));
+            if (Attributes == null)
+            {
+                return Name.ToString();
+            }
+            return Name + string.Join("", Attributes.Select(w => "[" + w.Name + " = " + w.Value + "]"));
         }
     }
 
@@ -72,42 +90,37 @@ namespace CssSelector
                     yield return node;
                     continue;
                 }
-                if (States.Where(w => !string.IsNullOrEmpty(w.ChangeState(node.Attributes))).Count() != 0)
+                if (States.Where(w => !string.IsNullOrEmpty(w.ChangeState(node))).Count() != 0)
                 {
                     yield return node;
                 }
             }
         }
-
-
         public void TokenSelector(IEnumerable<HtmlToken> tokens, IEnumerable<Tuple<string, Action<string>>> selectors)
         {
             States = selectors.Select(w => new State(w.Item1, w.Item2));
+            Element temp = new Element();
             var attribs = new List<Attribute>();
             foreach (var item in tokens)
             {
-                if(item.TokenType == TokenType.Attribute)
+                if (item.TokenType == TokenType.Attribute)
                 {
-                    attribs.Add(new Attribute(TransformAttribute(item.ToString())));
+                    attribs.Add(new Attribute(item.GetAttribute(), String.Concat(item.Source.Skip(item.Value.StartIndex).Take(item.Value.Length))));
                 }
-                if(item.TokenType == TokenType.OpenTag || item.TokenType == TokenType.CloseTag)
+                if (item.TokenType == TokenType.OpenTag || item.TokenType == TokenType.CloseTag)
                 {
+                    if (item.TokenType == TokenType.OpenTag)
+                    {
+                        temp.Name = item.GetTag();
+                    }
+                    temp.Attributes = attribs;
                     foreach (var state in States)
                     {
-                        state.ChangeState(attribs);
+                        state.ChangeState(temp);
                     }
                     attribs.Clear();
-                    if(item.TokenType == TokenType.OpenTag)
-                    {
-                        attribs.Add(new Attribute("[tag="+item.GetTag().ToString().ToLower()+"]"));
-                    }
                 }
             }
-        }
-
-        private string TransformAttribute(string source)
-        {
-            return '[' + source.Replace("Attr: ", string.Empty).Replace("\"", "") + ']';
         }
     }
 
@@ -115,11 +128,12 @@ namespace CssSelector
     {
         #region Fields
         IEnumerable<Attribute> Attributes;
-        Dictionary<string, int> Dict;
+        Dictionary<HtmlAttribute, int> Dict;
         Action<string> Trigger;
-        string CurrentValues;
-        string TestedValues;
-        string NeededName;
+        public HtmlTag Name;
+        int CurrentState;
+        int TestetState;
+        HtmlAttribute NeededName;
         string INeedThis;
         int Dim;
         #endregion
@@ -127,40 +141,51 @@ namespace CssSelector
         public State(string selector, Action<string> action)
         {
             if (selector == "*") return;
-            Attributes = GetAttributes(selector);
+            int index = selector.IndexOf('[');
+            Attributes = GetAttributes(selector.Substring(index, selector.Length - index));
+            if (index != 0)
+            {
+                string temp = selector.Substring(0, index);
+                if(!Char.IsUpper(temp[0]))
+                {
+                    temp = (char)(temp[0] - 32) + temp.Substring(1, temp.Length - 1);
+                }
+                Name = (HtmlTag)Enum.Parse(typeof(HtmlTag),temp);
+            }
             Dim = Attributes.Count();
             Dict = Attributes
-                    .Select((w, ii) => new Tuple<string, int>(w.Name, ii))
+                    .Select((w, ii) => new Tuple<HtmlAttribute, int>(w.Name, ii))
                     .ToDictionary(w => w.Item1, w => w.Item2 + 1);
             Trigger = action;
-
-            CurrentValues = String.Empty;
-            TestedValues = string.Join(" ", Dict.Select(w => w.Value)) + ' ';
-            INeedThis = null;
-            NeededName = null;
+            CurrentState = 0;
+            TestetState = Dict.Count;
             if (Attributes.Any(w => w.Value == "$result"))
                 NeededName = Attributes.First(w => w.Value == "$result").Name;
         }
-        public string ChangeState(IEnumerable<Attribute> attributes)
+        public string ChangeState(Element element)
         {
+            if (Name != HtmlTag.Custom && element.Name != Name)
+            {
+                return null;
+            }
+
             if (Attributes == null)
             {
                 return "$none";
             }
-            foreach (var item in attributes)
+            foreach (var item in element.Attributes)
             {
-                if (Attributes.Any(w => w.Name == item.Name) && item.Value == Attributes.First(w => w.Name == item.Name).Value)
+                if (Attributes.Any(w => w.Name == item.Name)
+                    && item.Value == Attributes.First(w => w.Name == item.Name).Value)
                 {
-                    CurrentValues = AddValueToString(CurrentValues, Dict[item.Name]);
+                    CurrentState += 1;
                 }
-
                 if (item.Name == NeededName)
                 {
                     INeedThis = item.Value;
-                    CurrentValues = AddValueToString(CurrentValues, Dict[item.Name]);
+                    CurrentState += 1;
                 }
-
-                if (CurrentValues == TestedValues)
+                if (CurrentState == TestetState)
                 {
                     if (string.IsNullOrEmpty(INeedThis))
                     {
@@ -170,12 +195,10 @@ namespace CssSelector
                     {
                         Trigger(INeedThis);
                         var temp = INeedThis;
-                        CurrentValues = String.Empty;
                         return temp;
                     }
                 }
             }
-            CurrentValues = String.Empty;
             return null;
         }
         private IEnumerable<Attribute> GetAttributes(string selector)
@@ -196,10 +219,6 @@ namespace CssSelector
                     i1 = i;
                 }
             }
-        }
-        private string AddValueToString(string str, int value)
-        {
-            return string.Join(" ", (str + value).Split(' ').OrderBy(w => w)) + ' ';
         }
     }
 }

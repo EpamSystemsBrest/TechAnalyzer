@@ -39,7 +39,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="CssSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -47,6 +46,10 @@
     <ProjectReference Include="..\HtmlParser\HtmlParser.csproj">
       <Project>{965f51eb-e9b7-4f1f-a59c-3500fed3868e}</Project>
       <Name>HtmlParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ParserCommon\ParserCommon.csproj">
+      <Project>{4acab80f-fdc8-4729-a673-275b80d95c18}</Project>
+      <Name>ParserCommon</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

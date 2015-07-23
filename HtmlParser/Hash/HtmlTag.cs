@@ -140,7 +140,7 @@ namespace HtmlParser.Hash {
 
     public enum HtmlTag
     {
-        Custom = 1,
+        Custom = 0,
         H6 = 2,
         H5 = 7,
         Del = 8,
