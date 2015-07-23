@@ -68,13 +68,51 @@ namespace HtmlParser
                     else if (rubyTags.Contains(tokenName) && IsInScope(HtmlTag.Ruby))
                         GenerateImpliedEndTags();
 
-                    //else if("table".IsInStack(stackOfOpenElements))
-                    //{
-                    //    if (inTableOpenTags.Contains(tokenName))
-                    //        ClearStackBackTo("table");
-                    //    if (tokenName == "td" || tokenName == "th" || tokenName == "tr")
+                    else if(HtmlTag.Table.IsInStack(stackOfOpenElements))
+                    {
+                        if (inTableOpenTags.Contains(tokenName))
+                            ClearStackBackTo(HtmlTag.Table);
 
-                    //}
+                        else if(tokenName == HtmlTag.Table)
+                        {
+                            ClearStackBackTo(HtmlTag.Table);
+                            stackOfOpenElements.Pop();
+                            InsertCloseTag(HtmlTag.Table);
+                        }
+
+                        else if (tokenName == HtmlTag.Col)
+                        {
+                            ClearStackBackTo(HtmlTag.Table);
+                            InsertOpenTag(HtmlTag.Colgroup);
+                        }
+
+                        else if (tokenName == HtmlTag.Td || tokenName == HtmlTag.Th || tokenName == HtmlTag.Tr)
+                        {
+                            if (!HtmlTag.Tbody.IsInStack(stackOfOpenElements))
+                            {
+                                ClearStackBackTo(HtmlTag.Table);
+                                InsertOpenTag(HtmlTag.Tbody);
+                            }
+
+                            if (tokenName == HtmlTag.Tr)
+                                ClearStackBackTo(HtmlTag.Tbody, HtmlTag.Thead, HtmlTag.Tfoot);  
+                          
+                            else //td or th
+                            {
+                                if(!HtmlTag.Tr.IsInStack(stackOfOpenElements))
+                                {
+                                    if (!HtmlTag.Tbody.IsInStack(stackOfOpenElements))
+                                    {
+                                        ClearStackBackTo(HtmlTag.Table);
+                                        InsertOpenTag(HtmlTag.Tbody);
+                                    }
+                                    ClearStackBackTo(HtmlTag.Tbody, HtmlTag.Thead, HtmlTag.Tfoot);
+                                    InsertOpenTag(HtmlTag.Tr);
+                                }
+                                ClearStackBackTo(HtmlTag.Tr);
+                            }
+                        }
+                    }
 
                     stackOfOpenElements.Push(token);
                 }
@@ -175,6 +213,13 @@ namespace HtmlParser
             tokensQueue.Add(new HtmlToken { TokenType = TokenType.CloseTag, hash = (int)insertTag });
         }
 
+        private void InsertOpenTag(HtmlTag insertTag)
+        {
+            var insertToken = new HtmlToken { TokenType = TokenType.OpenTag, hash = (int)insertTag };
+            tokensQueue.Add(insertToken);
+            stackOfOpenElements.Push(insertToken);
+        }
+
         private bool IsInScope(HtmlTag tagName)
         {
             for (int i = stackOfOpenElements.Count - 1; i >= 0; i--)
@@ -228,7 +273,7 @@ namespace HtmlParser
             var index = stackOfOpenElements.Count - 1;
             var currentTag = CurrentTag;
 
-            while (index >= 0)
+            while (true)
             {
                 if (currentTag.GetTag() == tokenName)
                 {
@@ -237,7 +282,9 @@ namespace HtmlParser
                     break;
                 }
 
-                currentTag = stackOfOpenElements[--index];
+                if (--index < 0)
+                    break;
+                currentTag = stackOfOpenElements[index];
             }
         }
 
@@ -268,10 +315,10 @@ namespace HtmlParser
             return tempToken;
         }
 
-        //internal static string GetTagName(this HtmlToken token)
-        //{
-        //    return token.Name.Name.ToString(token.Source).ToLower();
-        //}
+        internal static string GetTagName(this HtmlToken token)
+        {
+            return token.Name.Name.ToString(token.Source).ToLower();
+        }
 
         internal static bool IsInStack(this HtmlTag tagName, List<HtmlToken> stackOfOpenElements)
         {
