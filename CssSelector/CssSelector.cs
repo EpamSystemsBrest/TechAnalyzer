@@ -19,6 +19,7 @@ namespace CssSelector
         {
             string tempName = attribs.Substring(1, attribs.IndexOf('=') - 1);
             char temp = (char)(Char.IsUpper(tempName[0]) ? tempName[0] : tempName[0] - 32);
+
             Name = (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), temp + tempName.Substring(1, tempName.Length - 1));
             Value = attribs.Substring(attribs.IndexOf('=') + 1, attribs.Length - attribs.IndexOf('=') - 2);
         }
@@ -101,19 +102,16 @@ namespace CssSelector
     {
         #region Fields
         IEnumerable<Attribute> Attributes;
-        Dictionary<HtmlAttribute, int> Dict;
         Action<string> Trigger;
         public HtmlTag Name;
         int CurrentState;
         int TestetState;
         HtmlAttribute NeededName;
         string INeedThis;
-        int Dim;
         #endregion
 
         public State(string selector, Action<string> action)
         {
-            if (selector == "*") return;
             int index = selector.IndexOf('[');
             Attributes = GetAttributes(selector.Substring(index, selector.Length - index));
             if (index != 0)
@@ -125,13 +123,9 @@ namespace CssSelector
                 }
                 Name = (HtmlTag)Enum.Parse(typeof(HtmlTag), temp);
             }
-            Dim = Attributes.Count();
-            Dict = Attributes
-                    .Select((w, ii) => new Tuple<HtmlAttribute, int>(w.Name, ii))
-                    .ToDictionary(w => w.Item1, w => w.Item2 + 1);
             Trigger = action;
             CurrentState = 0;
-            TestetState = Dict.Count;
+            TestetState = Attributes.Count();
             if (Attributes.Any(w => w.Value == "$result"))
                 NeededName = Attributes.First(w => w.Value == "$result").Name;
         }
@@ -151,20 +145,13 @@ namespace CssSelector
                     INeedThis = item.Value;
                     CurrentState += 1;
                 }
-                if (CurrentState == TestetState)
+                if (CurrentState == TestetState && !string.IsNullOrEmpty(INeedThis))
                 {
-                    if (string.IsNullOrEmpty(INeedThis))
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        Trigger(INeedThis);
-                        return;
-                    }
+                    Trigger(INeedThis);
+                    CurrentState = 0;
+                    return;
                 }
             }
-            return;
         }
         private IEnumerable<Attribute> GetAttributes(string selector)
         {
