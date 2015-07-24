@@ -19,7 +19,6 @@ namespace CssSelector
         {
             string tempName = attribs.Substring(1, attribs.IndexOf('=') - 1);
             char temp = (char)(Char.IsUpper(tempName[0]) ? tempName[0] : tempName[0] - 32);
-
             Name = (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), temp + tempName.Substring(1, tempName.Length - 1));
             Value = attribs.Substring(attribs.IndexOf('=') + 1, attribs.Length - attribs.IndexOf('=') - 2);
         }
@@ -44,7 +43,7 @@ namespace CssSelector
         {
             if (Attributes == null || Attributes.All(w => w.Name != attributeName))
             {
-                throw new ArgumentException("Attributes doesn't contain inputed attribute");
+                throw new ArgumentException("Attributes doesn't contain this attribute");
             }
             return Attributes.First(w => attributeName == w.Name).Value;
         }
@@ -54,7 +53,7 @@ namespace CssSelector
             {
                 return Name.ToString();
             }
-            return Name + string.Join("", Attributes.Select(w => "[" + w.Name + " = " + w.Value + "]"));
+            return Name + string.Join(string.Empty, Attributes.Select(w => "[" + w.Name + "=" + w.Value + "]"));
         }
     }
 
@@ -72,7 +71,7 @@ namespace CssSelector
         }
         public void TokenSelector(IEnumerable<HtmlToken> tokens, IEnumerable<Tuple<string, Action<string>>> selectors)
         {
-            States = selectors.Select(w => new State(w.Item1, w.Item2));
+            States = selectors.Select(w => new State(w.Item1, w.Item2)).ToList();
             Element temp = new Element();
             var attribs = new List<Attribute>();
             foreach (var item in tokens)
@@ -100,7 +99,6 @@ namespace CssSelector
 
     public class State
     {
-        #region Fields
         IEnumerable<Attribute> Attributes;
         Action<string> Trigger;
         public HtmlTag Name;
@@ -108,7 +106,6 @@ namespace CssSelector
         int TestetState;
         HtmlAttribute NeededName;
         string INeedThis;
-        #endregion
 
         public State(string selector, Action<string> action)
         {
@@ -131,8 +128,8 @@ namespace CssSelector
         }
         public void ChangeState(Element element)
         {
+            CurrentState = 0;
             if ((Name != HtmlTag.Custom && element.Name != Name) || Attributes == null) return;
-
             foreach (var item in element.Attributes)
             {
                 if (Attributes.Any(w => w.Name == item.Name)
@@ -148,7 +145,6 @@ namespace CssSelector
                 if (CurrentState == TestetState && !string.IsNullOrEmpty(INeedThis))
                 {
                     Trigger(INeedThis);
-                    CurrentState = 0;
                     return;
                 }
             }
