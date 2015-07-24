@@ -18,8 +18,8 @@ namespace CssSelector
         public Attribute(string attribs)
         {
             string tempName = attribs.Substring(1, attribs.IndexOf('=') - 1);
-            char temp = (char)(Char.IsUpper(tempName[0])?tempName[0]:tempName[0]-32);
-            Name = (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), temp + tempName.Substring(1,tempName.Length-1));
+            char temp = (char)(Char.IsUpper(tempName[0]) ? tempName[0] : tempName[0] - 32);
+            Name = (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), temp + tempName.Substring(1, tempName.Length - 1));
             Value = attribs.Substring(attribs.IndexOf('=') + 1, attribs.Length - attribs.IndexOf('=') - 2);
         }
         public Attribute(HtmlAttribute name, string value)
@@ -68,33 +68,6 @@ namespace CssSelector
         public Selector()
         {
 
-        }
-        public IEnumerable<Element> QuerySelector(IEnumerable<Tuple<string, Action<string>>> selectors)
-        {
-            States = selectors.Select(w => new State(w.Item1, w.Item2));
-            if (Root == null) throw new ArgumentNullException();
-            var nodeStack = new Stack<Element>();
-            nodeStack.Push(Root);
-            while (nodeStack.Count != 0)
-            {
-                var node = nodeStack.Pop();
-                if (node.Children != null)
-                {
-                    foreach (var subNode in node.Children.Reverse())
-                    {
-                        nodeStack.Push(subNode);
-                    }
-                }
-                if (node.Attributes == null)
-                {
-                    yield return node;
-                    continue;
-                }
-                if (States.Where(w => !string.IsNullOrEmpty(w.ChangeState(node))).Count() != 0)
-                {
-                    yield return node;
-                }
-            }
         }
         public void TokenSelector(IEnumerable<HtmlToken> tokens, IEnumerable<Tuple<string, Action<string>>> selectors)
         {
@@ -146,11 +119,11 @@ namespace CssSelector
             if (index != 0)
             {
                 string temp = selector.Substring(0, index);
-                if(!Char.IsUpper(temp[0]))
+                if (!Char.IsUpper(temp[0]))
                 {
                     temp = (char)(temp[0] - 32) + temp.Substring(1, temp.Length - 1);
                 }
-                Name = (HtmlTag)Enum.Parse(typeof(HtmlTag),temp);
+                Name = (HtmlTag)Enum.Parse(typeof(HtmlTag), temp);
             }
             Dim = Attributes.Count();
             Dict = Attributes
@@ -162,17 +135,10 @@ namespace CssSelector
             if (Attributes.Any(w => w.Value == "$result"))
                 NeededName = Attributes.First(w => w.Value == "$result").Name;
         }
-        public string ChangeState(Element element)
+        public void ChangeState(Element element)
         {
-            if (Name != HtmlTag.Custom && element.Name != Name)
-            {
-                return null;
-            }
+            if ((Name != HtmlTag.Custom && element.Name != Name) || Attributes == null) return;
 
-            if (Attributes == null)
-            {
-                return "$none";
-            }
             foreach (var item in element.Attributes)
             {
                 if (Attributes.Any(w => w.Name == item.Name)
@@ -189,17 +155,16 @@ namespace CssSelector
                 {
                     if (string.IsNullOrEmpty(INeedThis))
                     {
-                        return "$none";
+                        return;
                     }
                     else
                     {
                         Trigger(INeedThis);
-                        var temp = INeedThis;
-                        return temp;
+                        return;
                     }
                 }
             }
-            return null;
+            return;
         }
         private IEnumerable<Attribute> GetAttributes(string selector)
         {
