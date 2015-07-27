@@ -18,8 +18,7 @@ namespace CssSelector
         public Attribute(string attribs)
         {
             string tempName = attribs.Substring(1, attribs.IndexOf('=') - 1);
-            char temp = (char)(Char.IsUpper(tempName[0]) ? tempName[0] : tempName[0] - 32);
-            Name = (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), temp + tempName.Substring(1, tempName.Length - 1));
+            Name = (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), ToUpperFirstChar(tempName));
             Value = attribs.Substring(attribs.IndexOf('=') + 1, attribs.Length - attribs.IndexOf('=') - 2);
         }
         public Attribute(HtmlAttribute name, string value)
@@ -27,14 +26,20 @@ namespace CssSelector
             Name = name;
             Value = value;
         }
+        public static string ToUpperFirstChar(string str)
+        {
+            if (str[0] < 97 && str[0] > 122) return str;
+            string g = (char)(str[0] - 32) + str.Substring(1, str.Length - 1);
+            return g;
+        }
     }
 
     public class Element
     {
-        public HtmlParser.Hash.HtmlTag Name;
+        public HtmlTag Name;
         public IEnumerable<Attribute> Attributes;
         public IEnumerable<Element> Children;
-        public Element(HtmlParser.Hash.HtmlTag name)
+        public Element(HtmlTag name)
         {
             Name = name;
         }
@@ -53,25 +58,16 @@ namespace CssSelector
             {
                 return Name.ToString();
             }
-            return Name + string.Join(string.Empty, Attributes.Select(w => "[" + w.Name + "=" + w.Value + "]"));
+            return Name + string.Join(string.Empty, Attributes.Select(w => '[' + w.Name + '=' + w.Value + ']'));
         }
     }
 
     public class Selector
     {
-        Element Root;
         public IEnumerable<State> States;
-        public Selector(Element root)
-        {
-            Root = root;
-        }
-        public Selector()
-        {
-
-        }
         public void TokenSelector(IEnumerable<HtmlToken> tokens, IEnumerable<Tuple<string, Action<string>>> selectors)
         {
-            States = selectors.Select(w => new State(w.Item1, w.Item2)).ToList();
+            States = selectors.Select(w => new State(w.Item1, w.Item2)).ToArray();
             Element temp = new Element();
             var attribs = new List<Attribute>();
             foreach (var item in tokens)
@@ -100,12 +96,11 @@ namespace CssSelector
     public class State
     {
         IEnumerable<Attribute> Attributes;
+        HtmlAttribute NeededName;
         Action<string> Trigger;
         public HtmlTag Name;
-        int CurrentState;
-        int TestetState;
-        HtmlAttribute NeededName;
         string INeedThis;
+        int TestetState;
 
         public State(string selector, Action<string> action)
         {
@@ -113,36 +108,31 @@ namespace CssSelector
             Attributes = GetAttributes(selector.Substring(index, selector.Length - index));
             if (index != 0)
             {
-                string temp = selector.Substring(0, index);
-                if (!Char.IsUpper(temp[0]))
-                {
-                    temp = (char)(temp[0] - 32) + temp.Substring(1, temp.Length - 1);
-                }
+                string temp = Attribute.ToUpperFirstChar(selector.Substring(0, index));
                 Name = (HtmlTag)Enum.Parse(typeof(HtmlTag), temp);
             }
             Trigger = action;
-            CurrentState = 0;
             TestetState = Attributes.Count();
             if (Attributes.Any(w => w.Value == "$result"))
                 NeededName = Attributes.First(w => w.Value == "$result").Name;
         }
         public void ChangeState(Element element)
         {
-            CurrentState = 0;
+            int currentState = 0;
             if ((Name != HtmlTag.Custom && element.Name != Name) || Attributes == null) return;
             foreach (var item in element.Attributes)
             {
                 if (Attributes.Any(w => w.Name == item.Name)
                     && item.Value == Attributes.First(w => w.Name == item.Name).Value)
                 {
-                    CurrentState += 1;
+                    currentState += 1;
                 }
                 if (item.Name == NeededName)
                 {
                     INeedThis = item.Value;
-                    CurrentState += 1;
+                    currentState += 1;
                 }
-                if (CurrentState == TestetState && !string.IsNullOrEmpty(INeedThis))
+                if (currentState == TestetState && !string.IsNullOrEmpty(INeedThis))
                 {
                     Trigger(INeedThis);
                     return;
