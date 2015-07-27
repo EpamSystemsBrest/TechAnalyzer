@@ -7,16 +7,17 @@ using HtmlParser.Hash;
 
 namespace CssSelector
 {
-    public class Element
+    internal class Element
     {
         public HtmlTag Name;
         public IEnumerable<Attribute> Attributes;
-        public IEnumerable<Element> Children;
+
+        public Element() { }
         public Element(HtmlTag name)
         {
             Name = name;
         }
-        public Element() { }
+
         public string GetAttributeValue(HtmlAttribute attributeName)
         {
             if (Attributes == null || Attributes.All(w => w.Name != attributeName))
