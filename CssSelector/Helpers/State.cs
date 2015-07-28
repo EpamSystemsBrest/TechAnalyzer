@@ -7,7 +7,7 @@ using HtmlParser.Hash;
 
 namespace CssSelector
 {
-    internal class State
+    public class State
     {
         public IEnumerable<Attribute> Attributes;
         public HtmlAttribute NeededName;

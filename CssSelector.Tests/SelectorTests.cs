@@ -45,17 +45,14 @@ namespace CssSelector.Tests
 
             sel.TokenSelector(tokens, new List<Tuple<string, Action<string>>>()
                 {
-                    new Tuple<string,Action<string>>("[httpequiv=$result]",w=>list.Add(w + " - Selector1")),
-                    new Tuple<string,Action<string>>("[name=$result]",w=>list.Add(w + " - Selector2")),
-                    new Tuple<string,Action<string>>("[id=13][name=$result]",w=>list.Add(w + " - Selector3")),
-                    new Tuple<string,Action<string>>("[content=$result]",w=>list.Add(w + " - Selector4"))
+                    new Tuple<string,Action<string>>("meta[httpequiv=$result]",w=>list.Add(w + " - Selector1")),
+                    new Tuple<string,Action<string>>("div[id=13][name=$result]",w=>list.Add(w + " - Selector3")),
+                    new Tuple<string,Action<string>>("meta[content=$result]",w=>list.Add(w + " - Selector4"))
                 });
 
             Assert.True(list.ElementAt(0) == "X-UA-Compatible - Selector1"
                      && list.ElementAt(1) == "IE=10 - Selector4"
-                     && list.ElementAt(2) == "GENERATOR - Selector2"
-                     && list.ElementAt(3) == "wraper - Selector2"
-                     && list.ElementAt(4) == "wraper - Selector3");
+                     && list.ElementAt(2) == "wraper - Selector3");
         }
 
         [Fact]
@@ -99,6 +96,26 @@ namespace CssSelector.Tests
                 });
 
             Assert.True(list.ElementAt(0) == "GENERATOR" && list.ElementAt(1) == "wraper");
+        }
+
+        [Fact]
+        public void GenerateTagGroup_Must_Work_Correctly()
+        {
+            var list = new List<string>();
+            var tagGroup = SelectorParser.GenerateTagGroup(new List<Tuple<string, Action<string>>>()
+                {
+                    new Tuple<string,Action<string>>("meta[httpequiv=$result]",w=>list.Add(w + " - Selector1")),
+                    new Tuple<string,Action<string>>("[name=$result]",w=>list.Add(w + " - Selector2")),
+                    new Tuple<string,Action<string>>("div[id=13][name=$result]",w=>list.Add(w + " - Selector3")),
+                    new Tuple<string,Action<string>>("meta[content=$result]",w=>list.Add(w + " - Selector4"))
+                });
+
+            foreach (var item in tokens)
+            {
+                tagGroup.GiveToken(item);
+            }
+
+            Assert.True(list.Count == 5);
         }
     }
 }

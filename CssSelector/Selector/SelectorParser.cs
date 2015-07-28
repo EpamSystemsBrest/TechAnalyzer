@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlParser.Hash;
+using HtmlParser.Lexer;
 
 namespace CssSelector
 {
-    internal static class SelectorParser
+    public static class SelectorParser
     {
         public static HtmlTag ParseHtmlTag(string selector)
         {
@@ -58,13 +59,31 @@ namespace CssSelector
                 TestedState = attribs.Count(),
                 NeededName = neededName
             };
-            
+
+        }
+        public static Attribute ConvertToAttribute(HtmlToken token)
+        {
+            return new Attribute(token.GetAttribute(), String.Concat(token.Source.Skip(token.Value.StartIndex).Take(token.Value.Length)));
         }
 
+
+        public static TagGroup GenerateTagGroup(IEnumerable<Tuple<string,Action<string>>> selectors)
+        {
+            var c = selectors.Select(w => new { Name = ParseHtmlTag(w.Item1), Attributes = ParseAttributes(w.Item1), Triger = w.Item2 })
+                .GroupBy(w => w.Name)
+                .Select(w => new Tag() { TagName = w.Key, AttributesGroups = w.Select(x => new HtmlAttributeGroup() { Attributes = x.Attributes, Triger = x.Triger}).ToArray()}).ToArray();
+
+            return new TagGroup()
+            {
+                Tags = c
+            };
+        }
         private static string ToUpperFirstChar(string str)
         {
             if (str[0] < 97 && str[0] > 122) return str;
             return (char)(str[0] - 32) + str.Substring(1, str.Length - 1);
         }
+
+
     }
 }

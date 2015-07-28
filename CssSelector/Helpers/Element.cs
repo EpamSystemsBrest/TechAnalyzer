@@ -7,7 +7,7 @@ using HtmlParser.Hash;
 
 namespace CssSelector
 {
-    internal class Element
+    public class Element
     {
         public HtmlTag Name;
         public IEnumerable<Attribute> Attributes;
@@ -17,7 +17,6 @@ namespace CssSelector
         {
             Name = name;
         }
-
         public override string ToString()
         {
             if (Attributes == null)
@@ -25,7 +24,7 @@ namespace CssSelector
                 return Name.ToString();
             }
             return Name + string.Join(string.Empty, Attributes.Select(w => '[' + w.Name + '=' + w.Value + ']'));
-        }
+        }        
         public string GetAttributeValue(HtmlAttribute attributeName)
         {
             if (Attributes == null || Attributes.All(w => w.Name != attributeName))
