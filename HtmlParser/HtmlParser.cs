@@ -9,7 +9,9 @@ using HtmlParser.Hash;
 namespace HtmlParser
 {
     public class HtmlParser
-    {        
+    {
+        #region TagTables
+
         private static readonly HtmlTag[] buttonScopeOpenTags = { HtmlTag.Div, HtmlTag.Ul, HtmlTag.P, HtmlTag.H1, HtmlTag.H2, HtmlTag.H3, HtmlTag.H4, HtmlTag.H5, HtmlTag.H6, HtmlTag.Ol, HtmlTag.Dl, HtmlTag.Fieldset,
                                                                   HtmlTag.Figcaption, HtmlTag.Figure, HtmlTag.Article, HtmlTag.Aside, HtmlTag.Blockquote, HtmlTag.Center, HtmlTag.Address, HtmlTag.Dialog, HtmlTag.Dir,
                                                                   HtmlTag.Summary, HtmlTag.Details, HtmlTag.Main, HtmlTag.Footer, HtmlTag.Header, HtmlTag.Nav, HtmlTag.Section, HtmlTag.Menu, HtmlTag.Hgroup, HtmlTag.Pre,
@@ -28,7 +30,8 @@ namespace HtmlParser
 
         private static readonly HtmlTag[] inTableOpenTags = { HtmlTag.Caption, HtmlTag.Colgroup, HtmlTag.Tbody, HtmlTag.Thead, HtmlTag.Tfoot };
 
-        
+        #endregion
+
         private List<HtmlToken> stackOfOpenElements;
         private List<HtmlToken> tokensQueue;
         private bool tokensReady = false;
@@ -176,6 +179,32 @@ namespace HtmlParser
                 yield return token;
         }
 
+        #region States
+
+        private void InBodyEndTagAnythingElse(HtmlTag tokenName)
+        {
+            var index = stackOfOpenElements.Count - 1;
+            var currentTag = CurrentTag;
+
+            while (true)
+            {
+                if (currentTag.GetTag() == tokenName)
+                {
+                    ClearStackBackTo(tokenName);
+                    stackOfOpenElements.Pop();
+                    break;
+                }
+
+                if (--index < 0)
+                    break;
+                currentTag = stackOfOpenElements[index];
+            }
+        }
+
+        #endregion
+
+        #region Helpers
+
         private void GenerateImpliedEndTags()
         {
             var currentTag = CurrentTag;
@@ -268,27 +297,11 @@ namespace HtmlParser
             return false;
         }
 
-        private void InBodyEndTagAnythingElse(HtmlTag tokenName)
-        {
-            var index = stackOfOpenElements.Count - 1;
-            var currentTag = CurrentTag;
-
-            while (true)
-            {
-                if (currentTag.GetTag() == tokenName)
-                {
-                    ClearStackBackTo(tokenName);
-                    stackOfOpenElements.Pop();
-                    break;
-                }
-
-                if (--index < 0)
-                    break;
-                currentTag = stackOfOpenElements[index];
-            }
-        }
+        #endregion       
 
     }
+
+    #region Extensions
 
     public static class HtmlTokenExtensions
     {
@@ -324,5 +337,7 @@ namespace HtmlParser
         {
             return stackOfOpenElements.Any(token => token.GetTag() == tagName);
         }
+
+    #endregion
     }
 }
