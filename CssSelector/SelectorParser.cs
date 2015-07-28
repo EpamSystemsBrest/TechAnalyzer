@@ -7,8 +7,24 @@ using HtmlParser.Hash;
 
 namespace CssSelector
 {
-    internal class SelectorParser
+    internal static class SelectorParser
     {
+        public static HtmlTag ParseHtmlTag(string selector)
+        {
+            int index = selector.IndexOf('[');
+            if (index == 0) return HtmlTag.Custom;
+            string temp = ToUpperFirstChar(selector.Substring(0, index));
+            return (HtmlTag)Enum.Parse(typeof(HtmlTag), temp);
+        }
+        public static string ParseAttributeValue(string selector)
+        {
+            return selector.Substring(selector.IndexOf('=') + 1, selector.Length - selector.IndexOf('=') - 2);
+        }
+        public static HtmlAttribute ParseAttributeName(string selector)
+        {
+            string tempName = selector.Substring(1, selector.IndexOf('=') - 1);
+            return (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), SelectorParser.ToUpperFirstChar(tempName));
+        }
         public static IEnumerable<Attribute> ParseAttributes(string selector)
         {
             int index = selector.IndexOf('[');
@@ -30,28 +46,25 @@ namespace CssSelector
                 }
             }
         }
-        public static HtmlAttribute ParseAttributeName(string selector)
+        public static State GenerateState(string selector, Action<string> action)
         {
-            string tempName = selector.Substring(1, selector.IndexOf('=') - 1);
-            return (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), SelectorParser.ToUpperFirstChar(tempName));
-        }
-        public static string ParseAttributeValue(string selector)
-        {
-            return selector.Substring(selector.IndexOf('=') + 1, selector.Length - selector.IndexOf('=') - 2);
-        }
-        public static HtmlTag ParseHtmlTag(string selector)
-        {
-            int index = selector.IndexOf('[');
-            if (index == 0) return HtmlTag.Custom;
-            string temp = ToUpperFirstChar(selector.Substring(0, index));
-            return (HtmlTag)Enum.Parse(typeof(HtmlTag), temp);
+            var attribs = SelectorParser.ParseAttributes(selector);
+            var neededName = attribs.Any(w => w.Value == "$result") ? attribs.First(w => w.Value == "$result").Name : 0;
+            return new State()
+            {
+                Attributes = attribs,
+                Name = SelectorParser.ParseHtmlTag(selector),
+                Trigger = action,
+                TestedState = attribs.Count(),
+                NeededName = neededName
+            };
+            
         }
 
-        public static string ToUpperFirstChar(string str)
+        private static string ToUpperFirstChar(string str)
         {
             if (str[0] < 97 && str[0] > 122) return str;
-            string g = (char)(str[0] - 32) + str.Substring(1, str.Length - 1);
-            return g;
+            return (char)(str[0] - 32) + str.Substring(1, str.Length - 1);
         }
     }
 }

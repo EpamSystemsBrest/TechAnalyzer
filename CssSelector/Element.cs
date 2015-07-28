@@ -18,14 +18,6 @@ namespace CssSelector
             Name = name;
         }
 
-        public string GetAttributeValue(HtmlAttribute attributeName)
-        {
-            if (Attributes == null || Attributes.All(w => w.Name != attributeName))
-            {
-                throw new ArgumentException("Attributes doesn't contain this attribute");
-            }
-            return Attributes.First(w => attributeName == w.Name).Value;
-        }
         public override string ToString()
         {
             if (Attributes == null)
@@ -33,6 +25,14 @@ namespace CssSelector
                 return Name.ToString();
             }
             return Name + string.Join(string.Empty, Attributes.Select(w => '[' + w.Name + '=' + w.Value + ']'));
+        }
+        public string GetAttributeValue(HtmlAttribute attributeName)
+        {
+            if (Attributes == null || Attributes.All(w => w.Name != attributeName))
+            {
+                throw new ArgumentException("Attributes doesn't contain this attribute");
+            }
+            return Attributes.First(w => attributeName == w.Name).Value;
         }
     }
 }

@@ -9,22 +9,13 @@ namespace CssSelector
 {
     internal class State
     {
-        IEnumerable<Attribute> Attributes;
-        HtmlAttribute NeededName;
-        Action<string> Trigger;
-        string INeedThis;
-        int TestedState;
-        HtmlTag Name;
+        public IEnumerable<Attribute> Attributes;
+        public HtmlAttribute NeededName;
+        public Action<string> Trigger;
+        public string INeedThis;
+        public int TestedState;
+        public HtmlTag Name;
 
-        public State(string selector, Action<string> action)
-        {
-            Attributes = SelectorParser.ParseAttributes(selector);
-            Name = SelectorParser.ParseHtmlTag(selector);
-            Trigger = action;
-            TestedState = Attributes.Count();
-            if (Attributes.Any(w => w.Value == "$result"))
-                NeededName = Attributes.First(w => w.Value == "$result").Name;
-        }
         public void ChangeState(Element element)
         {
             int currentState = 0;

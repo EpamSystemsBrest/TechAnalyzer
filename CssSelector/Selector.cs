@@ -15,7 +15,7 @@ namespace CssSelector
         private IEnumerable<State> States;
         public void TokenSelector(IEnumerable<HtmlToken> tokens, IEnumerable<Tuple<string, Action<string>>> selectors)
         {
-            States = selectors.Select(w => new State(w.Item1, w.Item2)).ToArray();
+            States = selectors.Select(w => SelectorParser.GenerateState(w.Item1, w.Item2)).ToArray();
             Element temp = new Element();
             var attribs = new List<Attribute>();
             foreach (var item in tokens)
