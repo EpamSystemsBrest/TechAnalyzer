@@ -8,7 +8,7 @@ using HtmlParser.Lexer;
 
 namespace CssSelector
 {
-    public class TagGroup
+    internal class TagGroup
     {
         IDictionary<HtmlTag, Tag> Tags;
         HtmlTag CurrentTag;
@@ -45,7 +45,6 @@ namespace CssSelector
             }
             if (token.TokenType == TokenType.Attribute)
             {
-                // 
                 if (!(CurrentTag == HtmlTag.Custom && !ContainCustom))
                 {
                     Tags[CurrentTag].ChangeState(SelectorParser.ConvertToAttribute(token));
@@ -56,7 +55,6 @@ namespace CssSelector
                 }
             }
         }
-
         private bool IsMatch(HtmlTag template, HtmlTag current)
         {
             if (template == HtmlTag.Custom) return true;

@@ -8,7 +8,7 @@ using HtmlParser.Lexer;
 
 namespace CssSelector
 {
-    public static class SelectorParser
+    internal static class SelectorParser
     {
         public static HtmlTag ParseHtmlTag(string selector)
         {
@@ -47,31 +47,15 @@ namespace CssSelector
                 }
             }
         }
-        public static State GenerateState(string selector, Action<string> action)
-        {
-            var attribs = SelectorParser.ParseAttributes(selector);
-            var neededName = attribs.Any(w => w.Value == "$result") ? attribs.First(w => w.Value == "$result").Name : 0;
-            return new State()
-            {
-                Attributes = attribs,
-                Name = SelectorParser.ParseHtmlTag(selector),
-                Trigger = action,
-                TestedState = attribs.Count(),
-                NeededName = neededName
-            };
-
-        }
         public static Attribute ConvertToAttribute(HtmlToken token)
         {
-            return new Attribute(token.GetAttribute(), String.Concat(token.Source.Skip(token.Value.StartIndex).Take(token.Value.Length)));
+            return new Attribute((int)token.GetAttribute(), String.Concat(token.Source.Skip(token.Value.StartIndex).Take(token.Value.Length)));
         }
-
-
         public static TagGroup GenerateTagGroup(IEnumerable<Tuple<string,Action<string>>> selectors)
         {
             var tags = selectors.Select(w => new { Name = ParseHtmlTag(w.Item1), Attributes = ParseAttributes(w.Item1), Triger = w.Item2 })
                 .GroupBy(w => w.Name)
-                .Select(w => new Tag() { TagName = w.Key, AttributesGroups = w.Select(x => new HtmlAttributeGroup() { Attributes = x.Attributes, Triger = x.Triger }).ToArray()})
+                .Select(w => new Tag() { TagName = w.Key, AttributesGroups = w.Select(x => new HtmlAttributeGroup(x.Attributes, x.Triger)).ToArray() })
                 .ToDictionary(w=>w.TagName);
 
             return new TagGroup(tags);
@@ -81,7 +65,5 @@ namespace CssSelector
             if (str[0] < 97 && str[0] > 122) return str;
             return (char)(str[0] - 32) + str.Substring(1, str.Length - 1);
         }
-
-
     }
 }

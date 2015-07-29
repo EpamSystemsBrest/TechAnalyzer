@@ -10,18 +10,22 @@ namespace CssSelector
     public class Attribute
     {
         public string Value;
-        public HtmlAttribute Name;
+        public int Id;
 
         public Attribute() { }
         public Attribute(string attribs)
         {
-            Name = SelectorParser.ParseAttributeName(attribs);
+            Id = (int)SelectorParser.ParseAttributeName(attribs);
             Value = SelectorParser.ParseAttributeValue(attribs);
         }
-        public Attribute(HtmlAttribute name, string value)
+        public Attribute(int name, string value)
         {
-            Name = name;
+            Id = name;
             Value = value;
+        }
+        public override string ToString()
+        {
+            return '[' + ((HtmlAttribute)Id).ToString() + " = " + Value + ']';
         }
     }
 }

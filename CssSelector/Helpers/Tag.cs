@@ -7,7 +7,7 @@ using HtmlParser.Hash;
 
 namespace CssSelector
 {
-    public class Tag
+    internal class Tag
     {
         public HtmlTag TagName;
         public IEnumerable<HtmlAttributeGroup> AttributesGroups;

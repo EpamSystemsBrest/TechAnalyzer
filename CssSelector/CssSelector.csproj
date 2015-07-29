@@ -40,13 +40,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\Attribute.cs" />
-    <Compile Include="Helpers\Element.cs" />
     <Compile Include="Helpers\HtmlAttributeGroup.cs" />
     <Compile Include="Helpers\Tag.cs" />
     <Compile Include="Selector\Selector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selector\SelectorParser.cs" />
-    <Compile Include="Helpers\State.cs" />
     <Compile Include="Helpers\TagGroup.cs" />
   </ItemGroup>
   <ItemGroup>

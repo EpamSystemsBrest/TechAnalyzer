@@ -7,13 +7,13 @@ using HtmlParser.Hash;
 
 namespace CssSelector
 {
-    public class HtmlAttributeGroup
+    internal class HtmlAttributeGroup
     {
-        public IEnumerable<Attribute> Attributes;
-        public Action<string> Triger;
-        public int CurrentState;
         public int Count;
+        public int CurrentState;
         string NeededValue;
+        Action<string> Triger;
+        IEnumerable<Attribute> Attributes;
 
         public void Reset()
         {
@@ -23,11 +23,15 @@ namespace CssSelector
             }
             CurrentState = Count;
         }
+        public override string ToString()
+        {
+            return string.Join("", Attributes);
+        }
         public void GiveAttribute(Attribute attribute)
         {
             foreach (var item in Attributes)
             {
-                if(item.Name == attribute.Name)
+                if(item.Id == attribute.Id)
                 {
                     if(item.Value == attribute.Value)
                     {
@@ -45,6 +49,11 @@ namespace CssSelector
                     return;
                 }
             }
+        }
+        public HtmlAttributeGroup(IEnumerable<Attribute> attribs, Action<string> triger)
+        {
+            Attributes = attribs;
+            Triger = triger;
         }
     }
 }

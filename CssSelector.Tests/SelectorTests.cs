@@ -97,25 +97,5 @@ namespace CssSelector.Tests
 
             Assert.True(list.ElementAt(0) == "GENERATOR" && list.ElementAt(1) == "wraper");
         }
-
-        [Fact]
-        public void GenerateTagGroup_Must_Work_Correctly()
-        {
-            var list = new List<string>();
-            var tagGroup = SelectorParser.GenerateTagGroup(new List<Tuple<string, Action<string>>>()
-                {
-                    new Tuple<string,Action<string>>("meta[httpequiv=$result]",w=>list.Add(w + " - Selector1")),
-                    new Tuple<string,Action<string>>("[name=$result]",w=>list.Add(w + " - Selector2")),
-                    new Tuple<string,Action<string>>("div[id=13][name=$result]",w=>list.Add(w + " - Selector3")),
-                    new Tuple<string,Action<string>>("meta[content=$result]",w=>list.Add(w + " - Selector4"))
-                });
-
-            foreach (var item in tokens)
-            {
-                tagGroup.GiveToken(item);
-            }
-
-            Assert.True(list.Count == 5);
-        }
     }
 }
