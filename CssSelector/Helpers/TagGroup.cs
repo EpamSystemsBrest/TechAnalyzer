@@ -45,7 +45,8 @@ namespace CssSelector
             }
             if (token.TokenType == TokenType.Attribute)
             {
-                if (Tags.ContainsKey(CurrentTag) && CurrentTag != HtmlTag.Custom)
+                // 
+                if (!(CurrentTag == HtmlTag.Custom && !ContainCustom))
                 {
                     Tags[CurrentTag].ChangeState(SelectorParser.ConvertToAttribute(token));
                 }
