@@ -10,18 +10,29 @@ namespace CssSelector
 {
     public class TagGroup
     {
-        public Tag[] Tags;
+        public IEnumerable<Tag> Tags;
         HtmlTag CurrentTag;
+        bool IsBegin = true;
 
         public void GiveToken(HtmlToken token)
         {
-            if (token.TokenType == TokenType.OpenTag)
+            if(IsBegin)
             {
-                CurrentTag = token.GetTag();
                 foreach (var tag in Tags)
                 {
                     tag.ResetAll();
+                    IsBegin = false;
                 }
+            }
+
+            if (token.TokenType == TokenType.OpenTag)
+            {
+                foreach (var tag in Tags.Where(w => IsMatch(w.TagName, CurrentTag)))
+                {
+                    tag.ResetAll();
+                }
+                CurrentTag = token.GetTag();
+                return;
             }
             if (token.TokenType == TokenType.Attribute)
             {

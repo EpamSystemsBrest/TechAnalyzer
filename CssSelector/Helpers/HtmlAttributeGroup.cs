@@ -12,11 +12,16 @@ namespace CssSelector
         public IEnumerable<Attribute> Attributes;
         public Action<string> Triger;
         public int CurrentState;
+        public int Count;
         string NeededValue;
 
         public void Reset()
         {
-            CurrentState = Attributes.Count();
+            if(Count==0)
+            {
+                Count = Attributes.Count();
+            }
+            CurrentState = Count;
         }
         public void GiveAttribute(Attribute attribute)
         {

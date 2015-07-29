@@ -71,7 +71,7 @@ namespace CssSelector
         {
             var c = selectors.Select(w => new { Name = ParseHtmlTag(w.Item1), Attributes = ParseAttributes(w.Item1), Triger = w.Item2 })
                 .GroupBy(w => w.Name)
-                .Select(w => new Tag() { TagName = w.Key, AttributesGroups = w.Select(x => new HtmlAttributeGroup() { Attributes = x.Attributes, Triger = x.Triger}).ToArray()}).ToArray();
+                .Select(w => new Tag() { TagName = w.Key, AttributesGroups = w.Select(x => new HtmlAttributeGroup() { Attributes = x.Attributes, Triger = x.Triger }).ToArray()}).ToArray();
 
             return new TagGroup()
             {
