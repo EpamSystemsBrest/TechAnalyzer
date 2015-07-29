@@ -42,7 +42,7 @@ namespace CssSelector
                     {
                         Triger(NeededValue);
                     }
-                    break;
+                    return;
                 }
             }
         }

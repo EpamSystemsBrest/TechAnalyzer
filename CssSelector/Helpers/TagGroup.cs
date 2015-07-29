@@ -10,35 +10,48 @@ namespace CssSelector
 {
     public class TagGroup
     {
-        public IEnumerable<Tag> Tags;
+        IDictionary<HtmlTag, Tag> Tags;
         HtmlTag CurrentTag;
-        bool IsBegin = true;
+        bool ContainCustom = false;
 
+        public TagGroup(IDictionary<HtmlTag, Tag> tags)
+        {
+            Tags = tags;
+            foreach (var tag in Tags)
+            {
+                tag.Value.ResetAll();
+            }
+            if (Tags.ContainsKey(HtmlTag.Custom))
+            {
+                ContainCustom = true;
+            }
+        }
         public void GiveToken(HtmlToken token)
         {
-            if(IsBegin)
-            {
-                foreach (var tag in Tags)
-                {
-                    tag.ResetAll();
-                    IsBegin = false;
-                }
-            }
-
             if (token.TokenType == TokenType.OpenTag)
             {
-                foreach (var tag in Tags.Where(w => IsMatch(w.TagName, CurrentTag)))
+                if (ContainCustom)
                 {
-                    tag.ResetAll();
+                    Tags[HtmlTag.Custom].ResetAll();
                 }
-                CurrentTag = token.GetTag();
+                var temp = token.GetTag();
+                if (!Tags.ContainsKey(temp))
+                {
+                    return;
+                }
+                CurrentTag = temp;
+                Tags[CurrentTag].ResetAll();
                 return;
             }
             if (token.TokenType == TokenType.Attribute)
             {
-                foreach (var tag in Tags.Where(w=>IsMatch(w.TagName, CurrentTag)))
+                if (Tags.ContainsKey(CurrentTag) && CurrentTag != HtmlTag.Custom)
                 {
-                    tag.ChangeState(SelectorParser.ConvertToAttribute(token));
+                    Tags[CurrentTag].ChangeState(SelectorParser.ConvertToAttribute(token));
+                }
+                if (ContainCustom)
+                {
+                    Tags[HtmlTag.Custom].ChangeState(SelectorParser.ConvertToAttribute(token));
                 }
             }
         }

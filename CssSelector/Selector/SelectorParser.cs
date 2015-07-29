@@ -69,14 +69,12 @@ namespace CssSelector
 
         public static TagGroup GenerateTagGroup(IEnumerable<Tuple<string,Action<string>>> selectors)
         {
-            var c = selectors.Select(w => new { Name = ParseHtmlTag(w.Item1), Attributes = ParseAttributes(w.Item1), Triger = w.Item2 })
+            var tags = selectors.Select(w => new { Name = ParseHtmlTag(w.Item1), Attributes = ParseAttributes(w.Item1), Triger = w.Item2 })
                 .GroupBy(w => w.Name)
-                .Select(w => new Tag() { TagName = w.Key, AttributesGroups = w.Select(x => new HtmlAttributeGroup() { Attributes = x.Attributes, Triger = x.Triger }).ToArray()}).ToArray();
+                .Select(w => new Tag() { TagName = w.Key, AttributesGroups = w.Select(x => new HtmlAttributeGroup() { Attributes = x.Attributes, Triger = x.Triger }).ToArray()})
+                .ToDictionary(w=>w.TagName);
 
-            return new TagGroup()
-            {
-                Tags = c
-            };
+            return new TagGroup(tags);
         }
         private static string ToUpperFirstChar(string str)
         {
