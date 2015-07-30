@@ -47,19 +47,7 @@ namespace CssSelector
                 }
             }
         }
-        public static Attribute ConvertToAttribute(HtmlToken token)
-        {
-            return new Attribute((int)token.GetAttribute(), String.Concat(token.Source.Skip(token.Value.StartIndex).Take(token.Value.Length)));
-        }
-        public static TagGroup GenerateTagGroup(IEnumerable<Tuple<string,Action<string>>> selectors)
-        {
-            var tags = selectors.Select(w => new { Name = ParseHtmlTag(w.Item1), Attributes = ParseAttributes(w.Item1), Triger = w.Item2 })
-                .GroupBy(w => w.Name)
-                .Select(w => new Tag() { TagName = w.Key, AttributesGroups = w.Select(x => new HtmlAttributeGroup(x.Attributes, x.Triger)).ToArray() })
-                .ToDictionary(w=>w.TagName);
 
-            return new TagGroup(tags);
-        }
         private static string ToUpperFirstChar(string str)
         {
             if (str[0] < 97 && str[0] > 122) return str;

@@ -16,7 +16,7 @@ namespace CssSelector
 
         public  void TokenSelector(IEnumerable<HtmlToken> tokens, IEnumerable<Tuple<string, Action<string>>> selectors)
         {
-            Tags = SelectorParser.GenerateTagGroup(selectors);
+            Tags = ObjectGenerator.GenerateTagGroup(selectors);
             foreach (var item in tokens)
             {
                 Tags.GiveToken(item);

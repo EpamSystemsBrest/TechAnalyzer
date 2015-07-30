@@ -19,6 +19,11 @@ namespace CssSelector
                 group.Reset();
             }
         }
+        public Tag(HtmlTag name, IEnumerable<HtmlAttributeGroup> groups)
+        {
+            TagName = name;
+            AttributesGroups = groups;
+        }
         public void ChangeState(Attribute attribute)
         {
             foreach (var group in AttributesGroups.Where(w=>w.CurrentState!=0))

@@ -47,11 +47,11 @@ namespace CssSelector
             {
                 if (!(CurrentTag == HtmlTag.Custom && !ContainCustom))
                 {
-                    Tags[CurrentTag].ChangeState(SelectorParser.ConvertToAttribute(token));
+                    Tags[CurrentTag].ChangeState(ObjectGenerator.ConvertToAttribute(token));
                 }
                 if (ContainCustom)
                 {
-                    Tags[HtmlTag.Custom].ChangeState(SelectorParser.ConvertToAttribute(token));
+                    Tags[HtmlTag.Custom].ChangeState(ObjectGenerator.ConvertToAttribute(token));
                 }
             }
         }
