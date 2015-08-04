@@ -8,7 +8,7 @@ using HtmlParser.Lexer;
 
 namespace CssSelector
 {
-    internal static class SelectorParser
+    public static class SelectorParser
     {
         public static HtmlTag ParseHtmlTag(string selector)
         {

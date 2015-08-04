@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IntermediateOutputPath>C:\Users\ULADZI~1\AppData\Local\Temp\vs964B.tmp\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\VOVANE~1\AppData\Local\Temp\vsE2CD.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,7 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IntermediateOutputPath>C:\Users\ULADZI~1\AppData\Local\Temp\vs964B.tmp\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\VOVANE~1\AppData\Local\Temp\vsE2CD.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

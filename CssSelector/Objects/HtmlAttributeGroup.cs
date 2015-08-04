@@ -7,13 +7,16 @@ using HtmlParser.Hash;
 
 namespace CssSelector
 {
-    internal class HtmlAttributeGroup
+    public class HtmlAttributeGroup
     {
         public int Count;
         public int CurrentState;
 
         string NeededValue;
-        Action<string> Triger;
+        public Action<string> Triger;
+        public Action<Tag> AddToList;
+
+        public Tag NextTag;
         string[] Attributes;
 
         public void Reset()

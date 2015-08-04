@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Objects\Attribute.cs" />
     <Compile Include="Objects\HtmlAttributeGroup.cs" />
+    <Compile Include="Objects\State.cs" />
     <Compile Include="Objects\Tag.cs" />
     <Compile Include="Helpers\ObjectGenerator.cs" />
     <Compile Include="Selector\Selector.cs" />

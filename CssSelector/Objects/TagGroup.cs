@@ -8,12 +8,16 @@ using HtmlParser.Lexer;
 
 namespace CssSelector
 {
-    internal class TagGroup
+    public class TagGroup
     {
         IDictionary<HtmlTag, Tag> Tags;
         HtmlTag CurrentTag;
         bool ContainCustom = false;
 
+        public void RemoveFromList(Tag tag)
+        {
+            Tags.Remove(new KeyValuePair<HtmlTag, Tag>(tag.TagName, tag));
+        }
         public TagGroup(IDictionary<HtmlTag, Tag> tags)
         {
             Tags = tags;
@@ -41,6 +45,12 @@ namespace CssSelector
                 }
                 CurrentTag = temp;
                 Tags[CurrentTag].ResetAll();
+                foreach (var tag in Tags)
+                {
+                    tag.Value.CheckForTag(token);
+                }
+
+
                 return;
             }
             if (token.TokenType == TokenType.Attribute)
@@ -61,4 +71,7 @@ namespace CssSelector
             return template == current;
         }
     }
+
+
+
 }

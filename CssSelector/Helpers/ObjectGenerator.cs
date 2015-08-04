@@ -8,7 +8,7 @@ using HtmlParser.Lexer;
 
 namespace CssSelector
 {
-    internal static class ObjectGenerator
+    public static class ObjectGenerator
     {
         public static Attribute ConvertToAttribute(HtmlToken token)
         {

@@ -10,6 +10,7 @@ using System.Net;
 using HtmlParser;
 using ParserCommon;
 using System.Diagnostics;
+using HtmlParser.Hash;
 
 namespace CssSelector.Tests
 {
@@ -83,6 +84,36 @@ namespace CssSelector.Tests
                 });
 
             Assert.True(list.Count == 0);
+        }
+
+        [Fact]
+        public void NewTestSomething()
+        {
+            var group1 = new HtmlAttributeGroup(ObjectGenerator.GenerateAttributes(new List<Attribute>()
+            {
+                new Attribute("[name=fsdfsdfsdfdsf"),
+                new Attribute("[value=fsfsfsdfsdfsdf]")
+            }),w=> { });
+
+            var group2 = new HtmlAttributeGroup(ObjectGenerator.GenerateAttributes(new List<Attribute>()
+            {
+                new Attribute("[name=lol"),
+                new Attribute("[value=15]")
+            }), w => { });
+
+            var group3 = new HtmlAttributeGroup(ObjectGenerator.GenerateAttributes(new List<Attribute>()
+            {
+                new Attribute("[name=vova"),
+                new Attribute("[value=assassin]")
+            }), w => { });
+
+            var tag1 = new ChildTag(HtmlTag.Div, new List<HtmlAttributeGroup>() { group1, group2 });
+            var tag2 = new ChildTag(HtmlTag.Div, new List<HtmlAttributeGroup>() { group3, group2 });
+            tag1.NextTag = tag2;
+
+            var dict = new Dictionary<HtmlTag, Tag>();
+            dict.Add(tag1.TagName, tag1);
+            var tagGroup = new TagGroup(dict);
         }
 
         [Fact]
