@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CssSelector;
-using Xunit;
-using HtmlParser.Lexer;
-using System.Net;
-using HtmlParser;
-using ParserCommon;
-using System.Diagnostics;
 using HtmlParser.Hash;
+using HtmlParser.Lexer;
+using CssSelector;
+using ParserCommon;
+using CssSelector.Objects;
 
-namespace CssSelector.Tests
+namespace ConsoleApplication1
 {
-    public class SelectorTests
+    class Program
     {
-        HtmlToken[] tokens = new HtmlToken[]
+        static void Main(string[] args)
+        {
+            HtmlToken[] tokens = new HtmlToken[]
             {
                 new HtmlToken(TokenType.OpenTag, "html".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
                     new HtmlToken(TokenType.OpenTag, "head".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
@@ -46,16 +45,16 @@ namespace CssSelector.Tests
                 new HtmlToken(TokenType.CloseTag, "html".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4))
             };
 
-        [Fact]
-        public void TokenSelector_Must_Do_Simple_Selects_Right()
-        {
-            var list = new List<string>();
             var c = ObjectGenerator.GenerateStateGroup(new List<Tuple<string, Action<string>>>()
             {
-                new Tuple<string, Action<string>>("body[name=bobody] div[name=$result]", w => list.Add(w + " - Selector1")),
-                new Tuple<string, Action<string>>("head[content=$result]", w => list.Add(w + " - Selector2"))
+                new Tuple<string, Action<string>>("body[name=bobody] div[name=$result]", w=>Console.WriteLine(w + " - Selector1")),
+                new Tuple<string, Action<string>>("head[content=$result]", w=>Console.WriteLine(w + " - Selector2"))
             });
-            c.QuerySelectorAll(tokens);
+
+            foreach (var item in tokens)
+            {
+                c.ChangeState(item);
+            }
         }
     }
 }
