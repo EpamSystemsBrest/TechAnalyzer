@@ -8,7 +8,7 @@ using HtmlParser.Lexer;
 
 namespace CssSelector
 {
-    public static class SelectorParser
+    internal static class SelectorParser
     {
         public static HtmlTag ParseHtmlTag(string selector)
         {
@@ -47,7 +47,6 @@ namespace CssSelector
                 }
             }
         }
-
         private static string ToUpperFirstChar(string str)
         {
             if (str[0] < 97 && str[0] > 122) return str;

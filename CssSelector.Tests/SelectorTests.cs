@@ -11,51 +11,61 @@ using HtmlParser;
 using ParserCommon;
 using System.Diagnostics;
 using HtmlParser.Hash;
+using System.IO;
 
 namespace CssSelector.Tests
 {
     public class SelectorTests
     {
-        HtmlToken[] tokens = new HtmlToken[]
-            {
-                new HtmlToken(TokenType.OpenTag, "html".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                    new HtmlToken(TokenType.OpenTag, "head".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                    new HtmlToken(TokenType.Attribute, "content=\"IE=10\"".ToArray(), new QualifiedName(0, 7), new StringSegment(9, 5)),
-                    new HtmlToken(TokenType.OpenTag, "meta".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                        new HtmlToken(TokenType.Attribute, "http-equiv=\"X-UA-Compatible\"".ToArray(), new QualifiedName(0, 10), new StringSegment(12, 15)),
-                        new HtmlToken(TokenType.Attribute, "content=\"IE=11\"".ToArray(), new QualifiedName(0, 7), new StringSegment(9, 5)),
-                            new HtmlToken(TokenType.OpenTag, "meta".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                                new HtmlToken(TokenType.Attribute, "name=\"GENERATOR\"".ToArray(), new QualifiedName(0, 4), new StringSegment(6, 9)),
-                                    new HtmlToken(TokenType.OpenTag, "meta".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                                        new HtmlToken(TokenType.Attribute, "name=\"GENERATOI\"".ToArray(), new QualifiedName(0, 4), new StringSegment(6, 9)),
-                                    new HtmlToken(TokenType.CloseTag, "meta".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                            new HtmlToken(TokenType.CloseTag, "meta".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                    new HtmlToken(TokenType.CloseTag, "meta".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                    new HtmlToken(TokenType.OpenTag, "meta".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 3)),
-                        new HtmlToken(TokenType.Attribute, "name=\"GENERATOR\"".ToArray(), new QualifiedName(0, 4), new StringSegment(6, 9)),
-                    new HtmlToken(TokenType.CloseTag, "meta".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                    new HtmlToken(TokenType.CloseTag, "head".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                    new HtmlToken(TokenType.OpenTag, "body".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                        new HtmlToken(TokenType.Attribute, "name=\"bobody\"".ToArray(), new QualifiedName(0, 4), new StringSegment(6, 6)),
-                    new HtmlToken(TokenType.OpenTag, "div".ToArray(), new QualifiedName(0, 3), new StringSegment(0, 3)),
-                        new HtmlToken(TokenType.Attribute, "id=\"13\"".ToArray(), new QualifiedName(0, 2), new StringSegment(4, 2)),
-                        new HtmlToken(TokenType.Attribute, "name=\"wraper\"".ToArray(), new QualifiedName(0, 4), new StringSegment(6, 6)),
-                        new HtmlToken(TokenType.Attribute, "class=\"maindiv\"".ToArray(), new QualifiedName(0, 5), new StringSegment(7, 7)),
-                    new HtmlToken(TokenType.CloseTag, "div".ToArray(), new QualifiedName(0, 3), new StringSegment(0, 3)),
-                    new HtmlToken(TokenType.CloseTag, "body".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4)),
-                new HtmlToken(TokenType.CloseTag, "html".ToArray(), new QualifiedName(0, 4), new StringSegment(0, 4))
-            };
+
+        HtmlToken[] tokens;
+        public void Inicialize()
+        {
+            if (tokens != null) return;
+            var k = new StreamReader("VGTimes.html").ReadToEnd();
+            HtmlLexer lexer = new HtmlLexer();
+            lexer.Load(k);
+            tokens = lexer.Parse().ToArray();
+        }
+
 
         [Fact]
-        public void TokenSelector_Must_Do_Simple_Selects_Right()
+        public void QuerySelector_Must_Do_SimpleSelects()
         {
+            Inicialize();
             var list = new List<string>();
             var c = ObjectGenerator.GenerateStateGroup(new List<Tuple<string, Action<string>>>()
             {
-                new Tuple<string, Action<string>>("body[name=bobody] div[name=$result]", w => list.Add(w + " - Selector1")),
-                new Tuple<string, Action<string>>("head[content=$result]", w => list.Add(w + " - Selector2"))
+                new Tuple<string, Action<string>>("[style=$result]", w => list.Add(w)),
             });
             c.QuerySelectorAll(tokens);
+            Assert.True(list.Count == 26);
+        }
+
+        [Fact]
+        public void QuerySelector_Must_Do_SimpleSelects_With_Tag_Name()
+        {
+            Inicialize();
+            var list = new List<string>();
+            var c = ObjectGenerator.GenerateStateGroup(new List<Tuple<string, Action<string>>>()
+            {
+                new Tuple<string, Action<string>>("div[style=$result]", w => list.Add(w)),
+            });
+            c.QuerySelectorAll(tokens);
+            Assert.True(list.Count == 21);
+        }
+
+        [Fact]
+        public void QuerySelector_Must_Do_Child_and_After_Selects()
+        {
+            Inicialize();
+            var list = new List<string>();
+            var c = ObjectGenerator.GenerateStateGroup(new List<Tuple<string, Action<string>>>()
+            {
+                new Tuple<string, Action<string>>("div[class=header] ul[class=menu] a[href=/bestsellers/]~sup[style=$result]", w => list.Add(w)),
+            });
+            c.QuerySelectorAll(tokens);
+            Assert.True(list.Count == 1);
         }
     }
 }

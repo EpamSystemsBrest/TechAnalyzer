@@ -1,25 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using HtmlParser.Lexer;
-using ParserCommon;
 using HtmlParser.Hash;
+using HtmlParser.Lexer;
 
-namespace CssSelector
+namespace CssSelector.Objects
 {
     public class Selector
     {
-        TagGroup Tags;
-
-        public  void TokenSelector(IEnumerable<HtmlToken> tokens, IEnumerable<Tuple<string, Action<string>>> selectors)
+        List<State> States;
+        static List<State> TempStates;
+        static List<State> RemoveStates;
+        internal static void AddToList(State state)
         {
-            Tags = ObjectGenerator.GenerateTagGroup(selectors);
-            foreach (var item in tokens)
+            TempStates.Add(state);
+        }
+        internal static void RemoveFromList(State state)
+        {
+            RemoveStates.Add(state);
+        }
+        internal Selector(IEnumerable<State> states)
+        {
+            TempStates = new List<State>();
+            RemoveStates = new List<State>();
+            States = states.ToList();
+        }
+        private void ChangeState(HtmlToken token)
+        {
+            foreach (var item in States)
             {
-                Tags.GiveToken(item);
+                item.ChangeState(token);
+            }
+            if (TempStates.Count != 0)
+            {
+                States.AddRange(TempStates);
+                TempStates.Clear();
+            }
+            if (RemoveStates.Count != 0)
+            {
+                foreach (var item in RemoveStates)
+                {
+                    States.Remove(item);
+                }
+                RemoveStates.Clear();
+            }
+        }
+        public void QuerySelectorAll(IEnumerable<HtmlToken> tokens)
+        {
+            foreach (var token in tokens)
+            {
+                ChangeState(token);
             }
         }
     }

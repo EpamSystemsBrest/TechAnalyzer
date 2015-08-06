@@ -39,15 +39,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\AfterState.cs" />
     <Compile Include="Objects\Attribute.cs" />
-    <Compile Include="Objects\HtmlAttributeGroup.cs" />
+    <Compile Include="Objects\ChildState.cs" />
+    <Compile Include="Objects\DirectChildState.cs" />
+    <Compile Include="Objects\ImmediatlyAfterState.cs" />
+    <Compile Include="Objects\RootState.cs" />
     <Compile Include="Objects\State.cs" />
-    <Compile Include="Objects\Tag.cs" />
     <Compile Include="Helpers\ObjectGenerator.cs" />
     <Compile Include="Selector\Selector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\SelectorParser.cs" />
-    <Compile Include="Objects\TagGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HtmlParser\HtmlParser.csproj">

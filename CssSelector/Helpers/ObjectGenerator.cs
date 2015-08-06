@@ -11,8 +11,7 @@ namespace CssSelector
 {
     public static class ObjectGenerator
     {
-
-        public static State GenerateStateNexus(string selector, Action<string> triger)
+        private static State GenerateStateNexus(string selector, Action<string> triger)
         {
             char[] separstors = new char[] { ' ', '+', '>', '~' };
             int ind = 0;
@@ -37,15 +36,12 @@ namespace CssSelector
                 return state;
             }
         }
-
-
-        public static StateGroup GenerateStateGroup(IEnumerable<Tuple<string, Action<string>>> selectors)
+        public static Selector GenerateStateGroup(IEnumerable<Tuple<string, Action<string>>> selectors)
         {
             var statelines = selectors.Select(w => GenerateStateNexus(w.Item1, w.Item2)).ToArray();
-            return new StateGroup(statelines);
+            return new Selector(statelines);
         }
-
-        public static State GenerateState(string selector, Action<string> triger)
+        private static State GenerateState(string selector, Action<string> triger)
         {
             char[] separators = new char[] { '>', ' ', '+', '~' };
             HtmlTag tagName;
@@ -75,11 +71,11 @@ namespace CssSelector
             }
             throw new ArgumentException();
         }
-        public static Attribute ConvertToAttribute(HtmlToken token)
+        internal static Attribute ConvertToAttribute(HtmlToken token)
         {
             return new Attribute((int)token.GetAttribute(), String.Concat(token.Source.Skip(token.Value.StartIndex).Take(token.Value.Length)));
         }
-        public static string[] GenerateAttributes(IEnumerable<Attribute> attribs)
+        internal static string[] GenerateAttributes(IEnumerable<Attribute> attribs)
         {
             int max = 0;
             foreach (var s in Enum.GetValues(typeof(HtmlAttribute)))
@@ -92,15 +88,6 @@ namespace CssSelector
                 result[item.Id] = item.Value;
             }
             return result;
-        }
-        public static TagGroup GenerateTagGroup(IEnumerable<Tuple<string, Action<string>>> selectors)
-        {
-            var tags = selectors.Select(w => new { Name = SelectorParser.ParseHtmlTag(w.Item1), Attributes = SelectorParser.ParseAttributes(w.Item1), Triger = w.Item2 })
-                                .GroupBy(w => w.Name)
-                                .Select(w => new Tag(w.Key, w.Select(x => new HtmlAttributeGroup(GenerateAttributes(x.Attributes), x.Triger))
-                                                             .ToArray()))
-                                .ToDictionary(w => w.TagName);
-            return new TagGroup(tags);
         }
     }
 }
