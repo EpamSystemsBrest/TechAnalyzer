@@ -9,10 +9,10 @@ namespace CssSelector.Objects
     internal class ImmediatlyAfterState : State
     {
         int Level = 1;
-        public ImmediatlyAfterState(HtmlTag tag, IEnumerable<Attribute> attribs, Action<string> triger)
+        public ImmediatlyAfterState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
             TagName = tag;
-            Attributes = ObjectGenerator.GenerateAttributes(attribs);
+            Attributes = attribs;
             Triger = triger;
             AttribCount = Attributes.Count(w => !string.IsNullOrEmpty(w));
             CurrentState = AttribCount;
@@ -21,6 +21,7 @@ namespace CssSelector.Objects
         }
         public override void ChangeState(HtmlToken token)
         {
+            
             if (token.TokenType == TokenType.OpenTag)
             {
                 CurrentState = AttribCount;
@@ -47,24 +48,27 @@ namespace CssSelector.Objects
                     CurrentState -= 1;
                     NeededValue = attribute.Value;
                 }
-                if (CurrentState == 0)
+            }
+            if (CurrentState == 0 && IsMatchTags(CurrentTag, TagName))
+            {
+                if (NextState != null)
                 {
-                    if (NextState != null)
-                    {
-                        AddToList(NextState);
-                        RemoveFromList(this);
-                    }
-                    else
-                    {
-                        Triger(NeededValue);
-                        RemoveFromList(this);
-                    }
+                    AddToList(NextState);
                 }
+                else
+                {
+                    Triger(NeededValue);
+                }
+                CurrentTag = HtmlTag.Custom;
             }
             if (Level == -1)
             {
                 RemoveFromList(this);
             }
+        }
+        public override State GetCopy()
+        {
+            return new ImmediatlyAfterState(TagName, Attributes, Triger) { NextState = this.NextState };
         }
     }
 }

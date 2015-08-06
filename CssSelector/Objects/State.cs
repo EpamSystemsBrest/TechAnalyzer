@@ -11,7 +11,7 @@ namespace CssSelector.Objects
     internal abstract class State
     {
         protected HtmlTag TagName;
-        protected string[] Attributes;
+        internal string[] Attributes;
         internal State NextState;
         protected Action<string> Triger;
         protected Action<State> AddToList;
@@ -24,8 +24,10 @@ namespace CssSelector.Objects
         public abstract void ChangeState(HtmlToken token);
         protected bool IsMatchTags(HtmlTag current, HtmlTag needed)
         {
+            if (current == HtmlTag.Custom) return false;
             if (needed == HtmlTag.Custom) return true;
             return current == needed;
         }
+        public abstract State GetCopy();
     }
 }

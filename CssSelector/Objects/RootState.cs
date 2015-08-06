@@ -8,10 +8,10 @@ namespace CssSelector.Objects
 {
     internal class RootState : State
     {
-        public RootState(HtmlTag tag, IEnumerable<Attribute> attribs, Action<string> triger)
+        public RootState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
             TagName = tag;
-            Attributes = ObjectGenerator.GenerateAttributes(attribs);
+            Attributes = attribs;
             Triger = triger;
             AttribCount = Attributes.Count(w => !string.IsNullOrEmpty(w));
             CurrentState = AttribCount;
@@ -44,18 +44,23 @@ namespace CssSelector.Objects
                     CurrentState -= 1;
                     NeededValue = attribute.Value;
                 }
-                if (CurrentState == 0)
-                {
-                    if (NextState != null)
-                    {
-                        AddToList(NextState);
-                    }
-                    else
-                    {
-                        Triger(NeededValue);
-                    }
-                }
             }
+            if (CurrentState == 0 && IsMatchTags(CurrentTag, TagName))
+            {
+                if (NextState != null)
+                {
+                    AddToList(NextState);
+                }
+                else
+                {
+                    Triger(NeededValue);
+                }
+                CurrentTag = HtmlTag.Custom;
+            }
+        }
+        public override State GetCopy()
+        {
+            return new RootState(TagName, Attributes, Triger) {NextState = NextState };
         }
     }
 }

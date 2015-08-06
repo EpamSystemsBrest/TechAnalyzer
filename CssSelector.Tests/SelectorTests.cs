@@ -28,7 +28,6 @@ namespace CssSelector.Tests
             tokens = lexer.Parse().ToArray();
         }
 
-
         [Fact]
         public void QuerySelector_Must_Do_SimpleSelects()
         {
@@ -63,6 +62,19 @@ namespace CssSelector.Tests
             var c = ObjectGenerator.GenerateStateGroup(new List<Tuple<string, Action<string>>>()
             {
                 new Tuple<string, Action<string>>("div[class=header] ul[class=menu] a[href=/bestsellers/]~sup[style=$result]", w => list.Add(w)),
+            });
+            c.QuerySelectorAll(tokens);
+            Assert.True(list.Count == 1);
+        }
+
+        [Fact]
+        public void QuerySelector_Must_Do_Selects_Without_Attribs()
+        {
+            Inicialize();
+            var list = new List<string>();
+            var c = ObjectGenerator.GenerateStateGroup(new List<Tuple<string, Action<string>>>()
+            {
+                new Tuple<string, Action<string>>("ul a~sup[style=$result]", w => list.Add(w)),
             });
             c.QuerySelectorAll(tokens);
             Assert.True(list.Count == 1);

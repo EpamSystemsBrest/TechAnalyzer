@@ -49,25 +49,25 @@ namespace CssSelector
             if (!separators.Contains(selector[0]))
             {
                 tagName = SelectorParser.ParseHtmlTag(selector);
-                return new RootState(tagName, attribs, triger);
+                return new RootState(tagName, GenerateAttributes(attribs), triger);
             }
 
             tagName = SelectorParser.ParseHtmlTag(selector.Substring(1, selector.Length - 1));
             if (selector[0] == '>')
             {
-                return new DirectChildState(tagName, attribs, triger);
+                return new DirectChildState(tagName, GenerateAttributes(attribs), triger);
             }
             if (selector[0] == ' ')
             {
-                return new ChildState(tagName, attribs, triger);
+                return new ChildState(tagName, GenerateAttributes(attribs), triger);
             }
             if (selector[0] == '+')
             {
-                return new ImmediatlyAfterState(tagName, attribs, triger);
+                return new ImmediatlyAfterState(tagName, GenerateAttributes(attribs), triger);
             }
             if (selector[0] == '~')
             {
-                return new AfterState(tagName, attribs, triger);
+                return new AfterState(tagName, GenerateAttributes(attribs), triger);
             }
             throw new ArgumentException();
         }

@@ -14,6 +14,7 @@ namespace CssSelector
         {
             int index = selector.IndexOf('[');
             if (index == 0) return HtmlTag.Custom;
+            if (index == -1) index = selector.Length;
             string temp = ToUpperFirstChar(selector.Substring(0, index));
             return (HtmlTag)Enum.Parse(typeof(HtmlTag), temp);
         }
@@ -29,6 +30,10 @@ namespace CssSelector
         public static IEnumerable<Attribute> ParseAttributes(string selector)
         {
             int index = selector.IndexOf('[');
+            if(index==-1)
+            {
+                yield break;
+            }
             selector = selector.Substring(index, selector.Length - index);
             int i1 = 0;
             int temp;

@@ -9,10 +9,10 @@ namespace CssSelector.Objects
     internal class AfterState : State
     {
         int Level = 1;
-        public AfterState(HtmlTag tag, IEnumerable<Attribute> attribs, Action<string> triger)
+        public AfterState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
             TagName = tag;
-            Attributes = ObjectGenerator.GenerateAttributes(attribs);
+            Attributes = attribs;
             Triger = triger;
             AttribCount = Attributes.Count(w => !string.IsNullOrEmpty(w));
             CurrentState = AttribCount;
@@ -26,6 +26,10 @@ namespace CssSelector.Objects
                 CurrentState = AttribCount;
                 Level += 1;
                 CurrentTag = token.GetTag();
+                if(CurrentTag == HtmlTag.Sup)
+                {
+
+                }
             }
             if (token.TokenType == TokenType.CloseTag)
             {
@@ -47,22 +51,27 @@ namespace CssSelector.Objects
                     CurrentState -= 1;
                     NeededValue = attribute.Value;
                 }
-                if (CurrentState == 0)
-                {
-                    if (NextState != null)
-                    {
-                        AddToList(NextState);
-                    }
-                    else
-                    {
-                        Triger(NeededValue);
-                    }
-                }
             }
-            if (Level == -1)
+            if (CurrentState == 0 && IsMatchTags(CurrentTag, TagName))
+            {
+                if (NextState != null)
+                {
+                    AddToList(NextState);
+                }
+                else
+                {
+                    Triger(NeededValue);
+                }
+                CurrentTag = HtmlTag.Custom;
+            }
+            if (Level <= -1)
             {
                 RemoveFromList(this);
             }
+        }
+        public override State GetCopy()
+        {
+            return new AfterState(TagName, Attributes, Triger) { NextState = this.NextState };
         }
     }
 }

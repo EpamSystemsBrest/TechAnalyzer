@@ -13,7 +13,7 @@ namespace CssSelector.Objects
         static List<State> RemoveStates;
         internal static void AddToList(State state)
         {
-            TempStates.Add(state);
+            TempStates.Add(state.GetCopy());
         }
         internal static void RemoveFromList(State state)
         {

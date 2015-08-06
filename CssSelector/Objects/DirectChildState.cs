@@ -9,10 +9,10 @@ namespace CssSelector.Objects
     internal class DirectChildState : State
     {
         int Level = 1;
-        public DirectChildState(HtmlTag tag, IEnumerable<Attribute> attribs, Action<string> triger)
+        public DirectChildState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
             TagName = tag;
-            Attributes = ObjectGenerator.GenerateAttributes(attribs);
+            Attributes = attribs;
             Triger = triger;
             AttribCount = Attributes.Count(w => !string.IsNullOrEmpty(w));
             CurrentState = AttribCount;
@@ -21,6 +21,7 @@ namespace CssSelector.Objects
         }
         public override void ChangeState(HtmlToken token)
         {
+            
             if (token.TokenType == TokenType.OpenTag)
             {
                 CurrentState = AttribCount;
@@ -47,22 +48,27 @@ namespace CssSelector.Objects
                     CurrentState -= 1;
                     NeededValue = attribute.Value;
                 }
-                if (CurrentState == 0)
-                {
-                    if (NextState != null)
-                    {
-                        AddToList(NextState);
-                    }
-                    else
-                    {
-                        Triger(NeededValue);
-                    }
-                }
             }
             if (Level == 0)
             {
                 RemoveFromList(this);
             }
+            if (CurrentState == 0 && IsMatchTags(CurrentTag, TagName))
+            {
+                if (NextState != null)
+                {
+                    AddToList(NextState);
+                }
+                else
+                {
+                    Triger(NeededValue);
+                }
+                CurrentTag = HtmlTag.Custom;
+            }
+        }
+        public override State GetCopy()
+        {
+            return new DirectChildState(TagName, Attributes, Triger) { NextState = this.NextState };
         }
     }
 }
