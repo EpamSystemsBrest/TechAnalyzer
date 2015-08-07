@@ -21,6 +21,7 @@ namespace CssSelector.Objects
         protected string NeededValue;
         protected HtmlTag CurrentTag;
 
+        public abstract State GetCopy();
         public abstract void ChangeState(HtmlToken token);
         protected bool IsMatchTags(HtmlTag current, HtmlTag needed)
         {
@@ -28,6 +29,5 @@ namespace CssSelector.Objects
             if (needed == HtmlTag.Custom) return true;
             return current == needed;
         }
-        public abstract State GetCopy();
     }
 }

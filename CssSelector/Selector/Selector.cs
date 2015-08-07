@@ -19,12 +19,6 @@ namespace CssSelector.Objects
         {
             RemoveStates.Add(state);
         }
-        internal Selector(IEnumerable<State> states)
-        {
-            TempStates = new List<State>();
-            RemoveStates = new List<State>();
-            States = states.ToList();
-        }
         private void ChangeState(HtmlToken token)
         {
             foreach (var item in States)
@@ -51,6 +45,13 @@ namespace CssSelector.Objects
             {
                 ChangeState(token);
             }
+        }
+        public Selector(IEnumerable<Tuple<string, Action<string>>> selectors)
+        {
+            var states = selectors.Select(w => ObjectGenerator.GenerateStateNexus(w.Item1, w.Item2)).ToArray();
+            TempStates = new List<State>();
+            RemoveStates = new List<State>();
+            States = states.ToList();
         }
     }
 }

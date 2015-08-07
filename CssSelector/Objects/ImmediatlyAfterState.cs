@@ -9,6 +9,7 @@ namespace CssSelector.Objects
     internal class ImmediatlyAfterState : State
     {
         int Level = 1;
+        int index = 0;
         public ImmediatlyAfterState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
             TagName = tag;
@@ -64,6 +65,14 @@ namespace CssSelector.Objects
             if (Level == -1)
             {
                 RemoveFromList(this);
+            }
+            if(token.TokenType == TokenType.CloseTag && Level == 0)
+            {
+                index += 1;
+                if(index==2)
+                {
+                    RemoveFromList(this);
+                }
             }
         }
         public override State GetCopy()

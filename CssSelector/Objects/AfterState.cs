@@ -26,10 +26,6 @@ namespace CssSelector.Objects
                 CurrentState = AttribCount;
                 Level += 1;
                 CurrentTag = token.GetTag();
-                if(CurrentTag == HtmlTag.Sup)
-                {
-
-                }
             }
             if (token.TokenType == TokenType.CloseTag)
             {

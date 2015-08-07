@@ -11,13 +11,13 @@ namespace CssSelector
 {
     public static class ObjectGenerator
     {
-        private static State GenerateStateNexus(string selector, Action<string> triger)
+        static char[] Separators = new char[] { ' ', '+', '>', '~' };
+        internal static State GenerateStateNexus(string selector, Action<string> triger)
         {
-            char[] separstors = new char[] { ' ', '+', '>', '~' };
             int ind = 0;
             foreach (var item in selector)
             {
-                if (ind!=0 && separstors.Contains(selector[ind]))
+                if (ind!=0 && Separators.Contains(selector[ind]))
                 {
                     break;
                 }
@@ -31,27 +31,19 @@ namespace CssSelector
             {
                 string temp = selector.Substring(0, ind);
                 var state = GenerateState(temp, triger);
-                temp = selector.Substring(ind, selector.Length - ind);
-                state.NextState = GenerateStateNexus(temp, triger);
+                state.NextState = GenerateStateNexus(selector.Substring(ind, selector.Length - ind), triger);
                 return state;
             }
         }
-        public static Selector GenerateStateGroup(IEnumerable<Tuple<string, Action<string>>> selectors)
-        {
-            var statelines = selectors.Select(w => GenerateStateNexus(w.Item1, w.Item2)).ToArray();
-            return new Selector(statelines);
-        }
         private static State GenerateState(string selector, Action<string> triger)
         {
-            char[] separators = new char[] { '>', ' ', '+', '~' };
             HtmlTag tagName;
             var attribs = SelectorParser.ParseAttributes(selector);
-            if (!separators.Contains(selector[0]))
+            if (!Separators.Contains(selector[0]))
             {
                 tagName = SelectorParser.ParseHtmlTag(selector);
                 return new RootState(tagName, GenerateAttributes(attribs), triger);
             }
-
             tagName = SelectorParser.ParseHtmlTag(selector.Substring(1, selector.Length - 1));
             if (selector[0] == '>')
             {
@@ -69,7 +61,7 @@ namespace CssSelector
             {
                 return new AfterState(tagName, GenerateAttributes(attribs), triger);
             }
-            throw new ArgumentException();
+            throw new ArgumentException("Some problem with selector you gived");
         }
         internal static Attribute ConvertToAttribute(HtmlToken token)
         {
