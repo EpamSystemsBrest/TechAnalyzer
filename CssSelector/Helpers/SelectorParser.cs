@@ -25,7 +25,9 @@ namespace CssSelector
         public static HtmlAttribute ParseAttributeName(string selector)
         {
             string tempName = selector.Substring(1, selector.IndexOf('=') - 1);
-            return (HtmlAttribute)Enum.Parse(typeof(HtmlAttribute), SelectorParser.ToUpperFirstChar(tempName));
+            var result = HtmlAttribute.CUSTOM;
+            Enum.TryParse(tempName, true, out result);
+            return result;
         }
         public static IEnumerable<Attribute> ParseAttributes(string selector)
         {

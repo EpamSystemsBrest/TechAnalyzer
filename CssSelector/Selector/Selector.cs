@@ -19,25 +19,44 @@ namespace CssSelector.Objects
         {
             RemoveStates.Add(state);
         }
+        private bool CompareStates(State state1, State state2)
+        {
+            return state1.Attributes == state2.Attributes && state1.TagName == state2.TagName && state1.Level == state2.Level;
+        }
+        public void AddNewStates()
+        {
+            foreach (var item in TempStates)
+            {
+                if (item is AfterState || item is ImmediatlyAfterState)
+                {
+                    if (!States.Any(w => CompareStates(w, item)))
+                    {
+                        States.Add(item);
+                    }
+                }
+                else
+                {
+                    States.Add(item);
+                }
+            }
+            TempStates.Clear();
+        }
+        public void RemoveIrrelevantStates()
+        {
+            foreach (var item in RemoveStates)
+            {
+                States.Remove(item);
+            }
+            RemoveStates.Clear();
+        }
         private void ChangeState(HtmlToken token)
         {
             foreach (var item in States)
             {
                 item.ChangeState(token);
             }
-            if (TempStates.Count != 0)
-            {
-                States.AddRange(TempStates);
-                TempStates.Clear();
-            }
-            if (RemoveStates.Count != 0)
-            {
-                foreach (var item in RemoveStates)
-                {
-                    States.Remove(item);
-                }
-                RemoveStates.Clear();
-            }
+            AddNewStates();
+            RemoveIrrelevantStates();
         }
         public void QuerySelectorAll(IEnumerable<HtmlToken> tokens)
         {

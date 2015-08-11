@@ -8,7 +8,6 @@ namespace CssSelector.Objects
 {
     internal class AfterState : State
     {
-        int Level = 1;
         public AfterState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
             TagName = tag;
@@ -60,7 +59,7 @@ namespace CssSelector.Objects
                 }
                 CurrentTag = HtmlTag.Custom;
             }
-            if (Level <= -1)
+            if (Level == -1)
             {
                 RemoveFromList(this);
             }

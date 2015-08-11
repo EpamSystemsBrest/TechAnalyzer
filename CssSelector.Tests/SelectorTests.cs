@@ -62,10 +62,10 @@ namespace CssSelector.Tests
             var list = new List<string>();
             var c = new Selector(new List<Tuple<string, Action<string>>>()
             {
-                new Tuple<string, Action<string>>("div[class=add_material_kind] div[class=add_material_kind_right] span+div[class=$result]", w => list.Add(w)),
+                new Tuple<string, Action<string>>("meta+link[rel=$result]", w => list.Add(w)),
             });
             c.QuerySelectorAll(tokens);
-            Assert.True(list.Count == 3);
+            Assert.True(list.Count == 1);
         }
 
         [Fact]
@@ -75,10 +75,10 @@ namespace CssSelector.Tests
             var list = new List<string>();
             var c = new Selector(new List<Tuple<string, Action<string>>>()
             {
-                new Tuple<string, Action<string>>("head meta~script[src=$result]", w => list.Add(w)),
+                new Tuple<string, Action<string>>("head meta~link[rel=$result]", w => list.Add(w)),
             });
             c.QuerySelectorAll(tokens);
-            Assert.True(list.Distinct().Count() == 1);
+            Assert.True(list.Count() == 3);
         }
 
         [Fact]
@@ -110,6 +110,7 @@ namespace CssSelector.Tests
         [Fact]
         public void DirectChild_Test()
         {
+            int i = 0;
             Inicialize();
             var list = new List<string>();
             var c = new Selector(new List<Tuple<string, Action<string>>>()

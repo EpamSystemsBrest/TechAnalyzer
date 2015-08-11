@@ -8,7 +8,6 @@ namespace CssSelector.Objects
 {
     internal class ImmediatlyAfterState : State
     {
-        int Level = 1;
         int index = 0;
         public ImmediatlyAfterState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
