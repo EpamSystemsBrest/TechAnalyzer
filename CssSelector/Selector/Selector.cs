@@ -23,7 +23,7 @@ namespace CssSelector.Objects
         {
             return state1.Attributes == state2.Attributes && state1.TagName == state2.TagName && state1.Level == state2.Level;
         }
-        public void AddNewStates()
+        private void AddNewStates()
         {
             foreach (var item in TempStates)
             {
@@ -41,7 +41,7 @@ namespace CssSelector.Objects
             }
             TempStates.Clear();
         }
-        public void RemoveIrrelevantStates()
+        private void RemoveIrrelevantStates()
         {
             foreach (var item in RemoveStates)
             {

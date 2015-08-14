@@ -10,10 +10,10 @@ namespace CssSelector.Objects
 {
     internal abstract class State
     {
-        internal HtmlTag TagName;
-        internal string[] Attributes;
-        internal State NextState;
-        internal int Level = 1;
+        public HtmlTag TagName;
+        public string[] Attributes;
+        public State NextState;
+        public int Level = 1;
         protected Action<string> Triger;
         protected Action<State> AddToList;
         protected Action<State> RemoveFromList;

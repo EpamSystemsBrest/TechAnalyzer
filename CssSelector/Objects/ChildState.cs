@@ -8,7 +8,6 @@ namespace CssSelector.Objects
 {
     internal class ChildState : State
     {
-        int Level = 1;
         public ChildState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
             TagName = tag;
@@ -68,7 +67,7 @@ namespace CssSelector.Objects
         }
         public override State GetCopy()
         {
-            return new ChildState(TagName, Attributes, Triger) { NextState = this.NextState };
+            return new ChildState(TagName, Attributes, Triger) { NextState = NextState };
         }
     }
 }

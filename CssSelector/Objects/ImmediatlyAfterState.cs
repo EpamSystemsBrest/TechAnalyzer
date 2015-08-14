@@ -76,7 +76,7 @@ namespace CssSelector.Objects
         }
         public override State GetCopy()
         {
-            return new ImmediatlyAfterState(TagName, Attributes, Triger) { NextState = this.NextState };
+            return new ImmediatlyAfterState(TagName, Attributes, Triger) { NextState = NextState };
         }
     }
 }

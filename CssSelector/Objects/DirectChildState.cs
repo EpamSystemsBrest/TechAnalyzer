@@ -8,7 +8,6 @@ namespace CssSelector.Objects
 {
     internal class DirectChildState : State
     {
-        int Level = 1;
         public DirectChildState(HtmlTag tag, string[] attribs, Action<string> triger)
         {
             TagName = tag;

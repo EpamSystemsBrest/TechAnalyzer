@@ -9,10 +9,10 @@ using CssSelector.Objects;
 
 namespace CssSelector
 {
-    public static class ObjectGenerator
+    internal static class ObjectGenerator
     {
         static char[] Separators = new char[] { ' ', '+', '>', '~' };
-        internal static State GenerateStateNexus(string selector, Action<string> triger)
+        public static State GenerateStateNexus(string selector, Action<string> triger)
         {
             int ind = 0;
             foreach (var item in selector)
@@ -34,6 +34,24 @@ namespace CssSelector
                 state.NextState = GenerateStateNexus(selector.Substring(ind, selector.Length - ind), triger);
                 return state;
             }
+        }
+        public static Attribute ConvertToAttribute(HtmlToken token)
+        {
+            return new Attribute((int)token.GetAttribute(), String.Concat(token.Source.Skip(token.Value.StartIndex).Take(token.Value.Length)));
+        }
+        public static string[] GenerateAttributes(IEnumerable<Attribute> attribs)
+        {
+            int max = 0;
+            foreach (var s in Enum.GetValues(typeof(HtmlAttribute)))
+            {
+                max = max < (int)s ? (int)s : max;
+            }
+            string[] result = new string[max + 1];
+            foreach (var item in attribs)
+            {
+                result[item.Id] = item.Value;
+            }
+            return result;
         }
         private static State GenerateState(string selector, Action<string> triger)
         {
@@ -62,24 +80,6 @@ namespace CssSelector
                 return new AfterState(tagName, GenerateAttributes(attribs), triger);
             }
             throw new ArgumentException("Some problem with selector you gived");
-        }
-        internal static Attribute ConvertToAttribute(HtmlToken token)
-        {
-            return new Attribute((int)token.GetAttribute(), String.Concat(token.Source.Skip(token.Value.StartIndex).Take(token.Value.Length)));
-        }
-        internal static string[] GenerateAttributes(IEnumerable<Attribute> attribs)
-        {
-            int max = 0;
-            foreach (var s in Enum.GetValues(typeof(HtmlAttribute)))
-            {
-                max = max < (int)s ? (int)s : max;
-            }
-            string[] result = new string[max + 1];
-            foreach (var item in attribs)
-            {
-                result[item.Id] = item.Value;
-            }
-            return result;
         }
     }
 }

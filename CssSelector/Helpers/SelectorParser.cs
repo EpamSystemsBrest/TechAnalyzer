@@ -15,8 +15,8 @@ namespace CssSelector
             int index = selector.IndexOf('[');
             if (index == 0) return HtmlTag.Custom;
             if (index == -1) index = selector.Length;
-            string temp = ToUpperFirstChar(selector.Substring(0, index));
-            return (HtmlTag)Enum.Parse(typeof(HtmlTag), temp);
+            string temp = selector.Substring(0, index);
+            return (HtmlTag)Enum.Parse(typeof(HtmlTag), temp, true);
         }
         public static string ParseAttributeValue(string selector)
         {
@@ -53,11 +53,6 @@ namespace CssSelector
                     i1 = i;
                 }
             }
-        }
-        private static string ToUpperFirstChar(string str)
-        {
-            if (str[0] < 97 && str[0] > 122) return str;
-            return (char)(str[0] - 32) + str.Substring(1, str.Length - 1);
         }
     }
 }
