@@ -34,9 +34,7 @@ namespace CssSelector.Objects
             if (token.TokenType == TokenType.Attribute && Level == 1 && IsMatchTags(CurrentTag, TagName))
             {
                 var attribute = ObjectGenerator.ConvertToAttribute(token);
-                if (attribute.Id >= Attributes.Length) return;
                 if (string.IsNullOrEmpty(Attributes[attribute.Id])) return;
-
                 if (Attributes[attribute.Id] == attribute.Value)
                 {
                     CurrentState -= 1;
@@ -66,7 +64,7 @@ namespace CssSelector.Objects
         }
         public override State GetCopy()
         {
-            return new AfterState(TagName, Attributes, Triger) { NextState = this.NextState };
+            return new AfterState(TagName, Attributes, Triger) { NextState = NextState };
         }
     }
 }

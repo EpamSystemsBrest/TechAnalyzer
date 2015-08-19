@@ -35,9 +35,7 @@ namespace CssSelector.Objects
             if (token.TokenType == TokenType.Attribute && IsMatchTags(CurrentTag, TagName))
             {
                 var attribute = ObjectGenerator.ConvertToAttribute(token);
-                if (attribute.Id >= Attributes.Length) return;
                 if (string.IsNullOrEmpty(Attributes[attribute.Id])) return;
-
                 if (Attributes[attribute.Id] == attribute.Value)
                 {
                     CurrentState -= 1;
@@ -47,10 +45,6 @@ namespace CssSelector.Objects
                     CurrentState -= 1;
                     NeededValue = attribute.Value;
                 }
-            }
-            if (Level == 0)
-            {
-                RemoveFromList(this);
             }
             if (CurrentState == 0 && IsMatchTags(CurrentTag, TagName))
             {
@@ -63,6 +57,10 @@ namespace CssSelector.Objects
                     Triger(NeededValue);
                 }
                 CurrentTag = HtmlTag.Custom;
+            }
+            if (Level == 0)
+            {
+                RemoveFromList(this);
             }
         }
         public override State GetCopy()

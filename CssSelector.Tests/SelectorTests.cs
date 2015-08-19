@@ -18,12 +18,11 @@ namespace CssSelector.Tests
 {
     public class SelectorTests
     {
-
         HtmlToken[] tokens;
         public void Inicialize()
         {
             if (tokens != null) return;
-            var k = new StreamReader("VGTimes.html").ReadToEnd();
+            var k = new StreamReader(Directory.GetCurrentDirectory().Replace("bin\\Debug","") + "VGTimes.html").ReadToEnd();
             HtmlLexer lexer = new HtmlLexer();
             lexer.Load(k);
             tokens = lexer.Parse().ToArray();
@@ -110,7 +109,6 @@ namespace CssSelector.Tests
         [Fact]
         public void DirectChild_Test()
         {
-            int i = 0;
             Inicialize();
             var list = new List<string>();
             var c = new Selector(new List<Tuple<string, Action<string>>>()
@@ -132,6 +130,32 @@ namespace CssSelector.Tests
             });
             c.QuerySelectorAll(tokens);
             Assert.True(list.Count == 0);
+        }
+
+        [Fact]
+        public void ImmediatlyAfter_Second_Test()
+        {
+            Inicialize();
+            var list = new List<string>();
+            var c = new Selector(new List<Tuple<string, Action<string>>>()
+            {
+                new Tuple<string, Action<string>>("a[href=/addarticle.html]~div[class=$result]", w => list.Add(w)),
+            });
+            c.QuerySelectorAll(tokens);
+            Assert.True(list.Count == 1);
+        }
+
+        [Fact]
+        public void Child_Plus_After_Test()
+        {
+            Inicialize();
+            var list = new List<string>();
+            var c = new Selector(new List<Tuple<string, Action<string>>>()
+            {
+                new Tuple<string, Action<string>>("div[class=add_material_cont] h3~div[class=$result]", w => list.Add(w)),
+            });
+            c.QuerySelectorAll(tokens);
+            Assert.True(list.Count == 1);
         }
     }
 }

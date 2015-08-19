@@ -60,7 +60,7 @@ namespace CssSelector.Objects
         }
         public override State GetCopy()
         {
-            return new RootState(TagName, Attributes, Triger) {NextState = NextState };
+            return new RootState(TagName, Attributes, Triger) { NextState = NextState };
         }
     }
 }

@@ -36,7 +36,6 @@ namespace CssSelector.Objects
             if (token.TokenType == TokenType.Attribute && Level == 1 && IsMatchTags(CurrentTag, TagName))
             {
                 var attribute = ObjectGenerator.ConvertToAttribute(token);
-                if (attribute.Id >= Attributes.Length) return;
                 if (string.IsNullOrEmpty(Attributes[attribute.Id])) return;
 
                 if (Attributes[attribute.Id] == attribute.Value)
